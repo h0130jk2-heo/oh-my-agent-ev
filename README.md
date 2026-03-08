@@ -2,9 +2,9 @@
 
 [한국어](./docs/README.ko.md) | [中文](./docs/README.zh.md) | [Português](./docs/README.pt.md) | [日本語](./docs/README.ja.md) | [Français](./docs/README.fr.md) | [Español](./docs/README.es.md) | [Nederlands](./docs/README.nl.md) | [Polski](./docs/README.pl.md) | [Українська](./docs/README.uk.md) | [Русский](./docs/README.ru.md) | [Deutsch](./docs/README.de.md)
 
-The Ultimate Multi-Agent Framework for Google Antigravity and beyond.
+The Ultimate Multi-Agent Harness for Google Antigravity and beyond.
 
-Orchestrate 6 specialized domain agents (PM, Frontend, Backend, Mobile, QA, Debug) via **Serena Memory**. Features parallel CLI execution, real-time observability dashboards, and zero-config progressive skill loading. The batteries-included solution for agentic coding.
+Orchestrate 9 specialized domain agents (PM, Frontend, Backend, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform) via **Serena Memory**. Features parallel CLI execution, real-time observability dashboards, and zero-config progressive skill loading. The batteries-included solution for agentic coding.
 
 ## Table of Contents
 
@@ -66,6 +66,9 @@ A collection of **Antigravity Skills** enabling collaborative multi-agent develo
 | **Mobile Agent** | Flutter cross-platform development | "mobile app", "iOS/Android" |
 | **QA Agent** | OWASP Top 10 security, performance, accessibility | "review security", "audit", "check performance" |
 | **Debug Agent** | Bug diagnosis, root cause analysis, regression tests | "bug", "error", "crash" |
+| **Brainstorm** | Design-first ideation, exploring intent and constraints before planning | "I have an idea", "let's design", "explore approaches" |
+| **Developer Workflow** | Monorepo task automation, mise tasks, CI/CD, migrations, release | "dev workflow", "mise tasks", "CI/CD pipeline" |
+| **Terraform Infra Engineer** | Multi-cloud IaC provisioning (AWS, GCP, Azure, OCI) | "infrastructure", "terraform", "cloud setup" |
 | **Orchestrator** | CLI-based parallel agent execution with Serena Memory | "spawn agent", "parallel execution" |
 | **Commit** | Conventional Commits with project-specific rules | "commit", "save changes" |
 

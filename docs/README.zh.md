@@ -2,9 +2,9 @@
 
 [English](../README.md) | [한국어](./README.ko.md) | [Português](./README.pt.md) | [日本語](./README.ja.md) | [Français](./README.fr.md) | [Español](./README.es.md) | [Nederlands](./README.nl.md) | [Polski](./README.pl.md) | [Українська](./README.uk.md) | [Русский](./README.ru.md) | [Deutsch](./README.de.md)
 
-终极多代理框架，适用于 Google Antigravity 及更多场景。
+终极多代理驱动框架，适用于 Google Antigravity 及更多场景。
 
-通过 **Serena Memory** 编排 6 个专业领域代理（PM、Frontend、Backend、Mobile、QA、Debug）。支持并行 CLI 执行、实时可观测性仪表盘，以及零配置渐进式技能加载。开箱即用的代理编程解决方案。
+通过 **Serena Memory** 编排 9 个专业领域代理（PM、Frontend、Backend、Mobile、QA、Debug、Brainstorm、DevWorkflow、Terraform）。支持并行 CLI 执行、实时可观测性仪表盘，以及零配置渐进式技能加载。开箱即用的代理编程解决方案。
 
 ## 目录
 
@@ -67,6 +67,9 @@ flowchart TD
 | **Mobile Agent** | Flutter 跨平台开发 | "mobile app", "iOS/Android" |
 | **QA Agent** | OWASP Top 10 安全、性能、可访问性 | "review security", "audit", "check performance" |
 | **Debug Agent** | Bug 诊断、根因分析、回归测试 | "bug", "error", "crash" |
+| **Brainstorm** | 设计优先的构思，在规划前探索意图与约束 | "我有个想法"、"来设计"、"探索方案" |
+| **Developer Workflow** | 单仓库任务自动化、mise 任务、CI/CD、迁移、发布 | "开发工作流"、"mise 任务"、"CI/CD 管道" |
+| **Terraform Infra Engineer** | 多云 IaC 基础设施配置（AWS、GCP、Azure、OCI） | "基础设施"、"terraform"、"云部署" |
 | **Orchestrator** | 基于 CLI 的并行代理执行，使用 Serena Memory | "spawn agent", "parallel execution" |
 | **Commit** | 遵循项目特定规则的 Conventional Commits | "commit", "save changes" |
 

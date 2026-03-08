@@ -2,9 +2,9 @@
 
 [English](../README.md) | [한국어](./README.ko.md) | [中文](./README.zh.md) | [Português](./README.pt.md) | [日本語](./README.ja.md) | [Français](./README.fr.md) | [Español](./README.es.md) | [Polski](./README.pl.md) | [Українська](./README.uk.md) | [Русский](./README.ru.md) | [Deutsch](./README.de.md)
 
-Het ultieme multi-agent framework voor Google Antigravity.
+Het ultieme multi-agent harness voor Google Antigravity.
 
-Orkestreer 6 gespecialiseerde domein agents (PM, Frontend, Backend, Mobile, QA, Debug) via **Serena Memory**. Biedt parallelle CLI-uitvoering, realtime observability dashboards en zero-config progressieve skill loading. De alles-inbegrepen oplossing voor agentisch programmeren.
+Orkestreer 9 gespecialiseerde domein agents (PM, Frontend, Backend, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform) via **Serena Memory**. Biedt parallelle CLI-uitvoering, realtime observability dashboards en zero-config progressieve skill loading. De alles-inbegrepen oplossing voor agentisch programmeren.
 
 > **Vind je dit project leuk?** Geef het een ster!
 >
@@ -74,6 +74,9 @@ Een verzameling **Antigravity Skills** die collaboratieve multi-agent ontwikkeli
 | **Mobile Agent** | Flutter cross-platform ontwikkeling | "mobiele app", "iOS/Android" |
 | **QA Agent** | OWASP Top 10 beveiliging, prestaties, toegankelijkheid | "bekijk beveiliging", "audit", "controleer prestaties" |
 | **Debug Agent** | Bug diagnose, root cause analyse, regressietests | "bug", "fout", "crash" |
+| **Brainstorm** | Design-first ideevorming, verkenning van intenties en beperkingen vóór planning | "ik heb een idee", "laten we ontwerpen", "benaderingen verkennen" |
+| **Developer Workflow** | Monorepo-taakautomatisering, mise-taken, CI/CD, migraties, release | "dev workflow", "mise-taken", "CI/CD-pipeline" |
+| **Terraform Infra Engineer** | Multi-cloud IaC-provisioning (AWS, GCP, Azure, OCI) | "infrastructuur", "terraform", "cloud-setup" |
 | **Orchestrator** | CLI-gebaseerde parallelle agent uitvoering met Serena Memory | "spawn agent", "parallelle uitvoering" |
 | **Commit** | Conventional Commits met projectspecifieke regels | "commit", "wijzigingen opslaan" |
 

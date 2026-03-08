@@ -2,9 +2,9 @@
 
 [English](../README.md) | [한국어](./README.ko.md) | [中文](./README.zh.md) | [Português](./README.pt.md) | [日本語](./README.ja.md) | [Español](./README.es.md) | [Nederlands](./README.nl.md) | [Polski](./README.pl.md) | [Українська](./README.uk.md) | [Русский](./README.ru.md) | [Deutsch](./README.de.md)
 
-Le framework multi-agents ultime pour Google Antigravity.
+Le harnais multi-agents ultime pour Google Antigravity.
 
-Orchestrez 6 agents de domaine spécialisés (PM, Frontend, Backend, Mobile, QA, Debug) via **Serena Memory**. Comprend l'exécution CLI parallèle, des tableaux de bord d'observabilité en temps réel et un chargement progressif de compétences sans configuration. La solution tout-en-un pour le codage agentique.
+Orchestrez 9 agents de domaine spécialisés (PM, Frontend, Backend, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform) via **Serena Memory**. Comprend l'exécution CLI parallèle, des tableaux de bord d'observabilité en temps réel et un chargement progressif de compétences sans configuration. La solution tout-en-un pour le codage agentique.
 
 > **Ce projet vous plaît ?** Donnez-lui une étoile !
 >
@@ -74,6 +74,9 @@ Une collection de **Compétences Antigravity** permettant le développement coll
 | **Mobile Agent** | Développement multiplateforme Flutter | "application mobile", "iOS/Android" |
 | **QA Agent** | Sécurité OWASP Top 10, performance, accessibilité | "vérifier sécurité", "audit", "vérifier performance" |
 | **Debug Agent** | Diagnostic de bugs, analyse de cause racine, tests de régression | "bug", "erreur", "crash" |
+| **Brainstorm** | Idéation design-first, exploration des intentions et contraintes avant planification | "j'ai une idée", "concevons", "explorer les approches" |
+| **Developer Workflow** | Automatisation des tâches monorepo, tâches mise, CI/CD, migrations, release | "workflow dev", "tâches mise", "pipeline CI/CD" |
+| **Terraform Infra Engineer** | Provisionnement IaC multi-cloud (AWS, GCP, Azure, OCI) | "infrastructure", "terraform", "config cloud" |
 | **Orchestrator** | Exécution parallèle d'agents via CLI avec Serena Memory | "lancer agent", "exécution parallèle" |
 | **Commit** | Commits conventionnels avec règles spécifiques au projet | "commit", "enregistrer changements" |
 

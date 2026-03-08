@@ -2,9 +2,9 @@
 
 [English](../README.md) | [한국어](./README.ko.md) | [中文](./README.zh.md) | [Português](./README.pt.md) | [日本語](./README.ja.md) | [Français](./README.fr.md) | [Español](./README.es.md) | [Nederlands](./README.nl.md) | [Українська](./README.uk.md) | [Русский](./README.ru.md) | [Deutsch](./README.de.md)
 
-Najlepszy framework multi-agentowy dla Google Antigravity.
+Najlepszy multi-agent harness dla Google Antigravity.
 
-Orkiestruj 6 wyspecjalizowanych agentów domenowych (PM, Frontend, Backend, Mobile, QA, Debug) za pomocą **Serena Memory**. Oferuje równoległe wykonywanie CLI, dashboardy z obserwacją w czasie rzeczywistym i progresywne ładowanie umiejętności bez konfiguracji. Kompleksowe rozwiązanie dla kodowania agentowego.
+Orkiestruj 9 wyspecjalizowanych agentów domenowych (PM, Frontend, Backend, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform) za pomocą **Serena Memory**. Oferuje równoległe wykonywanie CLI, dashboardy z obserwacją w czasie rzeczywistym i progresywne ładowanie umiejętności bez konfiguracji. Kompleksowe rozwiązanie dla kodowania agentowego.
 
 > **Podoba Ci się ten projekt?** Daj mu gwiazdkę!
 >
@@ -74,6 +74,9 @@ Kolekcja **Antigravity Skills** umożliwiających współpracę multi-agentową 
 | **Mobile Agent** | Rozwój wieloplatformowy Flutter | "aplikacja mobilna", "iOS/Android" |
 | **QA Agent** | Bezpieczeństwo OWASP Top 10, wydajność, dostępność | "sprawdź bezpieczeństwo", "audyt", "sprawdź wydajność" |
 | **Debug Agent** | Diagnoza błędów, analiza przyczyn źródłowych, testy regresji | "błąd", "error", "crash" |
+| **Brainstorm** | Ideacja design-first, eksploracja intencji i ograniczeń przed planowaniem | "mam pomysł", "zaprojektujmy", "zbadaj podejścia" |
+| **Developer Workflow** | Automatyzacja zadań monorepo, zadania mise, CI/CD, migracje, release | "workflow dev", "zadania mise", "pipeline CI/CD" |
+| **Terraform Infra Engineer** | Wielochmurowy provisioning IaC (AWS, GCP, Azure, OCI) | "infrastruktura", "terraform", "konfiguracja chmury" |
 | **Orchestrator** | Równoległe wykonywanie agentów przez CLI z Serena Memory | "uruchom agenta", "wykonanie równoległe" |
 | **Commit** | Conventional Commits z regułami specyficznymi dla projektu | "commit", "zapisz zmiany" |
 

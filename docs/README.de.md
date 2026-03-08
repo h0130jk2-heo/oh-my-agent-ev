@@ -2,9 +2,9 @@
 
 [English](../README.md) | [한국어](./README.ko.md) | [中文](./README.zh.md) | [Português](./README.pt.md) | [日本語](./README.ja.md) | [Français](./README.fr.md) | [Español](./README.es.md) | [Nederlands](./README.nl.md) | [Polski](./README.pl.md) | [Українська](./README.uk.md) | [Русский](./README.ru.md)
 
-Das ultimative Multi-Agent Framework für Google Antigravity.
+Das ultimative Multi-Agent Harness für Google Antigravity.
 
-Orchestrieren Sie 6 spezialisierte Domain-Agenten (PM, Frontend, Backend, Mobile, QA, Debug) über **Serena Memory**. Mit paralleler CLI-Ausführung, Echtzeit-Observability-Dashboards und Zero-Config Progressive Skill Loading. Die All-in-One-Lösung für agentisches Coding.
+Orchestrieren Sie 9 spezialisierte Domain-Agenten (PM, Frontend, Backend, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform) über **Serena Memory**. Mit paralleler CLI-Ausführung, Echtzeit-Observability-Dashboards und Zero-Config Progressive Skill Loading. Die All-in-One-Lösung für agentisches Coding.
 
 > **Gefällt Ihnen dieses Projekt?** Geben Sie ihm einen Stern!
 >
@@ -74,6 +74,9 @@ Eine Sammlung von **Antigravity Skills**, die kollaborative Multi-Agent-Entwickl
 | **Mobile Agent** | Flutter Cross-Platform-Entwicklung | "mobile App", "iOS/Android" |
 | **QA Agent** | OWASP Top 10 Sicherheit, Performance, Accessibility | "Sicherheit prüfen", "Audit", "Performance checken" |
 | **Debug Agent** | Bug-Diagnose, Root-Cause-Analyse, Regressionstests | "Bug", "Fehler", "Absturz" |
+| **Brainstorm** | Design-First-Ideenfindung, Erkundung von Absichten und Einschränkungen vor der Planung | "Ich habe eine Idee", "lass uns entwerfen", "Ansätze erkunden" |
+| **Developer Workflow** | Monorepo-Aufgabenautomatisierung, mise-Tasks, CI/CD, Migrationen, Release | "Dev-Workflow", "mise-Tasks", "CI/CD-Pipeline" |
+| **Terraform Infra Engineer** | Multi-Cloud-IaC-Bereitstellung (AWS, GCP, Azure, OCI) | "Infrastruktur", "Terraform", "Cloud-Setup" |
 | **Orchestrator** | CLI-basierte parallele Agent-Ausführung mit Serena Memory | "Agent spawnen", "parallele Ausführung" |
 | **Commit** | Conventional Commits mit projektspezifischen Regeln | "commit", "Änderungen speichern" |
 

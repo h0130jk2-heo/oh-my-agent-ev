@@ -2,9 +2,9 @@
 
 [English](../README.md) | [한국어](./README.ko.md) | [中文](./README.zh.md) | [Português](./README.pt.md) | [Français](./README.fr.md) | [Español](./README.es.md) | [Nederlands](./README.nl.md) | [Polski](./README.pl.md) | [Українська](./README.uk.md) | [Русский](./README.ru.md) | [Deutsch](./README.de.md)
 
-Google Antigravityのための究極のマルチエージェントフレームワーク。
+Google Antigravityのための究極のマルチエージェントハーネス。
 
-**Serena Memory**を通じて6つの専門ドメインエージェント(PM, Frontend, Backend, Mobile, QA, Debug)を統合管理します。並列CLI実行、リアルタイム監視ダッシュボード、ゼロコンフィグの段階的スキルロードをサポート。エージェントベースのコーディングに必要なものすべてが揃ったオールインワンソリューションです。
+**Serena Memory**を通じて9つの専門ドメインエージェント(PM, Frontend, Backend, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform)を統合管理します。並列CLI実行、リアルタイム監視ダッシュボード、ゼロコンフィグの段階的スキルロードをサポート。エージェントベースのコーディングに必要なものすべてが揃ったオールインワンソリューションです。
 
 > **このプロジェクトが気に入りましたか？** スターをお願いします！
 >
@@ -74,6 +74,9 @@ flowchart TD
 | **Mobile Agent** | Flutterクロスプラットフォーム開発 | "mobile app"、"iOS/Android" |
 | **QA Agent** | OWASP Top 10セキュリティ、パフォーマンス、アクセシビリティ | "review security"、"audit"、"check performance" |
 | **Debug Agent** | バグ診断、根本原因分析、リグレッションテスト | "bug"、"error"、"crash" |
+| **Brainstorm** | デザインファーストのアイデア発想、計画前の意図と制約の探索 | 「アイデアがある」「設計しよう」「アプローチを探る」 |
+| **Developer Workflow** | モノレポタスク自動化、mise タスク、CI/CD、マイグレーション、リリース | 「開発ワークフロー」「mise タスク」「CI/CD パイプライン」 |
+| **Terraform Infra Engineer** | マルチクラウド IaC プロビジョニング（AWS、GCP、Azure、OCI） | 「インフラ」「terraform」「クラウドセットアップ」 |
 | **Orchestrator** | CLIベースの並列エージェント実行とSerena Memory | "spawn agent"、"parallel execution" |
 | **Commit** | Conventional Commitsによるプロジェクト固有のルール | "commit"、"save changes" |
 
