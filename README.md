@@ -20,7 +20,9 @@ Orchestrate 9 specialized domain agents (PM, Frontend, Backend, Mobile, QA, Debu
 flowchart TD
     subgraph Workflows["Workflows"]
         direction TB
+        W0["/brainstorm"]
         W1["/coordinate"]
+        W1b["/coordinate-pro"]
         W2["/orchestrate"]
         W3["/plan"]
         W4["/review"]
@@ -59,6 +61,7 @@ A collection of **Antigravity Skills** enabling collaborative multi-agent develo
 
 | Agent | Specialization | Triggers |
 |-------|---------------|----------|
+| **Brainstorm** | Design-first ideation before planning | "brainstorm", "ideate", "explore idea" |
 | **Workflow Guide** | Coordinates complex multi-agent projects | "multi-domain", "complex project" |
 | **PM Agent** | Requirements analysis, task decomposition, architecture | "plan", "break down", "what should we build" |
 | **Frontend Agent** | React/Next.js, TypeScript, Tailwind CSS | "UI", "component", "styling" |
@@ -97,10 +100,10 @@ Select your project type and skills will be installed to `.agent/skills/`.
 | Preset | Skills |
 |--------|--------|
 | ✨ All | Everything |
-| 🌐 Fullstack | frontend, backend, pm, qa, debug, commit |
-| 🎨 Frontend | frontend, pm, qa, debug, commit |
-| ⚙️ Backend | backend, pm, qa, debug, commit |
-| 📱 Mobile | mobile, pm, qa, debug, commit |
+| 🌐 Fullstack | brainstorm, frontend, backend, pm, qa, debug, commit |
+| 🎨 Frontend | brainstorm, frontend, pm, qa, debug, commit |
+| ⚙️ Backend | brainstorm, backend, pm, qa, debug, commit |
+| 📱 Mobile | brainstorm, mobile, pm, qa, debug, commit |
 
 ### Option 2: Global Installation (For Orchestrator)
 

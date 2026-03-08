@@ -28,7 +28,9 @@
 flowchart TD
     subgraph Workflows["Робочі процеси"]
         direction TB
+        W0["/brainstorm"]
         W1["/coordinate"]
+        W1b["/coordinate-pro"]
         W2["/orchestrate"]
         W3["/plan"]
         W4["/review"]
@@ -67,6 +69,7 @@ flowchart TD
 
 | Агент | Спеціалізація | Тригери |
 |-------|---------------|---------|
+| **Brainstorm** | Ідеація з пріоритетом дизайну перед плануванням | "brainstorm", "ideate", "explore idea" |
 | **Workflow Guide** | Координація складних мультиагентних проєктів | "мульти-домен", "складний проєкт" |
 | **PM Agent** | Аналіз вимог, декомпозиція завдань, архітектура | "план", "розбити", "що треба побудувати" |
 | **Frontend Agent** | React/Next.js, TypeScript, Tailwind CSS | "UI", "компонент", "стилізація" |
@@ -105,10 +108,10 @@ bunx oh-my-ag
 | Пресет | Навички |
 |--------|---------|
 | ✨ All | Все |
-| 🌐 Fullstack | frontend, backend, pm, qa, debug, commit |
-| 🎨 Frontend | frontend, pm, qa, debug, commit |
-| ⚙️ Backend | backend, pm, qa, debug, commit |
-| 📱 Mobile | mobile, pm, qa, debug, commit |
+| 🌐 Fullstack | brainstorm, frontend, backend, pm, qa, debug, commit |
+| 🎨 Frontend | brainstorm, frontend, pm, qa, debug, commit |
+| ⚙️ Backend | brainstorm, backend, pm, qa, debug, commit |
+| 📱 Mobile | brainstorm, mobile, pm, qa, debug, commit |
 
 ### Варіант 2: Глобальна установка (Для Orchestrator)
 

@@ -21,7 +21,9 @@
 flowchart TD
     subgraph Workflows["工作流"]
         direction TB
+        W0["/brainstorm"]
         W1["/coordinate"]
+        W1b["/coordinate-pro"]
         W2["/orchestrate"]
         W3["/plan"]
         W4["/review"]
@@ -60,6 +62,7 @@ flowchart TD
 
 | 代理 | 专业领域 | 触发条件 |
 |------|---------|---------|
+| **Brainstorm** | 规划前的设计优先构思 | "brainstorm", "ideate", "explore idea" |
 | **Workflow Guide** | 协调复杂的多代理项目 | "multi-domain", "complex project" |
 | **PM Agent** | 需求分析、任务分解、架构设计 | "plan", "break down", "what should we build" |
 | **Frontend Agent** | React/Next.js、TypeScript、Tailwind CSS | "UI", "component", "styling" |
@@ -98,10 +101,10 @@ bunx oh-my-ag
 | 预设 | 技能 |
 |------|------|
 | ✨ 全部 | 所有技能 |
-| 🌐 全栈 | frontend, backend, pm, qa, debug, commit |
-| 🎨 前端 | frontend, pm, qa, debug, commit |
-| ⚙️ 后端 | backend, pm, qa, debug, commit |
-| 📱 移动端 | mobile, pm, qa, debug, commit |
+| 🌐 全栈 | brainstorm, frontend, backend, pm, qa, debug, commit |
+| 🎨 前端 | brainstorm, frontend, pm, qa, debug, commit |
+| ⚙️ 后端 | brainstorm, backend, pm, qa, debug, commit |
+| 📱 移动端 | brainstorm, mobile, pm, qa, debug, commit |
 
 ### 选项 2：全局安装（用于编排器）
 
