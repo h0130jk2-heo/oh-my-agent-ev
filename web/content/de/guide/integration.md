@@ -117,7 +117,7 @@ Dies gewährleistet eine einzige Informationsquelle, während die Skills über m
 .agent/skills/frontend-agent/      ← Quelle (SSOT)
 .claude/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/
 .agents/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (OpenCode, Amp, Codex)
-.github/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (GitHub Copilot)
+.github/skills/frontend-agent/     → ../../.agents/skills/frontend-agent/ (GitHub Copilot)
 ```
 
 Der Installer überspringt vorhandene Symlinks und warnt, wenn am Zielspeicherort ein echtes Verzeichnis existiert.

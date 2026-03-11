@@ -117,7 +117,7 @@ Also develop with other CLI tools?
 .agent/skills/frontend-agent/      <- Источник (SSOT)
 .claude/skills/frontend-agent/     -> ../../.agent/skills/frontend-agent/
 .agents/skills/frontend-agent/     -> ../../.agent/skills/frontend-agent/ (OpenCode, Amp, Codex)
-.github/skills/frontend-agent/     -> ../../.agent/skills/frontend-agent/ (GitHub Copilot)
+.github/skills/frontend-agent/     → ../../.agents/skills/frontend-agent/ (GitHub Copilot)
 ```
 
 Установщик пропускает существующие символические ссылки и предупреждает, если в целевом расположении существует реальная директория.

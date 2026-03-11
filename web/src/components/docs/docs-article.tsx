@@ -83,7 +83,10 @@ export function DocsArticle({ markdown }: DocsArticleProps) {
             </ul>
           ),
           ol: ({ children, ...props }) => (
-            <ol className="list-decimal space-y-1 pl-5 text-zinc-300" {...props}>
+            <ol
+              className="list-decimal space-y-1 pl-5 text-zinc-300"
+              {...props}
+            >
               {children}
             </ol>
           ),
@@ -120,18 +123,12 @@ export function DocsArticle({ markdown }: DocsArticleProps) {
             </table>
           ),
           thead: ({ children, ...props }) => (
-            <thead
-              className="border-b border-white/20 bg-white/5"
-              {...props}
-            >
+            <thead className="border-b border-white/20 bg-white/5" {...props}>
               {children}
             </thead>
           ),
           th: ({ children, ...props }) => (
-            <th
-              className="px-4 py-3 font-semibold text-zinc-200"
-              {...props}
-            >
+            <th className="px-4 py-3 font-semibold text-zinc-200" {...props}>
               {children}
             </th>
           ),

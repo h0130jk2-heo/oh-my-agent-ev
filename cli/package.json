@@ -70,7 +70,7 @@
     "url": "https://github.com/first-fluke/oh-my-ag"
   },
   "antigravity": {
-    "skillsPath": ".agent/skills",
+    "skillsPath": ".agents/skills",
     "skills": [
       "brainstorm",
       "workflow-guide",

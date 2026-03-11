@@ -58,21 +58,17 @@ type DescribeCommand = {
 function addOutputOptions(command: Command, description = "Output as JSON") {
   return command
     .option("--json", description)
-    .option(
-      "--output <format>",
-      "Output format (text/json)",
-      (value) => {
-        const normalized = value.trim().toLowerCase();
-        if (
-          !OUTPUT_FORMATS.includes(normalized as (typeof OUTPUT_FORMATS)[number])
-        ) {
-          throw new Error(
-            `Invalid output format: ${value}. Expected one of ${OUTPUT_FORMATS.join(", ")}`,
-          );
-        }
-        return normalized;
-      },
-    );
+    .option("--output <format>", "Output format (text/json)", (value) => {
+      const normalized = value.trim().toLowerCase();
+      if (
+        !OUTPUT_FORMATS.includes(normalized as (typeof OUTPUT_FORMATS)[number])
+      ) {
+        throw new Error(
+          `Invalid output format: ${value}. Expected one of ${OUTPUT_FORMATS.join(", ")}`,
+        );
+      }
+      return normalized;
+    });
 }
 
 function resolveOutputFormat(options?: JsonCapableOptions): OutputFormat {
@@ -129,8 +125,11 @@ function failValidation(message: string): never {
 }
 
 function assertNoControlChars(value: string, label: string): void {
-  if (/[\u0000-\u001F\u007F]/.test(value)) {
-    failValidation(`${label} must not contain control characters`);
+  for (const char of value) {
+    const code = char.charCodeAt(0);
+    if ((code >= 0 && code <= 31) || code === 127) {
+      failValidation(`${label} must not contain control characters`);
+    }
   }
 }
 
@@ -175,7 +174,9 @@ function validateValue(
   }
 
   if (Array.isArray(value)) {
-    value.forEach((entry, index) => validateValue(entry, `${label}[${index}]`, mode));
+    for (const [index, entry] of value.entries()) {
+      validateValue(entry, `${label}[${index}]`, mode);
+    }
   }
 }
 
@@ -197,10 +198,11 @@ function validationModeForName(name: string): "text" | "identifier" | "url" {
 
 function validateKnownOptionValues(options: Record<string, unknown>): void {
   const vendor = options.vendor;
-  if (typeof vendor === "string" && !VENDORS.includes(vendor as (typeof VENDORS)[number])) {
-    failValidation(
-      `vendor must be one of ${VENDORS.join(", ")}`,
-    );
+  if (
+    typeof vendor === "string" &&
+    !VENDORS.includes(vendor as (typeof VENDORS)[number])
+  ) {
+    failValidation(`vendor must be one of ${VENDORS.join(", ")}`);
   }
 
   const output = options.output;
@@ -208,9 +210,7 @@ function validateKnownOptionValues(options: Record<string, unknown>): void {
     typeof output === "string" &&
     !OUTPUT_FORMATS.includes(output as OutputFormat)
   ) {
-    failValidation(
-      `output must be one of ${OUTPUT_FORMATS.join(", ")}`,
-    );
+    failValidation(`output must be one of ${OUTPUT_FORMATS.join(", ")}`);
   }
 }
 
@@ -228,9 +228,7 @@ function validateCommandInputs(command: Command): void {
       typeof value === "string" &&
       !AGENT_TYPES.includes(value as (typeof AGENT_TYPES)[number])
     ) {
-      failValidation(
-        `agent-type must be one of ${AGENT_TYPES.join(", ")}`,
-      );
+      failValidation(`agent-type must be one of ${AGENT_TYPES.join(", ")}`);
     }
   });
 
@@ -293,7 +291,9 @@ function describeCommand(command: Command): DescribeCommand {
     options: describeOptions(command),
     supportsJsonOutput: commandSupportsJson(command),
     supportsDryRun: commandSupportsDryRun(command),
-    subcommands: command.commands.map((subcommand) => describeCommand(subcommand)),
+    subcommands: command.commands.map((subcommand) =>
+      describeCommand(subcommand),
+    ),
   };
 }
 
@@ -314,7 +314,10 @@ function findCommand(program: Command, commandPath?: string): Command | null {
       continue;
     }
 
-    if (current.name() === normalizedTarget || getCommandPath(current) === normalizedTarget) {
+    if (
+      current.name() === normalizedTarget ||
+      getCommandPath(current) === normalizedTarget
+    ) {
       return current;
     }
 
@@ -387,9 +390,12 @@ program
   .command("describe [command-path]")
   .description("Describe CLI commands as JSON for runtime introspection")
   .action(
-    runAction((commandPath) => {
-      printDescribe(program, commandPath);
-    }, { supportsJsonOutput: true }),
+    runAction(
+      (commandPath) => {
+        printDescribe(program, commandPath);
+      },
+      { supportsJsonOutput: true },
+    ),
   );
 
 program
@@ -416,9 +422,12 @@ addOutputOptions(
     .description("Show model usage quotas (connects to local Antigravity IDE)")
     .option("--raw", "Dump raw RPC response"),
 ).action(
-  runAction(async (options) => {
-    await usage(resolveJsonMode(options), options.raw);
-  }, { supportsJsonOutput: true }),
+  runAction(
+    async (options) => {
+      await usage(resolveJsonMode(options), options.raw);
+    },
+    { supportsJsonOutput: true },
+  ),
 );
 
 program
@@ -436,9 +445,12 @@ addOutputOptions(
     .description("Check CLI installations, MCP configs, and skill status"),
   "Output as JSON for CI/CD",
 ).action(
-  runAction(async (options) => {
-    await doctor(resolveJsonMode(options));
-  }, { supportsJsonOutput: true }),
+  runAction(
+    async (options) => {
+      await doctor(resolveJsonMode(options));
+    },
+    { supportsJsonOutput: true },
+  ),
 );
 
 addOutputOptions(
@@ -447,9 +459,12 @@ addOutputOptions(
     .description("View productivity metrics")
     .option("--reset", "Reset metrics data"),
 ).action(
-  runAction(async (options) => {
-    await stats(resolveJsonMode(options), options.reset);
-  }, { supportsJsonOutput: true }),
+  runAction(
+    async (options) => {
+      await stats(resolveJsonMode(options), options.reset);
+    },
+    { supportsJsonOutput: true },
+  ),
 );
 
 addOutputOptions(
@@ -458,9 +473,12 @@ addOutputOptions(
     .description("Session retrospective (learnings & next steps)")
     .option("--interactive", "Interactive mode (manual entry)"),
 ).action(
-  runAction(async (options) => {
-    await retro(resolveJsonMode(options), options.interactive);
-  }, { supportsJsonOutput: true }),
+  runAction(
+    async (options) => {
+      await retro(resolveJsonMode(options), options.interactive);
+    },
+    { supportsJsonOutput: true },
+  ),
 );
 
 addOutputOptions(
@@ -470,9 +488,12 @@ addOutputOptions(
     .option("--dry-run", "Show what would be cleaned without making changes")
     .option("-y, --yes", "Skip confirmation prompts and clean everything"),
 ).action(
-  runAction(async (options) => {
-    await cleanup(options.dryRun, resolveJsonMode(options), options.yes);
-  }, { supportsJsonOutput: true }),
+  runAction(
+    async (options) => {
+      await cleanup(options.dryRun, resolveJsonMode(options), options.yes);
+    },
+    { supportsJsonOutput: true },
+  ),
 );
 
 program
@@ -542,9 +563,12 @@ addOutputOptions(
     .description("Initialize Serena memory schema in .serena/memories")
     .option("--force", "Overwrite empty or existing schema files"),
 ).action(
-  runAction(async (options) => {
-    await initMemory(resolveJsonMode(options), options.force);
-  }, { supportsJsonOutput: true }),
+  runAction(
+    async (options) => {
+      await initMemory(resolveJsonMode(options), options.force);
+    },
+    { supportsJsonOutput: true },
+  ),
 );
 
 addOutputOptions(
@@ -553,9 +577,12 @@ addOutputOptions(
     .description("Verify subagent output (backend/frontend/mobile/qa/debug/pm)")
     .option("-w, --workspace <path>", "Workspace path", process.cwd()),
 ).action(
-  runAction(async (agentType, options) => {
-    await verify(agentType, options.workspace, resolveJsonMode(options));
-  }, { supportsJsonOutput: true }),
+  runAction(
+    async (agentType, options) => {
+      await verify(agentType, options.workspace, resolveJsonMode(options));
+    },
+    { supportsJsonOutput: true },
+  ),
 );
 
 program

@@ -117,7 +117,7 @@ Dit garandeert een enkele bron van waarheid terwijl skills over meerdere CLI-too
 .agent/skills/frontend-agent/      ← Bron (SSOT)
 .claude/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/
 .agents/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (OpenCode, Amp, Codex)
-.github/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (GitHub Copilot)
+.github/skills/frontend-agent/     → ../../.agents/skills/frontend-agent/ (GitHub Copilot)
 ```
 
 De installer slaat bestaande symlinks over en geeft een waarschuwing als er een echte map op de doellocatie bestaat.

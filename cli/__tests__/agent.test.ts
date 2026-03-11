@@ -148,9 +148,7 @@ describe("agent command", () => {
       mockFsFunctions.existsSync.mockImplementation((pathArg: fs.PathLike) => {
         const target = pathArg.toString();
         // user-preferences.yaml only exists at project root, not in apps/api
-        if (
-          target === "/project/.agent/config/user-preferences.yaml"
-        )
+        if (target === "/project/.agent/config/user-preferences.yaml")
           return true;
         if (
           target.includes("apps/api/.agent") &&
@@ -211,9 +209,7 @@ describe("agent command", () => {
 
       mockFsFunctions.existsSync.mockImplementation((pathArg: fs.PathLike) => {
         const target = pathArg.toString();
-        if (
-          target === "/project/.agent/config/user-preferences.yaml"
-        )
+        if (target === "/project/.agent/config/user-preferences.yaml")
           return true;
         if (target.includes("user-preferences.yaml")) return false;
         if (target.includes("cli-config.yaml")) return false;

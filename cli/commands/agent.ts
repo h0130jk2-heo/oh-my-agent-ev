@@ -656,11 +656,14 @@ export async function spawnAgent(
   process.on("SIGINT", cleanAndExit);
   process.on("SIGTERM", cleanAndExit);
 
-  (child as unknown as NodeJS.EventEmitter).on("exit", (code: number | null) => {
-    console.log(color.blue(`[${agentId}] Exited with code ${code}`));
-    cleanup();
-    process.exit(code ?? 0);
-  });
+  (child as unknown as NodeJS.EventEmitter).on(
+    "exit",
+    (code: number | null) => {
+      console.log(color.blue(`[${agentId}] Exited with code ${code}`));
+      cleanup();
+      process.exit(code ?? 0);
+    },
+  );
 }
 
 export async function checkStatus(
@@ -848,7 +851,7 @@ export async function parallelRun(
     const logFile = path.join(runDir, `${agent}-${idx}.log`);
 
     console.log(
-      color.blue(`[${idx}]`) + ` Spawning ${color.yellow(agent)} agent...`,
+      `${color.blue(`[${idx}]`)} Spawning ${color.yellow(agent)} agent...`,
     );
     console.log(
       `    Task: ${task.slice(0, 60)}${task.length > 60 ? "..." : ""}`,
@@ -936,10 +939,13 @@ export async function parallelRun(
     fs.appendFileSync(pidListFile, `${child.pid}:${agent}\n`);
 
     const exitPromise = new Promise<number | null>((resolve) => {
-      (child as unknown as NodeJS.EventEmitter).on("exit", (code: number | null) => {
-        fs.closeSync(logStream);
-        resolve(code);
-      });
+      (child as unknown as NodeJS.EventEmitter).on(
+        "exit",
+        (code: number | null) => {
+          fs.closeSync(logStream);
+          resolve(code);
+        },
+      );
       (child as unknown as NodeJS.EventEmitter).on("error", () => {
         fs.closeSync(logStream);
         resolve(null);
@@ -961,24 +967,24 @@ export async function parallelRun(
   );
 
   if (options.noWait) {
-    console.log(color.blue("[Parallel]") + " Running in background mode");
-    console.log(color.blue("[Parallel]") + ` Results will be in: ${runDir}`);
-    console.log(color.blue("[Parallel]") + ` PID list: ${pidListFile}`);
+    console.log(`${color.blue("[Parallel]")} Running in background mode`);
+    console.log(`${color.blue("[Parallel]")} Results will be in: ${runDir}`);
+    console.log(`${color.blue("[Parallel]")} PID list: ${pidListFile}`);
     return;
   }
 
-  console.log(color.blue("[Parallel]") + " Waiting for completion...");
+  console.log(`${color.blue("[Parallel]")} Waiting for completion...`);
   console.log("");
 
   const cleanup = () => {
     console.log("");
-    console.log(color.yellow("[Parallel]") + " Cleaning up child processes...");
+    console.log(`${color.yellow("[Parallel]")} Cleaning up child processes...`);
     for (const { pid, agent } of childProcesses) {
       if (isProcessRunning(pid)) {
         try {
           process.kill(pid);
           console.log(
-            color.yellow("[Parallel]") + ` Killed PID ${pid} (${agent})`,
+            `${color.yellow("[Parallel]")} Killed PID ${pid} (${agent})`,
           );
         } catch {
           // empty
@@ -1009,7 +1015,7 @@ export async function parallelRun(
   for (const { agent, idx, promise } of childProcesses) {
     const exitCode = await promise;
     if (exitCode === 0) {
-      console.log(color.green("[DONE]") + ` ${agent} agent (${idx}) completed`);
+      console.log(`${color.green("[DONE]")} ${agent} agent (${idx}) completed`);
       completed++;
     } else {
       console.log(

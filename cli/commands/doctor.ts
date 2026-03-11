@@ -11,7 +11,9 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import {
   CLI_SKILLS_DIR,
+  DEFAULT_COMPAT_SKILLS_DIRS,
   getAllSkills,
+  INSTALLED_SKILLS_DIR,
   installShared,
   installSkill,
 } from "../lib/skills.js";
@@ -67,7 +69,7 @@ async function checkMCPConfig(
 }
 
 async function checkSkills(): Promise<SkillCheck[]> {
-  const skillsDir = join(process.cwd(), ".agent", "skills");
+  const skillsDir = join(process.cwd(), INSTALLED_SKILLS_DIR);
   if (!existsSync(skillsDir)) return [];
 
   const allSkills = getAllSkills();
@@ -113,10 +115,17 @@ async function checkGlobalWorkflows(): Promise<{
 
 async function checkSymlinks(cwd: string): Promise<SymlinkCheck[]> {
   const allSkills = getAllSkills();
-  const ssotSkillsDir = join(cwd, ".agent", "skills");
+  const ssotSkillsDir = join(cwd, INSTALLED_SKILLS_DIR);
   const checks: SymlinkCheck[] = [];
+  const managedSkillsDirs = [
+    ...DEFAULT_COMPAT_SKILLS_DIRS.map((skillsDir) => {
+      const cli = (skillsDir.split("/")[0] ?? skillsDir).replace(/^\./, "");
+      return [cli, skillsDir] as const;
+    }),
+    ...Object.entries(CLI_SKILLS_DIR),
+  ];
 
-  for (const [cli, skillsDir] of Object.entries(CLI_SKILLS_DIR)) {
+  for (const [cli, skillsDir] of managedSkillsDirs) {
     const cliSkillsDir = join(cwd, skillsDir);
     const check: SymlinkCheck = {
       cli,

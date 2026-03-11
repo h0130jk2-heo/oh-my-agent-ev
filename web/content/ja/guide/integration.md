@@ -117,7 +117,7 @@ Antigravity と併用する追加の CLI ツールを選択してください。
 .agent/skills/frontend-agent/      ← ソース（SSOT）
 .claude/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/
 .agents/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (OpenCode, Amp, Codex)
-.github/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (GitHub Copilot)
+.github/skills/frontend-agent/     → ../../.agents/skills/frontend-agent/ (GitHub Copilot)
 ```
 
 インストーラーは既存のシンボリックリンクをスキップし、ターゲットの場所に実ディレクトリが存在する場合は警告します。

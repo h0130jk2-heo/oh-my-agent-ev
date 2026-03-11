@@ -21,8 +21,9 @@ bunx oh-my-ag
 
 실행 시 작업:
 
-- `.agent/skills/*` 설치/업데이트
-- `.agent/skills/_shared` 공통 리소스 설치
+- `.agents/skills/*` 설치/업데이트
+- `.agents/skills/_shared` 공통 리소스 설치
+- `.agent/skills/*`, `.claude/skills/*` 호환 심링크 생성
 - `.agent/workflows/*` 설치
 - `.agent/config/user-preferences.yaml` 설치
 - 선택적으로 `~/.gemini/antigravity/global_workflows` 전역 워크플로우 설치
@@ -34,17 +35,23 @@ bunx oh-my-ag
 ```bash
 cd /path/to/your-project
 
-mkdir -p .agent/skills .agent/workflows .agent/config
+mkdir -p .agents/skills .agent/skills .agent/workflows .agent/config .claude/skills
 
 # 없는 스킬만 복사 (예시)
 for skill in workflow-guide pm-agent frontend-agent backend-agent mobile-agent qa-agent debug-agent orchestrator commit; do
-  if [ ! -d ".agent/skills/$skill" ]; then
-    cp -r /path/to/oh-my-ag/.agent/skills/$skill .agent/skills/$skill
+  if [ ! -d ".agents/skills/$skill" ]; then
+    cp -r /path/to/oh-my-ag/.agent/skills/$skill .agents/skills/$skill
   fi
 done
 
 # 공통 리소스가 없으면 복사
-[ -d .agent/skills/_shared ] || cp -r /path/to/oh-my-ag/.agent/skills/_shared .agent/skills/_shared
+[ -d .agents/skills/_shared ] || cp -r /path/to/oh-my-ag/.agent/skills/_shared .agents/skills/_shared
+
+# 호환 심링크 생성
+for skill in workflow-guide pm-agent frontend-agent backend-agent mobile-agent qa-agent debug-agent orchestrator commit _shared; do
+  [ -L ".agent/skills/$skill" ] || ln -s "../../.agents/skills/$skill" ".agent/skills/$skill"
+  [ -L ".claude/skills/$skill" ] || ln -s "../../.agents/skills/$skill" ".claude/skills/$skill"
+done
 
 # 워크플로우가 없으면 복사
 for wf in coordinate.md orchestrate.md plan.md review.md debug.md setup.md tools.md; do
@@ -59,10 +66,10 @@ done
 
 ```bash
 # 설치형 스킬 9개(_shared 제외)
-find .agent/skills -mindepth 1 -maxdepth 1 -type d ! -name '_shared' | wc -l
+find .agents/skills -mindepth 1 -maxdepth 1 -type d ! -name '_shared' | wc -l
 
 # 공통 리소스
-[ -d .agent/skills/_shared ] && echo ok
+[ -d .agents/skills/_shared ] && echo ok
 
 # 워크플로우 7개
 find .agent/workflows -maxdepth 1 -name '*.md' | wc -l
@@ -98,32 +105,31 @@ git commit -m "chore: checkpoint before oh-my-ag integration"
 `bunx oh-my-ag`를 실행하면 스킬 선택 후 다음과 같은 프롬프트가 표시됩니다:
 
 ```text
-또 다른 CLI 도구로도 개발하시나요?
-  ○ Claude Code (.claude/skills/)
-  ○ OpenCode, Amp, Codex (.agents/skills/)
+다른 CLI 도구용 심링크도 만드시겠어요?
+  ○ Cursor (.cursor/skills/)
   ○ GitHub Copilot (.github/skills/)
 ```
 
-Antigravity와 함께 사용하는 추가 CLI 도구를 선택하세요. 설치 프로그램은 다음을 수행합니다:
+설치 프로그램은 항상 다음을 수행합니다:
 
-1. 스킬을 `.agent/skills/`에 설치 (Antigravity의 기본 위치)
-2. 선택한 각 CLI의 skills 디렉토리에서 `.agent/skills/`로 심링크 생성
+1. 스킬을 `.agents/skills/`에 설치 (CLI 기준 SSOT)
+2. `.agent/skills/`와 `.claude/skills/`에 호환 심링크 생성
 
-이를 통해 단일 출처(스킬의 SSOT)를 유지하면서 여러 CLI 도구에서 스킬을 사용할 수 있습니다.
+추가 CLI를 선택하면 해당 디렉토리에도 심링크를 생성합니다. 이렇게 하면 단일 출처를 유지하면서 여러 도구에서 같은 스킬을 사용할 수 있습니다.
 
 ### 심링크 구조
 
-```
-.agent/skills/frontend-agent/      ← 출처 (SSOT)
-.claude/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/
-.agents/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (OpenCode, Amp, Codex)
-.github/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (GitHub Copilot)
+```text
+.agents/skills/frontend-agent/     ← 출처 (SSOT)
+.agent/skills/frontend-agent/      → ../../.agents/skills/frontend-agent/
+.claude/skills/frontend-agent/     → ../../.agents/skills/frontend-agent/
+.github/skills/frontend-agent/     → ../../.agents/skills/frontend-agent/ (GitHub Copilot)
 ```
 
 설치 프로그램은 기존 심링크를 건 넘기고, 대상 위치에 실제 디렉토리가 있는 경우 경고합니다.
 
 ## 참고
 
-- 커스터마이즈된 `.agent/skills/*`가 있으면 의도하지 않은 덮어쓰기를 피하세요.
+- 커스터마이즈된 `.agents/skills/*`가 있으면 의도하지 않은 덮어쓰기를 피하세요.
 - 프로젝트 정책 파일(`.agent/config/*`)은 각 프로젝트 저장소 소유로 관리하세요.
 - 멀티 에이전트 조율 패턴은 [`사용 가이드`](./usage.md)를 이어서 참고하세요.

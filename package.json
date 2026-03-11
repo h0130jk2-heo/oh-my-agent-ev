@@ -11,6 +11,7 @@
     "lint": "bun run --cwd cli lint && bun run --cwd web lint",
     "prepare": "husky",
     "test": "bun run --cwd cli test",
+    "typecheck": "bunx tsc --noEmit -p tsconfig.json && bunx tsc --noEmit -p web/tsconfig.json",
     "web:dev": "bun run --cwd web dev",
     "web:build": "bun run --cwd web build",
     "web:lint": "bun run --cwd web lint"

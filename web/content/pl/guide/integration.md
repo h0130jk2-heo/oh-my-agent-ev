@@ -117,7 +117,7 @@ Zapewnia to jedno źródło prawdy, jednocześnie umożliwiając działanie umie
 .agent/skills/frontend-agent/      ← Źródło (SSOT)
 .claude/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/
 .agents/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (OpenCode, Amp, Codex)
-.github/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (GitHub Copilot)
+.github/skills/frontend-agent/     → ../../.agents/skills/frontend-agent/ (GitHub Copilot)
 ```
 
 Instalator pomija istniejące dowiązania symboliczne i ostrzega, jeśli w docelowej lokalizacji istnieje prawdziwy katalog.

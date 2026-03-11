@@ -44,7 +44,12 @@ function findProcess(): number | null {
     });
     for (const line of stdout.split("\n")) {
       if (line.includes("antigravity") || line.includes("language_server")) {
-        const pid = Number.parseInt(line.trim().split(" ")[0], 10);
+        const pidToken = line.trim().split(" ")[0];
+        if (!pidToken) {
+          continue;
+        }
+
+        const pid = Number.parseInt(pidToken, 10);
         if (!Number.isNaN(pid)) return pid;
       }
     }

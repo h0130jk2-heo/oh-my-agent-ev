@@ -117,7 +117,7 @@ Cela garantit une source unique de vérité tout en permettant aux skills de fon
 .agent/skills/frontend-agent/      ← Source (SSOT)
 .claude/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/
 .agents/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (OpenCode, Amp, Codex)
-.github/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (GitHub Copilot)
+.github/skills/frontend-agent/     → ../../.agents/skills/frontend-agent/ (GitHub Copilot)
 ```
 
 L'installateur ignore les liens symboliques existants et avertit si un répertoire réel existe à l'emplacement cible.

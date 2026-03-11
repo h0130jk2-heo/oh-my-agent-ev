@@ -117,7 +117,7 @@ Also develop with other CLI tools?
 .agent/skills/frontend-agent/      ← 源（唯一真实来源）
 .claude/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/
 .agents/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (OpenCode, Amp, Codex)
-.github/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (GitHub Copilot)
+.github/skills/frontend-agent/     → ../../.agents/skills/frontend-agent/ (GitHub Copilot)
 ```
 
 安装器会跳过已存在的符号链接，如果目标位置存在真实目录则发出警告。

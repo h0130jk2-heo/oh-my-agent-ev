@@ -21,8 +21,9 @@ bunx oh-my-ag
 
 What it does:
 
-- Installs or updates `.agent/skills/*`
-- Installs shared resources in `.agent/skills/_shared`
+- Installs or updates `.agents/skills/*`
+- Installs shared resources in `.agents/skills/_shared`
+- Creates compatibility symlinks at `.agent/skills/*` and `.claude/skills/*`
 - Installs `.agent/workflows/*`
 - Installs `.agent/config/user-preferences.yaml`
 - Optionally installs global workflows under `~/.gemini/antigravity/global_workflows`
@@ -34,17 +35,23 @@ Use this when you need full control over each copied directory.
 ```bash
 cd /path/to/your-project
 
-mkdir -p .agent/skills .agent/workflows .agent/config
+mkdir -p .agents/skills .agent/skills .agent/workflows .agent/config .claude/skills
 
 # Copy only missing skill directories (example)
 for skill in workflow-guide pm-agent frontend-agent backend-agent mobile-agent qa-agent debug-agent orchestrator commit; do
-  if [ ! -d ".agent/skills/$skill" ]; then
-    cp -r /path/to/oh-my-ag/.agent/skills/$skill .agent/skills/$skill
+  if [ ! -d ".agents/skills/$skill" ]; then
+    cp -r /path/to/oh-my-ag/.agent/skills/$skill .agents/skills/$skill
   fi
 done
 
 # Copy shared resources if missing
-[ -d .agent/skills/_shared ] || cp -r /path/to/oh-my-ag/.agent/skills/_shared .agent/skills/_shared
+[ -d .agents/skills/_shared ] || cp -r /path/to/oh-my-ag/.agent/skills/_shared .agents/skills/_shared
+
+# Compatibility symlinks
+for skill in workflow-guide pm-agent frontend-agent backend-agent mobile-agent qa-agent debug-agent orchestrator commit _shared; do
+  [ -L ".agent/skills/$skill" ] || ln -s "../../.agents/skills/$skill" ".agent/skills/$skill"
+  [ -L ".claude/skills/$skill" ] || ln -s "../../.agents/skills/$skill" ".claude/skills/$skill"
+done
 
 # Copy workflows if missing
 for wf in coordinate.md orchestrate.md plan.md review.md debug.md setup.md tools.md; do
@@ -59,10 +66,10 @@ done
 
 ```bash
 # 9 installable skills (excluding _shared)
-find .agent/skills -mindepth 1 -maxdepth 1 -type d ! -name '_shared' | wc -l
+find .agents/skills -mindepth 1 -maxdepth 1 -type d ! -name '_shared' | wc -l
 
 # Shared resources
-[ -d .agent/skills/_shared ] && echo ok
+[ -d .agents/skills/_shared ] && echo ok
 
 # 7 workflows
 find .agent/workflows -maxdepth 1 -name '*.md' | wc -l
@@ -98,32 +105,31 @@ If you need to undo, revert that commit with your normal team process.
 When you run `bunx oh-my-ag`, you'll see this prompt after selecting skills:
 
 ```text
-Also develop with other CLI tools?
-  ○ Claude Code (.claude/skills/)
-  ○ OpenCode, Amp, Codex (.agents/skills/)
+Also create symlinks for other CLI tools?
+  ○ Cursor (.cursor/skills/)
   ○ GitHub Copilot (.github/skills/)
 ```
 
-Select any additional CLI tools you use alongside Antigravity. The installer will:
+The installer will always:
 
-1. Install skills to `.agent/skills/` (Antigravity's native location)
-2. Create symlinks from each selected CLI's skills directory to `.agent/skills/`
+1. Install skills to `.agents/skills/` (SSOT for CLI-based usage)
+2. Create compatibility symlinks at `.agent/skills/` and `.claude/skills/`
 
-This ensures a single source of truth while allowing skills to work across multiple CLI tools.
+If you select additional CLI tools, it will also create symlinks for those directories. This keeps one source of truth while allowing skills to work across multiple tools.
 
 ### Symlink Structure
 
-```
-.agent/skills/frontend-agent/      ← Source (SSOT)
-.claude/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/
-.agents/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (OpenCode, Amp, Codex)
-.github/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (GitHub Copilot)
+```text
+.agents/skills/frontend-agent/     ← Source (SSOT)
+.agent/skills/frontend-agent/      → ../../.agents/skills/frontend-agent/
+.claude/skills/frontend-agent/     → ../../.agents/skills/frontend-agent/
+.github/skills/frontend-agent/     → ../../.agents/skills/frontend-agent/ (GitHub Copilot)
 ```
 
 The installer skips existing symlinks and warns if a real directory exists at the target location.
 
 ## Notes
 
-- Do not overwrite existing `.agent/skills/*` folders unless you intend to replace customized skills.
+- Do not overwrite existing `.agents/skills/*` folders unless you intend to replace customized skills.
 - Keep project-specific policy files (`.agent/config/*`) under your repository ownership.
 - For multi-agent orchestration patterns, continue with the [`Usage Guide`](./usage.md).

@@ -6,7 +6,9 @@ import pc from "picocolors";
 import {
   type CliTool,
   createCliSymlinks,
+  createCompatSymlinks,
   getAllSkills,
+  INSTALLED_SKILLS_DIR,
   installConfigs,
   installGlobalWorkflows,
   installShared,
@@ -64,18 +66,8 @@ export async function install(): Promise<void> {
   }
 
   const cliSelection = await p.multiselect({
-    message: "Also develop with other CLI tools?",
+    message: "Also create symlinks for other CLI tools?",
     options: [
-      {
-        value: "agents",
-        label: "OpenCode, Amp, Codex",
-        hint: ".agents/skills/",
-      },
-      {
-        value: "claude",
-        label: "Claude Code",
-        hint: ".claude/skills/",
-      },
       {
         value: "cursor",
         label: "Cursor",
@@ -93,14 +85,7 @@ export async function install(): Promise<void> {
   const rawSelection = p.isCancel(cliSelection)
     ? []
     : (cliSelection as string[]);
-  const selectedClis: CliTool[] = [];
-  for (const value of rawSelection) {
-    if (value === "agents") {
-      selectedClis.push("opencode", "amp", "codex");
-    } else {
-      selectedClis.push(value as CliTool);
-    }
-  }
+  const selectedClis = rawSelection as CliTool[];
 
   const cwd = process.cwd();
   const spinner = p.spinner();
@@ -117,46 +102,37 @@ export async function install(): Promise<void> {
       await installSkill(skillName, cwd);
     }
 
-    if (selectedClis.length > 0) {
-      spinner.message("Creating symlinks...");
-      const { created, skipped } = createCliSymlinks(
-        cwd,
-        selectedClis,
-        selectedSkills,
-      );
+    spinner.message("Creating symlinks...");
+    const compatSymlinks = createCompatSymlinks(cwd, selectedSkills);
+    const cliSymlinks =
+      selectedClis.length > 0
+        ? createCliSymlinks(cwd, selectedClis, selectedSkills)
+        : { created: [], skipped: [] };
 
-      spinner.stop("Skills installed!");
+    const created = [...compatSymlinks.created, ...cliSymlinks.created];
+    const skipped = [...compatSymlinks.skipped, ...cliSymlinks.skipped];
 
-      p.note(
-        [
-          ...selectedSkills.map((s) => `${pc.green("✓")} ${s}`),
-          "",
-          pc.dim(`Location: ${join(cwd, ".agent", "skills")}`),
-          ...(created.length > 0
-            ? [
-                "",
-                pc.cyan("Symlinks:"),
-                ...created.map((s) => `${pc.green("→")} ${s}`),
-              ]
-            : []),
-          ...(skipped.length > 0
-            ? ["", pc.dim("Skipped:"), ...skipped.map((s) => pc.dim(`  ${s}`))]
-            : []),
-        ].join("\n"),
-        "Installed",
-      );
-    } else {
-      spinner.stop("Skills installed!");
+    spinner.stop("Skills installed!");
 
-      p.note(
-        [
-          ...selectedSkills.map((s) => `${pc.green("✓")} ${s}`),
-          "",
-          pc.dim(`Location: ${join(cwd, ".agent", "skills")}`),
-        ].join("\n"),
-        "Installed",
-      );
-    }
+    p.note(
+      [
+        ...selectedSkills.map((s) => `${pc.green("✓")} ${s}`),
+        "",
+        pc.dim(`Location: ${join(cwd, INSTALLED_SKILLS_DIR)}`),
+        pc.dim("Compat symlinks: .agent/skills, .claude/skills"),
+        ...(created.length > 0
+          ? [
+              "",
+              pc.cyan("Symlinks:"),
+              ...created.map((s) => `${pc.green("→")} ${s}`),
+            ]
+          : []),
+        ...(skipped.length > 0
+          ? ["", pc.dim("Skipped:"), ...skipped.map((s) => pc.dim(`  ${s}`))]
+          : []),
+      ].join("\n"),
+      "Installed",
+    );
 
     // --- Git rerere Setup ---
     try {

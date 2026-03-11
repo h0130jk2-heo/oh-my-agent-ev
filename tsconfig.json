@@ -25,5 +25,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
-  }
+  },
+  "include": ["cli/**/*.ts"],
+  "exclude": ["cli/__tests__/**", "web/**", "node_modules"]
 }

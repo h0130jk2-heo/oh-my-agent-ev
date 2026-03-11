@@ -14,6 +14,11 @@ import type { SkillInfo, SkillsRegistry } from "../types/index.js";
 export const REPO = "first-fluke/oh-my-ag";
 export const GITHUB_RAW = `https://raw.githubusercontent.com/${REPO}/main/.agent/skills`;
 export const GITHUB_AGENT_ROOT = `https://raw.githubusercontent.com/${REPO}/main/.agent`;
+export const INSTALLED_SKILLS_DIR = ".agents/skills";
+export const DEFAULT_COMPAT_SKILLS_DIRS = [
+  ".agent/skills",
+  ".claude/skills",
+] as const;
 
 function ghCliAvailable(): boolean {
   try {
@@ -105,7 +110,14 @@ export const PRESETS: Record<string, string[]> = {
     "tf-infra-agent",
     "developer-workflow",
   ],
-  frontend: ["brainstorm", "frontend-agent", "pm-agent", "qa-agent", "debug-agent", "commit"],
+  frontend: [
+    "brainstorm",
+    "frontend-agent",
+    "pm-agent",
+    "qa-agent",
+    "debug-agent",
+    "commit",
+  ],
   backend: [
     "brainstorm",
     "backend-agent",
@@ -115,7 +127,14 @@ export const PRESETS: Record<string, string[]> = {
     "commit",
     "developer-workflow",
   ],
-  mobile: ["brainstorm", "mobile-agent", "pm-agent", "qa-agent", "debug-agent", "commit"],
+  mobile: [
+    "brainstorm",
+    "mobile-agent",
+    "pm-agent",
+    "qa-agent",
+    "debug-agent",
+    "commit",
+  ],
   infrastructure: [
     "brainstorm",
     "tf-infra-agent",
@@ -150,7 +169,7 @@ export async function installSkill(
   skillName: string,
   targetDir: string,
 ): Promise<boolean> {
-  const skillDir = join(targetDir, ".agent", "skills", skillName);
+  const skillDir = join(targetDir, INSTALLED_SKILLS_DIR, skillName);
   const files = await fetchSkillFiles(skillName);
 
   for (const file of files) {
@@ -172,7 +191,7 @@ export async function installSkill(
 }
 
 export async function installShared(targetDir: string): Promise<void> {
-  const sharedDir = join(targetDir, ".agent", "skills", "_shared");
+  const sharedDir = join(targetDir, INSTALLED_SKILLS_DIR, "_shared");
   const files = [
     "reasoning-templates.md",
     "clarification-protocol.md",
@@ -258,45 +277,35 @@ export function getAllSkills(): SkillInfo[] {
   ];
 }
 
-export type CliTool =
-  | "claude"
-  | "cursor"
-  | "opencode"
-  | "amp"
-  | "codex"
-  | "copilot";
+export type CliTool = "cursor" | "copilot";
 
 export const CLI_SKILLS_DIR: Record<CliTool, string> = {
-  claude: ".claude/skills",
   cursor: ".cursor/skills",
-  opencode: ".agents/skills",
-  amp: ".agents/skills",
-  codex: ".agents/skills",
   copilot: ".github/skills",
 };
 
-export function createCliSymlinks(
+function createSkillsDirSymlinks(
   targetDir: string,
-  cliTools: CliTool[],
+  targetSkillsDirs: readonly string[],
   skillNames: string[],
 ): { created: string[]; skipped: string[] } {
   const created: string[] = [];
   const skipped: string[] = [];
-  const ssotSkillsDir = resolve(targetDir, ".agent", "skills");
+  const ssotSkillsDir = resolve(targetDir, INSTALLED_SKILLS_DIR);
 
-  for (const cli of cliTools) {
-    const cliSkillsDir = join(targetDir, CLI_SKILLS_DIR[cli]);
+  for (const skillsDir of targetSkillsDirs) {
+    const linkRootDir = join(targetDir, skillsDir);
 
-    if (!existsSync(cliSkillsDir)) {
-      mkdirSync(cliSkillsDir, { recursive: true });
+    if (!existsSync(linkRootDir)) {
+      mkdirSync(linkRootDir, { recursive: true });
     }
 
     for (const skillName of skillNames) {
       const source = join(ssotSkillsDir, skillName);
-      const link = join(cliSkillsDir, skillName);
+      const link = join(linkRootDir, skillName);
 
       if (!existsSync(source)) {
-        skipped.push(`${cli}/${skillName} (source missing)`);
+        skipped.push(`${skillsDir}/${skillName} (source missing)`);
         continue;
       }
 
@@ -305,23 +314,46 @@ export function createCliSymlinks(
         if (stat.isSymbolicLink()) {
           const existing = resolve(dirname(link), readlinkSync(link));
           if (existing === resolve(source)) {
-            skipped.push(`${cli}/${skillName} (already linked)`);
+            skipped.push(`${skillsDir}/${skillName} (already linked)`);
             continue;
           }
           unlinkSync(link);
         } else {
-          skipped.push(`${cli}/${skillName} (real dir exists)`);
+          skipped.push(`${skillsDir}/${skillName} (real dir exists)`);
           continue;
         }
       } catch (_e) {}
 
-      const relativePath = relative(cliSkillsDir, source);
+      const relativePath = relative(linkRootDir, source);
       symlinkSync(relativePath, link, "dir");
-      created.push(`${CLI_SKILLS_DIR[cli]}/${skillName}`);
+      created.push(`${skillsDir}/${skillName}`);
     }
   }
 
   return { created, skipped };
+}
+
+export function createCompatSymlinks(
+  targetDir: string,
+  skillNames: string[],
+): { created: string[]; skipped: string[] } {
+  return createSkillsDirSymlinks(
+    targetDir,
+    DEFAULT_COMPAT_SKILLS_DIRS,
+    skillNames,
+  );
+}
+
+export function createCliSymlinks(
+  targetDir: string,
+  cliTools: CliTool[],
+  skillNames: string[],
+): { created: string[]; skipped: string[] } {
+  return createSkillsDirSymlinks(
+    targetDir,
+    cliTools.map((cli) => CLI_SKILLS_DIR[cli]),
+    skillNames,
+  );
 }
 
 export async function installGlobalWorkflows(): Promise<void> {

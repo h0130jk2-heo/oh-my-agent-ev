@@ -111,7 +111,11 @@ describe("star command", () => {
     execSyncMock.mockImplementation((cmd: string) => {
       if (cmd === "gh --version") return;
       if (cmd === "gh auth status") return;
-      if (typeof cmd === "string" && cmd.includes("user/starred") && !cmd.includes("-X PUT"))
+      if (
+        typeof cmd === "string" &&
+        cmd.includes("user/starred") &&
+        !cmd.includes("-X PUT")
+      )
         throw new Error("not starred");
       return;
     });
@@ -129,7 +133,11 @@ describe("star command", () => {
     execSyncMock.mockImplementation((cmd: string) => {
       if (cmd === "gh --version") return;
       if (cmd === "gh auth status") return;
-      if (typeof cmd === "string" && cmd.includes("user/starred") && !cmd.includes("-X PUT"))
+      if (
+        typeof cmd === "string" &&
+        cmd.includes("user/starred") &&
+        !cmd.includes("-X PUT")
+      )
         throw new Error("not starred");
     });
     confirmMock.mockResolvedValue(false);

@@ -117,7 +117,7 @@ Also develop with other CLI tools?
 .agent/skills/frontend-agent/      ← Джерело (SSOT)
 .claude/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/
 .agents/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (OpenCode, Amp, Codex)
-.github/skills/frontend-agent/     → ../../.agent/skills/frontend-agent/ (GitHub Copilot)
+.github/skills/frontend-agent/     → ../../.agents/skills/frontend-agent/ (GitHub Copilot)
 ```
 
 Інсталятор пропускає існуючі симлінки та попереджає, якщо в цільовому розташуванні існує реальна директорія.

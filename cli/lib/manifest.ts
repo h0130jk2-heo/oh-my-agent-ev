@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import type { Manifest, ManifestFile } from "../types/index.js";
-import { REPO } from "./skills.js";
+import { INSTALLED_SKILLS_DIR, REPO } from "./skills.js";
 
 export function calculateSHA256(content: string): string {
   return createHash("sha256").update(content, "utf-8").digest("hex");
@@ -20,7 +20,7 @@ export async function getFileSHA256(filePath: string): Promise<string | null> {
 export async function getLocalVersion(
   targetDir: string,
 ): Promise<string | null> {
-  const versionFile = join(targetDir, ".agent", "skills", "_version.json");
+  const versionFile = join(targetDir, INSTALLED_SKILLS_DIR, "_version.json");
   if (!existsSync(versionFile)) return null;
 
   try {
@@ -36,7 +36,7 @@ export async function saveLocalVersion(
   targetDir: string,
   version: string,
 ): Promise<void> {
-  const versionFile = join(targetDir, ".agent", "skills", "_version.json");
+  const versionFile = join(targetDir, INSTALLED_SKILLS_DIR, "_version.json");
   const versionDir = dirname(versionFile);
 
   if (!existsSync(versionDir)) {
@@ -79,7 +79,10 @@ export async function downloadFile(
     };
   }
 
-  const targetPath = join(process.cwd(), manifestFile.path);
+  const targetPath = join(
+    process.cwd(),
+    mapManifestPathToTargetPath(manifestFile.path),
+  );
   const targetDir = dirname(targetPath);
 
   if (!existsSync(targetDir)) {
@@ -87,5 +90,16 @@ export async function downloadFile(
   }
 
   writeFileSync(targetPath, content, "utf-8");
-  return { path: manifestFile.path, success: true };
+  return {
+    path: mapManifestPathToTargetPath(manifestFile.path),
+    success: true,
+  };
+}
+
+function mapManifestPathToTargetPath(path: string): string {
+  if (path.startsWith(".agent/skills/")) {
+    return path.replace(".agent/skills", INSTALLED_SKILLS_DIR);
+  }
+
+  return path;
 }

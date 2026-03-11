@@ -1,4 +1,4 @@
-import { type ChildProcess, spawn } from "node:child_process";
+import { spawn } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import http, { type IncomingMessage } from "node:http";
 import https from "node:https";
@@ -15,6 +15,27 @@ const STARTUP_TIMEOUT_MS = Number.parseInt(
   process.env.OH_MY_AG_BRIDGE_STARTUP_TIMEOUT_MS ?? "120000",
   10,
 );
+
+type BridgeRuntimeListeners = {
+  stdinData?: (chunk: string | Buffer) => void;
+  sigint?: () => void;
+  sigterm?: () => void;
+};
+
+let activeBridgeListeners: BridgeRuntimeListeners = {};
+
+function clearBridgeRuntimeListeners(): void {
+  if (activeBridgeListeners.stdinData) {
+    process.stdin.off("data", activeBridgeListeners.stdinData);
+  }
+  if (activeBridgeListeners.sigint) {
+    process.off("SIGINT", activeBridgeListeners.sigint);
+  }
+  if (activeBridgeListeners.sigterm) {
+    process.off("SIGTERM", activeBridgeListeners.sigterm);
+  }
+  activeBridgeListeners = {};
+}
 
 export function validateSerenaConfigs(): void {
   const globalConfigPath = join(homedir(), ".serena", "serena_config.yml");
@@ -69,13 +90,15 @@ export function validateSerenaConfigs(): void {
 }
 
 export async function bridge(mcpUrlArg?: string) {
+  clearBridgeRuntimeListeners();
+
   const MCP_URL = mcpUrlArg || DEFAULT_MCP_URL;
 
   const url = new URL(MCP_URL);
   const isHttps = url.protocol === "https:";
   const httpModule = isHttps ? https : http;
 
-  let serenaProcess: ChildProcess | null = null;
+  let serenaProcess: ReturnType<typeof spawn> | null = null;
   let isShuttingDown = false;
   let sessionId: string | null = null;
   let serverStreamActive = false;
@@ -139,6 +162,12 @@ export async function bridge(mcpUrlArg?: string) {
       stdio: "pipe",
       detached: false,
     });
+    const serenaProcessEvents = serenaProcess as typeof serenaProcess & {
+      on: (
+        event: "error" | "exit",
+        listener: (...args: unknown[]) => void,
+      ) => void;
+    };
 
     if (serenaProcess.stderr) {
       serenaProcess.stderr.on("data", (data) => {
@@ -150,15 +179,17 @@ export async function bridge(mcpUrlArg?: string) {
       serenaProcess.stdout.on("data", () => {});
     }
 
-    serenaProcess.on("error", (err) => {
+    serenaProcessEvents.on("error", (err) => {
       console.error("Failed to start Serena server:", err);
       process.exit(1);
     });
 
-    serenaProcess.on("exit", (code, signal) => {
-      console.error(`Serena server exited with code ${code} signal ${signal}`);
+    serenaProcessEvents.on("exit", (code, signal) => {
+      console.error(
+        `Serena server exited with code ${String(code)} signal ${String(signal)}`,
+      );
       if (!isShuttingDown) {
-        process.exit(code || 1);
+        process.exit(typeof code === "number" ? code : 1);
       }
     });
 
@@ -331,7 +362,7 @@ export async function bridge(mcpUrlArg?: string) {
   const pendingMessages: string[] = [];
 
   process.stdin.setEncoding("utf8");
-  process.stdin.on("data", (chunk) => {
+  const handleStdinData = (chunk: string | Buffer) => {
     stdinBuffer += chunk.toString();
 
     const lines = stdinBuffer.split("\n");
@@ -342,7 +373,8 @@ export async function bridge(mcpUrlArg?: string) {
         enqueueMessage(line.trim());
       }
     }
-  });
+  };
+  process.stdin.on("data", handleStdinData);
 
   function enqueueMessage(message: string) {
     if (initializePending) {
@@ -436,11 +468,18 @@ export async function bridge(mcpUrlArg?: string) {
 
   const cleanup = () => {
     isShuttingDown = true;
+    clearBridgeRuntimeListeners();
     if (serenaProcess) {
       console.error("Stopping Serena server...");
       serenaProcess.kill("SIGTERM");
     }
     process.exit(0);
+  };
+
+  activeBridgeListeners = {
+    stdinData: handleStdinData,
+    sigint: cleanup,
+    sigterm: cleanup,
   };
 
   process.on("SIGINT", cleanup);

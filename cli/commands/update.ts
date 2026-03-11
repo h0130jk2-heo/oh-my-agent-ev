@@ -13,7 +13,9 @@ import {
   CLI_SKILLS_DIR,
   type CliTool,
   createCliSymlinks,
+  createCompatSymlinks,
   getAllSkills,
+  INSTALLED_SKILLS_DIR,
 } from "../lib/skills.js";
 
 export async function update(): Promise<void> {
@@ -59,7 +61,7 @@ export async function update(): Promise<void> {
 
     await saveLocalVersion(cwd, remoteManifest.version);
 
-    const ssotSkillsDir = join(cwd, ".agent", "skills");
+    const ssotSkillsDir = join(cwd, INSTALLED_SKILLS_DIR);
     const activeClis: CliTool[] = [];
 
     for (const [cli, skillsDir] of Object.entries(CLI_SKILLS_DIR)) {
@@ -72,7 +74,7 @@ export async function update(): Promise<void> {
     let symlinkCreated: string[] = [];
     let symlinkSkipped: string[] = [];
 
-    if (activeClis.length > 0 && existsSync(ssotSkillsDir)) {
+    if (existsSync(ssotSkillsDir)) {
       spinner.message("Updating CLI symlinks...");
 
       const allSkillNames = getAllSkills().map((s) => s.name);
@@ -80,13 +82,14 @@ export async function update(): Promise<void> {
         existsSync(join(ssotSkillsDir, name)),
       );
 
-      const { created, skipped } = createCliSymlinks(
-        cwd,
-        activeClis,
-        installedSkills,
-      );
-      symlinkCreated = created;
-      symlinkSkipped = skipped;
+      const compatSymlinks = createCompatSymlinks(cwd, installedSkills);
+      const cliSymlinks =
+        activeClis.length > 0
+          ? createCliSymlinks(cwd, activeClis, installedSkills)
+          : { created: [], skipped: [] };
+
+      symlinkCreated = [...compatSymlinks.created, ...cliSymlinks.created];
+      symlinkSkipped = [...compatSymlinks.skipped, ...cliSymlinks.skipped];
     }
 
     const successCount = results.length - failures.length;
