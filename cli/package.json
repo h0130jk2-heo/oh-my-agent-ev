@@ -49,7 +49,8 @@
     }
   ],
   "scripts": {
-    "build": "bun build cli.ts --outfile bin/cli.js --target node --minify",
+    "sync:readme": "node ./scripts/sync-readme.mjs",
+    "build": "bun run sync:readme && bun build cli.ts --outfile bin/cli.js --target node --minify",
     "dev": "bun run cli.ts",
     "lint": "biome check --write --unsafe .",
     "test": "vitest run",
