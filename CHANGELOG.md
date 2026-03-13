@@ -180,13 +180,13 @@
 
 ### Features
 
-* add usage command with model quota bar chart ([a6ddff2](https://github.com/first-fluke/oh-my-agent/commit/a6ddff2715e79e42083cc29eaecb154c79edaa97))
-* **usage:** add flow credits, tier, default model, image support info ([b20224c](https://github.com/first-fluke/oh-my-agent/commit/b20224c94518f4c02e6a2dff6db3e4ab7a56b39e))
+* add usage:anti command with model quota bar chart ([a6ddff2](https://github.com/first-fluke/oh-my-agent/commit/a6ddff2715e79e42083cc29eaecb154c79edaa97))
+* **usage:anti:** add flow credits, tier, default model, image support info ([b20224c](https://github.com/first-fluke/oh-my-agent/commit/b20224c94518f4c02e6a2dff6db3e4ab7a56b39e))
 
 
 ### Documentation
 
-* add usage command to CLI Commands section ([7d89582](https://github.com/first-fluke/oh-my-agent/commit/7d89582eaf7799c0aeecb47b41c427a4ee4286b7))
+* add usage:anti command to CLI Commands section ([7d89582](https://github.com/first-fluke/oh-my-agent/commit/7d89582eaf7799c0aeecb47b41c427a4ee4286b7))
 
 
 ### Miscellaneous
