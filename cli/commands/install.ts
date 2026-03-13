@@ -43,6 +43,11 @@ export async function install(): Promise<void> {
       { value: "frontend", label: "🎨 Frontend", hint: "React/Next.js" },
       { value: "backend", label: "⚙️ Backend", hint: "FastAPI/Python" },
       { value: "mobile", label: "📱 Mobile", hint: "Flutter/Dart" },
+      {
+        value: "devops",
+        label: "🚀 DevOps",
+        hint: "Terraform + CI/CD + Workflows",
+      },
       { value: "custom", label: "🔧 Custom", hint: "Choose skills" },
     ],
   });

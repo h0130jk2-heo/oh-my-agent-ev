@@ -131,7 +131,7 @@ export const PRESETS: Record<string, string[]> = {
     "debug-agent",
     "commit",
   ],
-  infrastructure: [
+  devops: [
     "brainstorm",
     "tf-infra-agent",
     "developer-workflow",
