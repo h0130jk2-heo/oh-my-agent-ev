@@ -22,7 +22,7 @@ jobs:
       - name: Get current version
         id: version
         run: |
-          VERSION=$(jq -r '.cli' .release-please-manifest.json)
+          VERSION=$(jq -r '.["."]' .release-please-manifest.json)
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Generate prompt-manifest.json
