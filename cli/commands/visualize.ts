@@ -1,8 +1,6 @@
 import { buildGraph, renderAscii } from "../lib/graph.js";
 
-export async function visualize(options: {
-  json?: boolean;
-}): Promise<void> {
+export async function visualize(options: { json?: boolean }): Promise<void> {
   const graph = buildGraph(process.cwd());
 
   if (options.json) {

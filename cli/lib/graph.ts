@@ -411,4 +411,3 @@ export function renderAscii(graph: Graph): string {
 
   return o.join("\n");
 }
-

@@ -101,8 +101,8 @@ export function parseTimeWindow(arg?: string): TimeWindow {
     throw new Error(`Invalid window: ${arg}. Use: 24h, 7d, 14d, 30d, 2w`);
   }
 
-  const num = parseInt(match[1]!, 10);
-  const unit = match[2]!;
+  const num = parseInt(match[1] || "0", 10);
+  const unit = match[2] || "";
 
   switch (unit) {
     case "h":
@@ -209,8 +209,8 @@ export function getCommitsWithStats(
     } else if (current && line.trim()) {
       const insMatch = line.match(/(\d+) insertions?\(\+\)/);
       const delMatch = line.match(/(\d+) deletions?\(-\)/);
-      if (insMatch) current.insertions = parseInt(insMatch[1]!, 10);
-      if (delMatch) current.deletions = parseInt(delMatch[1]!, 10);
+      if (insMatch) current.insertions = parseInt(insMatch[1] || "0", 10);
+      if (delMatch) current.deletions = parseInt(delMatch[1] || "0", 10);
     }
   }
 
@@ -289,7 +289,7 @@ export function getFileHotspots(
     .map((line) => {
       const match = line.trim().match(/^\s*(\d+)\s+(.+)$/);
       if (!match) return null;
-      return { count: parseInt(match[1]!, 10), file: match[2]! };
+      return { count: parseInt(match[1] || "0", 10), file: match[2] || "" };
     })
     .filter((x): x is { file: string; count: number } => x !== null);
 }
@@ -315,8 +315,8 @@ export function getShippingStreak(
   const checkDate = new Date(today);
 
   for (const dateStr of dates) {
-    const [y, m, d] = dateStr.split("-").map(Number);
-    const commitDate = new Date(y!, m! - 1, d!);
+    const [y = 0, m = 0, d = 0] = dateStr.split("-").map(Number);
+    const commitDate = new Date(y, m - 1, d);
     commitDate.setHours(0, 0, 0, 0);
 
     const diffDays = Math.round(
@@ -406,7 +406,7 @@ export function computeHourlyDistribution(commits: RetroCommit[]): number[] {
   const hours = new Array<number>(24).fill(0);
   for (const c of commits) {
     const hour = new Date(c.timestamp * 1000).getHours();
-    hours[hour]!++;
+    hours[hour] = (hours[hour] || 0) + 1;
   }
   return hours;
 }
@@ -420,7 +420,7 @@ export function computeCommitTypes(
 
   for (const c of commits) {
     const match = c.subject.match(pattern);
-    const type = match ? match[1]! : "other";
+    const type = match ? match[1] || "other" : "other";
     types[type] = (types[type] || 0) + 1;
   }
 
@@ -469,7 +469,8 @@ export function computeAuthorStats(
         peakHour: 0,
       };
     }
-    const s = stats[c.author]!;
+    const s = stats[c.author];
+    if (!s) continue;
     s.commits++;
     s.insertions += c.insertions;
     s.deletions += c.deletions;
@@ -477,7 +478,7 @@ export function computeAuthorStats(
     const typeMatch = c.subject.match(
       /^(feat|fix|docs|style|refactor|test|chore|build|ci|perf)(\(.+\))?!?:/,
     );
-    const type = typeMatch ? typeMatch[1]! : "other";
+    const type = typeMatch ? typeMatch[1] || "other" : "other";
     s.commitTypes[type] = (s.commitTypes[type] || 0) + 1;
   }
 
@@ -488,10 +489,12 @@ export function computeAuthorStats(
   for (const fc of fileChanges) {
     if (!authorDirs[fc.author]) authorDirs[fc.author] = {};
     const dir = fc.file.split("/")[0] || fc.file;
-    authorDirs[fc.author]![dir] = (authorDirs[fc.author]?.[dir] || 0) + 1;
+    const authorDir = authorDirs[fc.author];
+    if (authorDir) authorDir[dir] = (authorDir[dir] || 0) + 1;
 
-    if (stats[fc.author] && isTestFile(fc.file)) {
-      stats[fc.author]!.testInsertions += fc.insertions;
+    const authorStat = stats[fc.author];
+    if (authorStat && isTestFile(fc.file)) {
+      authorStat.testInsertions += fc.insertions;
     }
   }
 
@@ -499,7 +502,8 @@ export function computeAuthorStats(
     if (!authorHours[c.author])
       authorHours[c.author] = new Array<number>(24).fill(0);
     const hour = new Date(c.timestamp * 1000).getHours();
-    authorHours[c.author]![hour]!++;
+    const hrs = authorHours[c.author];
+    if (hrs) hrs[hour] = (hrs[hour] || 0) + 1;
   }
 
   for (const [author, s] of Object.entries(stats)) {
@@ -548,7 +552,7 @@ export function loadPreviousSnapshot(cwd: string): RetroSnapshot | null {
 
     if (files.length === 0) return null;
 
-    const content = readFileSync(join(dir, files[0]!), "utf-8");
+    const content = readFileSync(join(dir, files[0] || ""), "utf-8");
     const parsed = JSON.parse(content);
     // Check if it's the new schema (has metrics field)
     if (parsed.metrics) return parsed as RetroSnapshot;
@@ -582,7 +586,7 @@ export function fmtHourlyHistogram(hours: number[]): string {
   const lines: string[] = [];
 
   for (let h = 0; h < 24; h++) {
-    const count = hours[h]!;
+    const count = hours[h] || 0;
     if (count === 0) continue;
     lines.push(
       `  ${String(h).padStart(2)}:00  ${String(count).padStart(3)}  ${bar(count, max, 20)}`,
@@ -627,7 +631,7 @@ export function fmtLeaderboard(
   const userIdx = entries.findIndex(([name]) => name === currentUser);
   if (userIdx > 0) {
     const [entry] = entries.splice(userIdx, 1);
-    entries.unshift(entry!);
+    if (entry) entries.unshift(entry);
   }
 
   const header = `  ${"Contributor".padEnd(24)} ${"Commits".padStart(7)}   ${"+/-".padStart(14)}   Top area`;
