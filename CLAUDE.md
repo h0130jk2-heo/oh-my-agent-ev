@@ -25,6 +25,7 @@
 | `/setup` | `setup.md` | inline 셋업 |
 | `/commit` | `commit/SKILL.md` | inline git 커밋 |
 | `/tools` | `tools.md` | inline MCP 관리 |
+| `/stack-set` | `stack-set.md` | inline 스택 설정 |
 | `/deepinit` | `deepinit.md` | inline 프로젝트 초기화 |
 
 ## 필수 참조 (모든 skill 실행 전)
@@ -53,3 +54,4 @@
 4. 서브에이전트는 Charter Preflight(`CHARTER_CHECK`) 필수
 5. 플랜 저장: `.agents/plan.json` (호환성 유지)
 6. 커밋 Co-Author: `First Fluke <our.first.fluke@gmail.com>`
+7. **`stack/`은 생성된 산출물** — SSOT 예외. `/stack-set`이나 `oma install` variant로 생성됨

@@ -20,6 +20,7 @@ oma stats                   # productiviteitsmetrieken
 oma retro                   # retrospectief rapport
 oma cleanup                 # opruimen van verweesde resources
 oma bridge [url]            # MCP stdio -> streamable HTTP
+oma stack-set <stack>       # backend taalstack instellen (python|node|rust)
 ```
 
 ## Agentcommando's

@@ -118,7 +118,7 @@ A collection of **Agent Skills** enabling collaborative multi-agent development.
 | **Brainstorm** | Design-first ideation before planning | "oma-brainstorm", "ideate", "explore idea" |
 | **PM Agent** | Requirements analysis, task decomposition, architecture | "plan", "break down", "what should we build" |
 | **Frontend Agent** | React/Next.js, TypeScript, Tailwind CSS | "UI", "component", "styling" |
-| **Backend Agent** | FastAPI, PostgreSQL, JWT authentication | "API", "database", "authentication" |
+| **Backend Agent** | Backend (Python, Node.js, Rust, ...) | "API", "database", "authentication" |
 | **DB Agent** | SQL/NoSQL modeling, normalization, integrity, backup, capacity | "ERD", "schema", "database design", "index tuning" |
 | **Mobile Agent** | Flutter cross-platform development | "mobile app", "iOS/Android" |
 | **QA Agent** | OWASP Top 10 security, performance, accessibility | "review security", "audit", "check performance" |
