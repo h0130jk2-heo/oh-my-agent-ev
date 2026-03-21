@@ -5,7 +5,7 @@ description: What oh-my-agent is and how multi-agent collaboration works.
 
 # Introduction
 
-oh-my-agent is a multi-agent orchestrator for AI IDEs. It routes requests to specialized skills and coordinates agents through Serena memories.
+oh-my-agent is a multi-agent orchestrator for AI IDEs. It routes requests to specialized skills and coordinates agents through shared memory.
 
 ## What You Get
 
@@ -35,8 +35,10 @@ oh-my-agent is a multi-agent orchestrator for AI IDEs. It routes requests to spe
 
 ## Project Structure
 
-- `.agents/skills/`: skill definitions and resources
-- `.agents/workflows/`: explicit workflow commands
+- `skills/`: domain-specific agent capabilities
+- `workflows/`: orchestrated execution patterns (plan, review, debug)
+- `shared memory`: real-time coordination state
+- `CLI`: multi-agent orchestration engine
 - `.serena/memories/`: runtime orchestration state
 - `cli/cli.ts`: source of truth for command interfaces
 

@@ -6,13 +6,12 @@
 
 AI로 제대로 개발하고 싶은 팀을 위한 에이전트 하네스. 역할별로 나뉘어 있고, 특정 IDE에 종속되지 않습니다.
 
-**Serena Memory**로 10개 전문 에이전트(PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform)를 조율합니다. `oh-my-agent`는 `.agents/`를 스킬과 워크플로우의 원본으로 쓰고, 여기서 다른 AI IDE나 CLI로 연결해줍니다. 역할이 정해진 에이전트, 명확한 워크플로우, 실시간 모니터링, 표준 기반 가이드를 합쳐서 AI가 대충 만든 코드를 줄이고 체계적으로 일할 수 있게 해줍니다.
+Antigravity, Claude Code, Cursor, Gemini, OpenCode 등 모든 주요 AI IDE 에서 작동합니다. 역할이 정해진 에이전트, 명확한 워크플로우, 실시간 모니터링, 표준 기반 가이드를 합쳐서 AI가 대충 만든 코드를 줄이고 체계적으로 일할 수 있게 해줍니다.
 
 ## 목차
 
 - [아키텍처](#아키텍처)
 - [뭐가 다른가요?](#뭐가-다른가요)
-- [호환성](#호환성)
 - [`.agents` 명세](#agents-명세)
 - [이게 뭔가요?](#이게-뭔가요)
 - [빠른 시작](#빠른-시작)
@@ -71,22 +70,6 @@ flowchart TD
 - **표준을 알고 있습니다**: ISO 기반 기획, QA, DB 보안, 인프라 거버넌스 가이드가 에이전트에 내장되어 있습니다.
 - **검증할 수 있습니다**: 대시보드, 매니페스트 생성, 실행 프로토콜, 구조화된 출력으로 결과를 추적할 수 있습니다. 그냥 만들어내기만 하는 게 아닙니다.
 
-## 호환성
-
-`oh-my-agent`는 `.agents/`를 중심으로 설계되어 있고, 필요하면 다른 도구의 스킬 폴더와 연결합니다.
-
-| 도구 / IDE | 스킬 소스 | 연동 방식 | 참고 |
-|------------|---------------|--------------|-------|
-| Antigravity | `.agents/skills/` | 네이티브 | 원본 레이아웃; 커스텀 서브에이전트 스폰 미지원 |
-| Claude Code | `.claude/skills/` + `.claude/agents/` | 네이티브 + 어댑터 | 도메인 스킬은 심링크, 워크플로우 스킬은 씬 라우터, 서브에이전트는 `.agents/agents/`에서 생성 |
-| Codex CLI | `.codex/agents/` + `.agents/skills/` | 네이티브 + 어댑터 | `.agents/agents/`에서 TOML로 에이전트 정의 생성 (planned) |
-| Gemini CLI | `.gemini/agents/` + `.agents/skills/` | 네이티브 + 어댑터 | `.agents/agents/`에서 MD로 에이전트 정의 생성 (planned) |
-| OpenCode | `.agents/skills/` | 호환 | 같은 스킬 소스 사용 |
-| Amp | `.agents/skills/` | 호환 | 같은 소스 공유 |
-| Cursor | `.agents/skills/` | 호환 | 같은 스킬 소스 사용 가능 |
-| GitHub Copilot | `.github/skills/` | 심링크 (선택) | 설정 시 선택하면 설치 |
-
-지원 현황과 연동 방법은 [SUPPORTED_AGENTS.md](./SUPPORTED_AGENTS.md)를 참고하세요.
 
 ### Claude Code 네이티브 연동
 
@@ -128,7 +111,7 @@ Claude Code는 심링크를 넘어서 직접 연동됩니다:
 | **Debug Agent** | 버그 진단, 원인 분석, 회귀 테스트 | "버그", "에러", "크래시" |
 | **Developer Workflow** | 모노레포 자동화, mise, CI/CD, 릴리스 | "개발 워크플로우", "mise", "CI/CD" |
 | **TF Infra Agent** | 멀티 클라우드 IaC (AWS, GCP, Azure, OCI) | "인프라", "terraform", "클라우드" |
-| **Orchestrator** | CLI로 에이전트를 병렬 실행 + Serena Memory | "에이전트 실행", "병렬 실행" |
+| **Orchestrator** | CLI로 에이전트를 병렬 실행  | "에이전트 실행", "병렬 실행" |
 | **Commit** | Conventional Commits 규칙으로 커밋 | "커밋", "변경사항 저장" |
 
 ## 빠른 시작

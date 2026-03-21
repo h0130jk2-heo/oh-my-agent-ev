@@ -6,14 +6,12 @@
 
 The portable, role-based agent harness for serious AI-assisted engineering.
 
-Orchestrate 10 specialized domain agents (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform) via **Serena Memory**. `oh-my-agent` uses `.agents/` as the source of truth for portable skills and workflows, then projects compatibility to other AI IDEs and CLIs. It combines role-based agents, explicit workflows, real-time observability, and standards-aware guidance for teams that want less AI slop and more disciplined execution.
+Orchestrate 10 specialized domain agents (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform). `oh-my-agent` works with all major AI IDEs including Antigravity, Claude Code, Cursor, Gemini, OpenCode, and more. It combines role-based agents, explicit workflows, real-time observability, and standards-aware guidance for teams that want less AI slop and more disciplined execution.
 
 ## Table of Contents
 
 - [Architecture](#architecture)
 - [Why Different](#why-different)
-- [Compatibility](#compatibility)
-- [The `.agents` Spec](#the-agents-spec)
 - [What Is This?](#what-is-this)
 - [Quick Start](#quick-start)
 - [Sponsors](#sponsors)
@@ -70,47 +68,7 @@ flowchart TD
 - **Standards-aware by design**: agents now carry focused guidance for ISO-driven planning, QA, database continuity/security, and infrastructure governance.
 - **Built for verification**: dashboards, manifest generation, shared execution protocols, and structured outputs favor traceability over vibe-only generation.
 
-## Compatibility
 
-`oh-my-agent` is designed around `.agents/` and then bridges to other tool-specific skill folders when needed.
-
-| Tool / IDE | Skills Source | Interop Mode | Notes |
-|------------|---------------|--------------|-------|
-| Antigravity | `.agents/skills/` | Native | Primary source-of-truth layout; no custom subagent spawning |
-| Claude Code | `.claude/skills/` + `.claude/agents/` | Native + Adapter | Symlinks for domain skills + thin router workflow skills, subagents generated from `.agents/agents/`, and CLAUDE.md |
-| Codex CLI | `.codex/agents/` + `.agents/skills/` | Native + Adapter | Agent TOML generated from `.agents/agents/` (planned) |
-| Gemini CLI | `.gemini/agents/` + `.agents/skills/` | Native + Adapter | Agent MD generated from `.agents/agents/` (planned) |
-| OpenCode | `.agents/skills/` | Native-compatible | Uses the same project-level skill source |
-| Amp | `.agents/skills/` | Native-compatible | Shares the same project-level source |
-| Cursor | `.agents/skills/` | Native-compatible | Can consume the same project-level skill source |
-| GitHub Copilot | `.github/skills/` | Optional symlink | Installed when selected during setup |
-
-See [SUPPORTED_AGENTS.md](./docs/SUPPORTED_AGENTS.md) for the current support matrix and interoperability notes.
-
-### Claude Code Native Integration
-
-Claude Code has first-class native integration beyond symlinks:
-
-- **`CLAUDE.md`** — project identity, architecture, and rules (auto-loaded by Claude Code)
-- **`.claude/skills/`** — 12 thin router SKILL.md files that delegate to `.agents/workflows/` (e.g., `/orchestrate`, `/coordinate`, `/ultrawork`). Skills are explicitly invoked via slash commands, not keyword-auto-activated.
-- **`.claude/agents/`** — 7 subagent definitions generated from `.agents/agents/*.yaml`, spawned via Task tool (backend-engineer, frontend-engineer, mobile-engineer, db-engineer, qa-reviewer, debug-investigator, pm-planner)
-- **Native loop patterns** — Review Loop, Issue Remediation Loop, and Phase Gate Loop using synchronous Task tool results instead of CLI polling
-
-Domain skills (oma-backend, oma-frontend, etc.) remain as symlinks from `.agents/skills/`. Workflow skills are thin router SKILL.md files that delegate to the corresponding `.agents/workflows/*.md` source of truth.
-
-## The `.agents` Spec
-
-`oh-my-agent` treats `.agents/` as a portable project convention for agent skills, workflows, and shared context.
-
-- Skills live in `.agents/skills/<skill-name>/SKILL.md`
-- Abstract agent definitions live in `.agents/agents/` (vendor-neutral SSOT; the CLI generates `.claude/agents/`, `.codex/agents/` (planned), `.gemini/agents/` (planned) from these)
-- Shared resources live in `.agents/skills/_shared/`
-  and are grouped into `core/`, `conditional/`, and `runtime/`
-- Workflows live in `.agents/workflows/*.md`
-- Project config lives in `.agents/config/`
-- CLI metadata and packaging stay aligned through generated manifests
-
-See [AGENTS_SPEC.md](./docs/AGENTS_SPEC.md) for the project layout, required files, interoperability rules, and source-of-truth model.
 
 ## What Is This?
 

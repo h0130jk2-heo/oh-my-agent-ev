@@ -6,7 +6,7 @@
 
 Przenośna, oparta na rolach uprząż dla agentów do poważnej inżynierii wspomaganej przez AI.
 
-Orkiestruj 10 wyspecjalizowanymi agentami domenowymi (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform) za pośrednictwem **Serena Memory**. `oh-my-agent` używa `.agents/` jako źródła prawdy dla przenośnych umiejętności i przepływów pracy, a następnie zapewnia integrację z innymi środowiskami IDE i interfejsami CLI AI. Łączy opartych na rolach agentów, jawne przepływy pracy, obserwowalność w czasie rzeczywistym i wskazówki uwzględniające standardy dla zespołów, które chcą mniej bałaganu związanego z AI i bardziej zdyscyplinowanego wykonywania zadań.
+Orkiestruj 10 wyspecjalizowanymi agentami domenowymi (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform)  `oh-my-agent` używa `.agents/` jako źródła prawdy dla przenośnych umiejętności i przepływów pracy, a następnie zapewnia integrację z innymi środowiskami IDE i interfejsami CLI AI. Łączy opartych na rolach agentów, jawne przepływy pracy, obserwowalność w czasie rzeczywistym i wskazówki uwzględniające standardy dla zespołów, które chcą mniej bałaganu związanego z AI i bardziej zdyscyplinowanego wykonywania zadań.
 
 > **Podoba Ci się ten projekt?** Daj mu gwiazdkę!
 >
@@ -20,7 +20,6 @@ Orkiestruj 10 wyspecjalizowanymi agentami domenowymi (PM, Frontend, Backend, DB,
 
 - [Architektura](#architektura)
 - [Dlaczego inaczej](#dlaczego-inaczej)
-- [Kompatybilność](#kompatybilność)
 - [Specyfikacja `.agents`](#specyfikacja-agents)
 - [Co to jest?](#co-to-jest)
 - [Szybki start](#szybki-start)
@@ -35,22 +34,6 @@ Orkiestruj 10 wyspecjalizowanymi agentami domenowymi (PM, Frontend, Backend, DB,
 - **Projekt świadomy standardów**: agenci teraz przenoszą ukierunkowane wskazówki dla planowania ISO, QA, ciągłości/bezpieczeństwa baz danych i zarządzania infrastrukturą.
 - **Zbudowany do weryfikacji**: dashboardy, generowanie manifestów, współdzielone protokoły wykonania i strukturyzowane wyjścia faworyzują możliwości śledzenia nad generowaniem tylko na podstawie odczuć.
 
-## Kompatybilność
-
-`oh-my-agent` jest zaprojektowany wokół `.agents/` i następnie mostkuje do innych folderów skills specyficznych dla narzędzi, gdy jest to potrzebne.
-
-| Narzędzie / IDE | Źródło Skills | Tryb Interoperacyjności | Uwagi |
-|------------|---------------|--------------|-------|
-| Antigravity | `.agents/skills/` | Natywny | Główny układ źródła-prawdy; brak niestandardowych subagentów |
-| Claude Code | `.claude/skills/` + `.claude/agents/` | Natywny + Adapter | Skills domenowe przez dowiązanie symboliczne, skills workflow jako thin routery, subagenty generowane z `.agents/agents/` |
-| Codex CLI | `.codex/agents/` + `.agents/skills/` | Natywny + Adapter | Definicje agentów w TOML generowane z `.agents/agents/` (planned) |
-| Gemini CLI | `.gemini/agents/` + `.agents/skills/` | Natywny + Adapter | Definicje agentów w MD generowane z `.agents/agents/` (planned) |
-| OpenCode | `.agents/skills/` | Natywnie-kompatybilny | Używa tego samego źródła skills na poziomie projektu |
-| Amp | `.agents/skills/` | Natywnie-kompatybilny | Dzieli to samo źródło na poziomie projektu |
-| Cursor | `.agents/skills/` | Natywnie-kompatybilny | Może konsumować to samo źródło skills na poziomie projektu |
-| GitHub Copilot | `.github/skills/` | Opcjonalne dowiązanie | Instalowane po wybraniu podczas konfiguracji |
-
-Zobacz [SUPPORTED_AGENTS.md](./SUPPORTED_AGENTS.md) dla aktualnej macierzy wsparcia i uwag o interoperacyjności.
 
 ## Natywna integracja z Claude Code
 
@@ -134,7 +117,7 @@ Kolekcja **Agent Skills** umożliwiających współpracę multi-agentową w rozw
 | **Debug Agent** | Diagnoza błędów, analiza przyczyn źródłowych, testy regresji | "błąd", "error", "crash" |
 | **Developer Workflow** | Automatyzacja zadań monorepo, zadania mise, CI/CD, migracje, release | "workflow dev", "zadania mise", "pipeline CI/CD" |
 | **TF Infra Agent** | Wielochmurowy provisioning IaC (AWS, GCP, Azure, OCI) | "infrastruktura", "terraform", "konfiguracja chmury" |
-| **Orchestrator** | Równoległe wykonywanie agentów przez CLI z Serena Memory | "uruchom agenta", "wykonanie równoległe" |
+| **Orchestrator** | Równoległe wykonywanie agentów przez CLI  | "uruchom agenta", "wykonanie równoległe" |
 | **Commit** | Conventional Commits z regułami specyficznymi dla projektu | "commit", "zapisz zmiany" |
 
 ## Szybki start

@@ -23,7 +23,7 @@ What it does:
 
 - Installs or updates `.agents/skills/*`
 - Installs shared resources in `.agents/skills/_shared`
-- Creates compatibility symlinks at `.agents/skills/*` and `.claude/skills/*`
+- Creates interoperability symlinks at `.agents/skills/*` and `.claude/skills/*`
 - Installs `.agents/workflows/*`
 - Installs `.agents/config/user-preferences.yaml`
 - Optionally installs global workflows under `~/.gemini/global_workflows`
@@ -47,7 +47,7 @@ done
 # Copy shared resources if missing
 [ -d .agents/skills/_shared ] || cp -r /path/to/oh-my-agent/.agents/skills/_shared .agents/skills/_shared
 
-# Compatibility symlinks
+# Interoperability symlinks
 for skill in oma-coordination oma-pm oma-frontend oma-backend oma-mobile oma-qa oma-debug oma-orchestrator oma-commit _shared; do
   [ -L ".agents/skills/$skill" ] || ln -s "../../.agents/skills/$skill" ".agents/skills/$skill"
   [ -L ".claude/skills/$skill" ] || ln -s "../../.agents/skills/$skill" ".claude/skills/$skill"
@@ -113,7 +113,7 @@ Also create symlinks for other CLI tools?
 The installer will always:
 
 1. Install skills to `.agents/skills/` (SSOT for CLI-based usage)
-2. Create compatibility symlinks at `.agents/skills/` and `.claude/skills/`
+2. Create interoperability symlinks at `.agents/skills/` and `.claude/skills/`
 
 If you select additional CLI tools, it will also create symlinks for those directories. This keeps one source of truth while allowing skills to work across multiple tools.
 

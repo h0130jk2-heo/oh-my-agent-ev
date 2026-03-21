@@ -6,7 +6,7 @@
 
 Das tragbare, rollenbasierte Agenten-Harness für ernsthaftes KI-gestütztes Engineering.
 
-Orchestrieren Sie 10 spezialisierte Domain-Agenten (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform) über **Serena Memory**. `oh-my-agent` verwendet `.agents/` als Single Source of Truth für tragbare Fähigkeiten und Workflows und verbindet sich von dort aus mit anderen KI-IDEs und CLIs. Es kombiniert rollenbasierte Agenten, explizite Workflows, Echtzeit-Observability und standardbewusste Anleitung für Teams, die weniger KI-Chaos und eine diszipliniertere Ausführung wünschen.
+Orchestrieren Sie 10 spezialisierte Domain-Agenten (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform)  `oh-my-agent` verwendet `.agents/` als Single Source of Truth für tragbare Fähigkeiten und Workflows und verbindet sich von dort aus mit anderen KI-IDEs und CLIs. Es kombiniert rollenbasierte Agenten, explizite Workflows, Echtzeit-Observability und standardbewusste Anleitung für Teams, die weniger KI-Chaos und eine diszipliniertere Ausführung wünschen.
 
 > **Gefällt Ihnen dieses Projekt?** Geben Sie ihm einen Stern!
 >
@@ -20,7 +20,6 @@ Orchestrieren Sie 10 spezialisierte Domain-Agenten (PM, Frontend, Backend, DB, M
 
 - [Architektur](#architektur)
 - [Warum anders](#warum-anders)
-- [Kompatibilität](#kompatibilität)
 - [`.agents` Spezifikation](#agents-spezifikation)
 - [Was ist das?](#was-ist-das)
 - [Schnellstart](#schnellstart)
@@ -35,22 +34,6 @@ Orchestrieren Sie 10 spezialisierte Domain-Agenten (PM, Frontend, Backend, DB, M
 - **Standard-bewusstes Design**: Agenten tragen jetzt fokussierte Anleitung für ISO-getriebene Planung, QA, Datenbank-Kontinuität/Sicherheit und Infrastruktur-Governance.
 - **Für Verifikation gebaut**: Dashboards, Manifest-Generierung, gemeinsame Ausführungsprotokolle und strukturierte Ausgaben bevorzugen Rückverfolgbarkeit gegenüber reiner Vibe-Generierung.
 
-## Kompatibilität
-
-`oh-my-agent` ist um `.agents/` herum entworfen und überbrückt dann bei Bedarf zu anderen toolspezifischen Skill-Ordnern.
-
-| Tool / IDE | Skill-Quelle | Interop-Modus | Hinweise |
-|------------|---------------|--------------|-------|
-| Antigravity | `.agents/skills/` | Native | Primäre Source-of-Truth-Layout; keine benutzerdefinierten Subagenten |
-| Claude Code | `.claude/skills/` + `.claude/agents/` | Nativ + Adapter | Domain-Skills per Symlink, Workflow-Skills als Thin Router, Subagenten generiert aus `.agents/agents/` |
-| Codex CLI | `.codex/agents/` + `.agents/skills/` | Nativ + Adapter | Agent-Definitionen als TOML generiert aus `.agents/agents/` (planned) |
-| Gemini CLI | `.gemini/agents/` + `.agents/skills/` | Nativ + Adapter | Agent-Definitionen als MD generiert aus `.agents/agents/` (planned) |
-| OpenCode | `.agents/skills/` | Native-kompatibel | Verwendet dieselbe Projekt-Level-Skill-Quelle |
-| Amp | `.agents/skills/` | Native-kompatibel | Teilt dieselbe Projekt-Level-Quelle |
-| Cursor | `.agents/skills/` | Native-kompatibel | Kann dieselbe Projekt-Level-Skill-Quelle konsumieren |
-| GitHub Copilot | `.github/skills/` | Optionale Symlink | Installiert bei Auswahl während des Setups |
-
-Siehe [SUPPORTED_AGENTS.md](./SUPPORTED_AGENTS.md) für die aktuelle Support-Matrix und Interoperabilitäts-Hinweise.
 
 ## Native Claude Code Integration
 
@@ -134,7 +117,7 @@ Eine Sammlung von **Agent Skills**, die kollaborative Multi-Agent-Entwicklung er
 | **Debug Agent** | Bug-Diagnose, Root-Cause-Analyse, Regressionstests | "Bug", "Fehler", "Absturz" |
 | **Developer Workflow** | Monorepo-Aufgabenautomatisierung, mise-Tasks, CI/CD, Migrationen, Release | "Dev-Workflow", "mise-Tasks", "CI/CD-Pipeline" |
 | **TF Infra Agent** | Multi-Cloud-IaC-Bereitstellung (AWS, GCP, Azure, OCI) | "Infrastruktur", "Terraform", "Cloud-Setup" |
-| **Orchestrator** | CLI-basierte parallele Agent-Ausführung mit Serena Memory | "Agent spawnen", "parallele Ausführung" |
+| **Orchestrator** | CLI-basierte parallele Agent-Ausführung  | "Agent spawnen", "parallele Ausführung" |
 | **Commit** | Conventional Commits mit projektspezifischen Regeln | "commit", "Änderungen speichern" |
 
 ## Schnellstart

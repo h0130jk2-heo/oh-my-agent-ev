@@ -6,13 +6,12 @@
 
 专为严谨的 AI 辅助工程打造的便携式、基于角色的代理 Harness。
 
-通过 **Serena Memory** 编排 10 个专业领域代理（PM、Frontend、Backend、DB、Mobile、QA、Debug、Brainstorm、DevWorkflow、Terraform）。`oh-my-agent` 以 `.agents/` 作为便携技能和工作流的权威来源，并对接其他 AI IDE 和 CLI。它将基于角色的代理、显式工作流、实时可观测性和标准化指导融为一体，帮助团队告别粗制滥造的 AI 代码，走向更有纪律的工程执行。
+适用于所有主流 AI IDE，包括 Antigravity、Claude Code、Cursor、Gemini、OpenCode 等。它将基于角色的代理、显式工作流、实时可观测性和标准化指导融为一体，帮助团队告别粗制滥造的 AI 代码，走向更有纪律的工程执行。
 
 ## 目录
 
 - [架构](#架构)
 - [为何不同](#为何不同)
-- [兼容性](#兼容性)
 - [`.agents` 规范](#agents-规范)
 - [这是什么？](#这是什么)
 - [快速开始](#快速开始)
@@ -71,22 +70,6 @@ flowchart TD
 - **内建标准意识**：代理携带针对 ISO 驱动规划、QA、数据库连续性/安全及基础设施治理的专项指导。
 - **为验证而设计**：仪表盘、清单生成、共享执行协议和结构化输出以可追溯性为先，而不是凭感觉生成。
 
-## 兼容性
-
-`oh-my-agent` 以 `.agents/` 为核心设计，在需要时对接各工具专属的技能目录。
-
-| 工具 / IDE | 技能来源 | 互操作模式 | 备注 |
-|------------|---------------|--------------|-------|
-| Antigravity | `.agents/skills/` | 原生 | 主要权威来源布局；不支持自定义子代理 |
-| Claude Code | `.claude/skills/` + `.claude/agents/` | 原生 + 适配器 | 领域技能符号链接 + 薄路由工作流技能、从 `.agents/agents/` 生成的子代理 |
-| Codex CLI | `.codex/agents/` + `.agents/skills/` | 原生 + 适配器 | 从 `.agents/agents/` 生成 TOML 格式代理定义 (planned) |
-| Gemini CLI | `.gemini/agents/` + `.agents/skills/` | 原生 + 适配器 | 从 `.agents/agents/` 生成 MD 格式代理定义 (planned) |
-| OpenCode | `.agents/skills/` | 原生兼容 | 使用相同的项目级技能来源 |
-| Amp | `.agents/skills/` | 原生兼容 | 共享相同的项目级来源 |
-| Cursor | `.agents/skills/` | 原生兼容 | 可使用相同的项目级技能来源 |
-| GitHub Copilot | `.github/skills/` | 可选符号链接 | 安装时按需选择 |
-
-当前支持矩阵和互操作性说明请参阅 [SUPPORTED_AGENTS.md](./SUPPORTED_AGENTS.md)。
 
 ### Claude Code 原生集成
 

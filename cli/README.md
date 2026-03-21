@@ -12,8 +12,6 @@ Orchestrate 10 specialized domain agents (PM, Frontend, Backend, DB, Mobile, QA,
 
 - [Architecture](#architecture)
 - [Why Different](#why-different)
-- [Compatibility](#compatibility)
-- [The `.agents` Spec](#the-agents-spec)
 - [What Is This?](#what-is-this)
 - [Quick Start](#quick-start)
 - [Sponsors](#sponsors)
@@ -70,21 +68,6 @@ flowchart TD
 - **Standards-aware by design**: agents now carry focused guidance for ISO-driven planning, QA, database continuity/security, and infrastructure governance.
 - **Built for verification**: dashboards, manifest generation, shared execution protocols, and structured outputs favor traceability over vibe-only generation.
 
-## Compatibility
-
-`oh-my-agent` is designed around `.agents/` and then bridges to other tool-specific skill folders when needed.
-
-| Tool / IDE | Skills Source | Interop Mode | Notes |
-|------------|---------------|--------------|-------|
-| Antigravity | `.agents/skills/` | Native | Primary source-of-truth layout |
-| Claude Code | `.claude/skills/` + `.claude/agents/` | Native + Adapter | Symlinks for domain skills + native workflow skills, subagents, and CLAUDE.md |
-| OpenCode | `.agents/skills/` | Native-compatible | Uses the same project-level skill source |
-| Amp | `.agents/skills/` | Native-compatible | Shares the same project-level source |
-| Codex CLI | `.agents/skills/` | Native-compatible | Works from the same project skill source |
-| Cursor | `.agents/skills/` | Native-compatible | Can consume the same project-level skill source |
-| GitHub Copilot | `.github/skills/` | Optional symlink | Installed when selected during setup |
-
-See [SUPPORTED_AGENTS.md](https://github.com/first-fluke/oh-my-agent/blob/main/docs/SUPPORTED_AGENTS.md) for the current support matrix and interoperability notes.
 
 ### Claude Code Native Integration
 
@@ -97,18 +80,6 @@ Claude Code has first-class native integration beyond symlinks:
 
 Domain skills (oma-backend, oma-frontend, etc.) remain as symlinks from `.agents/skills/`. Workflow skills are native SKILL.md files that reference the corresponding `.agents/workflows/*.md` source of truth.
 
-## The `.agents` Spec
-
-`oh-my-agent` treats `.agents/` as a portable project convention for agent skills, workflows, and shared context.
-
-- Skills live in `.agents/skills/<skill-name>/SKILL.md`
-- Shared resources live in `.agents/skills/_shared/`
-  and are grouped into `core/`, `conditional/`, and `runtime/`
-- Workflows live in `.agents/workflows/*.md`
-- Project config lives in `.agents/config/`
-- CLI metadata and packaging stay aligned through generated manifests
-
-See [AGENTS_SPEC.md](https://github.com/first-fluke/oh-my-agent/blob/main/docs/AGENTS_SPEC.md) for the project layout, required files, interoperability rules, and source-of-truth model.
 
 ## What Is This?
 

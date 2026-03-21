@@ -6,7 +6,7 @@
 
 El arnés de agente portátil, basado en roles, para la ingeniería seria asistida por IA.
 
-Orquesta 10 agentes de dominio especializados (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform) a través de **Serena Memory**. `oh-my-agent` utiliza `.agents/` como la fuente de verdad para las habilidades y los flujos de trabajo portátiles, y los adapta para funcionar con otras IDE y CLI de IA. Combina agentes basados en roles, flujos de trabajo explícitos, observabilidad en tiempo real y orientación con conocimiento de estándares para los equipos que desean menos desorden de IA y una ejecución más disciplinada.
+Orquesta 10 agentes de dominio especializados (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform)  `oh-my-agent` utiliza `.agents/` como la fuente de verdad para las habilidades y los flujos de trabajo portátiles, y los adapta para funcionar con otras IDE y CLI de IA. Combina agentes basados en roles, flujos de trabajo explícitos, observabilidad en tiempo real y orientación con conocimiento de estándares para los equipos que desean menos desorden de IA y una ejecución más disciplinada.
 
 > **¿Te gusta este proyecto?** ¡Dale una estrella!
 >
@@ -20,7 +20,6 @@ Orquesta 10 agentes de dominio especializados (PM, Frontend, Backend, DB, Mobile
 
 - [Arquitectura](#arquitectura)
 - [Por qué diferente](#por-qué-diferente)
-- [Compatibilidad](#compatibilidad)
 - [Especificación `.agents`](#especificación-agents)
 - [¿Qué es esto?](#qué-es-esto)
 - [Inicio Rápido](#inicio-rápido)
@@ -35,22 +34,6 @@ Orquesta 10 agentes de dominio especializados (PM, Frontend, Backend, DB, Mobile
 - **Diseño consciente de estándares**: los agentes ahora llevan guía enfocada para planificación ISO, QA, continuidad/seguridad de bases de datos y gobernanza de infraestructura.
 - **Construido para verificación**: dashboards, generación de manifiestos, protocolos de ejecución compartidos y salidas estructuradas favorecen la trazabilidad sobre generación basada solo en vibes.
 
-## Compatibilidad
-
-`oh-my-agent` está diseñado alrededor de `.agents/` y luego hace puentes a otras carpetas de skills específicas de herramientas cuando es necesario.
-
-| Herramienta / IDE | Fuente de Skills | Modo de Interoperabilidad | Notas |
-|------------|---------------|--------------|-------|
-| Antigravity | `.agents/skills/` | Nativo | Disposición principal fuente-de-verdad; sin subagentes personalizados |
-| Claude Code | `.claude/skills/` + `.claude/agents/` | Nativo + Adaptador | Skills de dominio vía enlace simbólico, workflow skills como thin routers, subagentes generados desde `.agents/agents/` |
-| Codex CLI | `.codex/agents/` + `.agents/skills/` | Nativo + Adaptador | Definiciones de agentes en TOML generadas desde `.agents/agents/` (planned) |
-| Gemini CLI | `.gemini/agents/` + `.agents/skills/` | Nativo + Adaptador | Definiciones de agentes en MD generadas desde `.agents/agents/` (planned) |
-| OpenCode | `.agents/skills/` | Nativo-compatible | Usa la misma fuente de skills a nivel de proyecto |
-| Amp | `.agents/skills/` | Nativo-compatible | Comparte la misma fuente a nivel de proyecto |
-| Cursor | `.agents/skills/` | Nativo-compatible | Puede consumir la misma fuente de skills |
-| GitHub Copilot | `.github/skills/` | Enlace simbólico opcional | Instalado cuando se selecciona durante la configuración |
-
-Ver [SUPPORTED_AGENTS.md](./SUPPORTED_AGENTS.md) para la matriz de soporte actual y notas de interoperabilidad.
 
 ## Integración Nativa con Claude Code
 
@@ -135,7 +118,7 @@ Una colección de **Agent Skills** que habilitan desarrollo colaborativo multi-a
 | **Debug Agent** | Diagnóstico de bugs, análisis de causa raíz, pruebas de regresión | "bug", "error", "crash" |
 | **Developer Workflow** | Automatización de tareas monorepo, tareas mise, CI/CD, migraciones, release | "workflow dev", "tareas mise", "pipeline CI/CD" |
 | **TF Infra Agent** | Provisión IaC multi-nube (AWS, GCP, Azure, OCI) | "infraestructura", "terraform", "config cloud" |
-| **Orchestrator** | Ejecución paralela de agentes basada en CLI con Serena Memory | "generar agente", "ejecución paralela" |
+| **Orchestrator** | Ejecución paralela de agentes basada en CLI  | "generar agente", "ejecución paralela" |
 | **Commit** | Conventional Commits con reglas específicas del proyecto | "commit", "guardar cambios" |
 
 ## Inicio Rápido

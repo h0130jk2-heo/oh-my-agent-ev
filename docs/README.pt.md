@@ -6,7 +6,7 @@
 
 O arnês de agente portátil e baseado em funções para engenharia séria assistida por IA.
 
-Orquestre 10 agentes de domínio especializados (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform) via **Serena Memory**. O `oh-my-agent` usa `.agents/` como a fonte de verdade para habilidades e fluxos de trabalho portáteis e é compatível com outras IDEs e CLIs de IA. Ele combina agentes baseados em funções, fluxos de trabalho explícitos, observabilidade em tempo real e orientação com reconhecimento de padrões para equipes que desejam menos confusão de IA e uma execução mais disciplinada.
+Orquestre 10 agentes de domínio especializados (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform)  O `oh-my-agent` usa `.agents/` como a fonte de verdade para habilidades e fluxos de trabalho portáteis e é compatível com outras IDEs e CLIs de IA. Ele combina agentes baseados em funções, fluxos de trabalho explícitos, observabilidade em tempo real e orientação com reconhecimento de padrões para equipes que desejam menos confusão de IA e uma execução mais disciplinada.
 
 > **Gostou deste projeto?** Dê uma estrela!
 >
@@ -20,7 +20,6 @@ Orquestre 10 agentes de domínio especializados (PM, Frontend, Backend, DB, Mobi
 
 - [Arquitetura](#arquitetura)
 - [Por que diferente](#por-que-diferente)
-- [Compatibilidade](#compatibilidade)
 - [Especificação `.agents`](#especificação-agents)
 - [O Que É Isso?](#o-que-é-isso)
 - [Início Rápido](#início-rápido)
@@ -35,22 +34,6 @@ Orquestre 10 agentes de domínio especializados (PM, Frontend, Backend, DB, Mobi
 - **Design consciente de padrões**: agentes agora carregam orientação focada para planejamento ISO, QA, continuidade/segurança de banco de dados e governança de infraestrutura.
 - **Construído para verificação**: dashboards, geração de manifestos, protocolos de execução compartilhados e saídas estruturadas favorecem rastreabilidade sobre geração apenas por vibe.
 
-## Compatibilidade
-
-`oh-my-agent` é projetado em torno de `.agents/` e depois faz ponte para outras pastas de skills específicas de ferramentas quando necessário.
-
-| Ferramenta / IDE | Fonte de Skills | Modo de Interoperabilidade | Notas |
-|------------|---------------|--------------|-------|
-| Antigravity | `.agents/skills/` | Nativo | Layout principal fonte-da-verdade; sem suporte a subagentes customizados |
-| Claude Code | `.claude/skills/` + `.claude/agents/` | Nativo + Adaptador | Skills de domínio via symlink, workflow skills como thin routers, subagentes gerados de `.agents/agents/` |
-| Codex CLI | `.codex/agents/` + `.agents/skills/` | Nativo + Adaptador | Definições de agentes em TOML geradas de `.agents/agents/` (planned) |
-| Gemini CLI | `.gemini/agents/` + `.agents/skills/` | Nativo + Adaptador | Definições de agentes em MD geradas de `.agents/agents/` (planned) |
-| OpenCode | `.agents/skills/` | Nativo-compatível | Usa a mesma fonte de skills de nível de projeto |
-| Amp | `.agents/skills/` | Nativo-compatível | Compartilha a mesma fonte de nível de projeto |
-| Cursor | `.agents/skills/` | Nativo-compatível | Pode consumir a mesma fonte de skills de nível de projeto |
-| GitHub Copilot | `.github/skills/` | Symlink opcional | Instalado quando selecionado durante o setup |
-
-Veja [SUPPORTED_AGENTS.md](./SUPPORTED_AGENTS.md) para a matriz de suporte atual e notas de interoperabilidade.
 
 ### Integração Nativa com Claude Code
 

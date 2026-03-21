@@ -6,7 +6,7 @@
 
 Le harnais d'agent portable, basé sur les rôles, pour l'ingénierie sérieuse assistée par l'IA.
 
-Orchestrez 10 agents de domaine spécialisés (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform) via **Serena Memory**. `oh-my-agent` utilise `.agents/` comme source de vérité pour les compétences et les flux de travail portables, et s'intègre avec d'autres IDE et CLI d'IA. Il combine des agents basés sur les rôles, des flux de travail explicites, une observabilité en temps réel et des conseils tenant compte des normes pour les équipes qui souhaitent moins de déchets liés à l'IA et une exécution plus disciplinée.
+Orchestrez 10 agents de domaine spécialisés (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform)  `oh-my-agent` utilise `.agents/` comme source de vérité pour les compétences et les flux de travail portables, et s'intègre avec d'autres IDE et CLI d'IA. Il combine des agents basés sur les rôles, des flux de travail explicites, une observabilité en temps réel et des conseils tenant compte des normes pour les équipes qui souhaitent moins de déchets liés à l'IA et une exécution plus disciplinée.
 
 > **Ce projet vous plaît ?** Donnez-lui une étoile !
 >
@@ -20,7 +20,6 @@ Orchestrez 10 agents de domaine spécialisés (PM, Frontend, Backend, DB, Mobile
 
 - [Architecture](#architecture)
 - [Pourquoi différent](#pourquoi-différent)
-- [Compatibilité](#compatibilité)
 - [Spécification `.agents`](#spécification-agents)
 - [Qu'est-ce que c'est ?](#quest-ce-que-cest-)
 - [Démarrage rapide](#démarrage-rapide)
@@ -35,22 +34,6 @@ Orchestrez 10 agents de domaine spécialisés (PM, Frontend, Backend, DB, Mobile
 - **Conception consciente des standards** : les agents portent désormais des conseils ciblés pour la planification ISO, le QA, la continuité/sécurité des bases de données et la gouvernance de l'infrastructure.
 - **Conçu pour la vérification** : les tableaux de bord, la génération de manifestes, les protocoles d'exécution partagés et les sorties structurées favorisent la traçabilité plutôt que la génération basée sur le ressenti.
 
-## Compatibilité
-
-`oh-my-agent` est conçu autour de `.agents/` puis fait le pont vers d'autres dossiers de compétences spécifiques aux outils si nécessaire.
-
-| Outil / IDE | Source des compétences | Mode d'interopérabilité | Notes |
-|------------|---------------|--------------|-------|
-| Antigravity | `.agents/skills/` | Natif | Principale disposition source-de-vérité ; pas de sous-agents personnalisés |
-| Claude Code | `.claude/skills/` + `.claude/agents/` | Natif + Adaptateur | Skills de domaine via lien symbolique, workflow skills en tant que thin routers, sous-agents générés depuis `.agents/agents/` |
-| Codex CLI | `.codex/agents/` + `.agents/skills/` | Natif + Adaptateur | Définitions d'agents en TOML générées depuis `.agents/agents/` (planned) |
-| Gemini CLI | `.gemini/agents/` + `.agents/skills/` | Natif + Adaptateur | Définitions d'agents en MD générées depuis `.agents/agents/` (planned) |
-| OpenCode | `.agents/skills/` | Natif-compatible | Utilise la même source de compétences au niveau du projet |
-| Amp | `.agents/skills/` | Natif-compatible | Partage la même source au niveau du projet |
-| Cursor | `.agents/skills/` | Natif-compatible | Peut consommer la même source de compétences |
-| GitHub Copilot | `.github/skills/` | Lien symbolique optionnel | Installé lors de la sélection pendant la configuration |
-
-Voir [SUPPORTED_AGENTS.md](./SUPPORTED_AGENTS.md) pour la matrice de support actuelle et les notes d'interopérabilité.
 
 ### Intégration native avec Claude Code
 
@@ -136,7 +119,7 @@ Une collection de **Compétences Agent** permettant le développement collaborat
 | **Debug Agent** | Diagnostic de bugs, analyse de cause racine, tests de régression | "bug", "erreur", "crash" |
 | **Developer Workflow** | Automatisation des tâches monorepo, tâches mise, CI/CD, migrations, release | "workflow dev", "tâches mise", "pipeline CI/CD" |
 | **TF Infra Agent** | Provisionnement IaC multi-cloud (AWS, GCP, Azure, OCI) | "infrastructure", "terraform", "config cloud" |
-| **Orchestrator** | Exécution parallèle d'agents via CLI avec Serena Memory | "lancer agent", "exécution parallèle" |
+| **Orchestrator** | Exécution parallèle d'agents via CLI  | "lancer agent", "exécution parallèle" |
 | **Commit** | Commits conventionnels avec règles spécifiques au projet | "commit", "enregistrer changements" |
 
 ## Démarrage rapide

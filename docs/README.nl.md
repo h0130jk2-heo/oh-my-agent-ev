@@ -6,7 +6,7 @@
 
 Het draagbare, rolgebaseerde agentharnas voor serieuze AI-ondersteunde engineering.
 
-Orkestreer 10 gespecialiseerde domeinagents (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform) via **Serena Memory**. `oh-my-agent` gebruikt `.agents/` als de enige bron van waarheid voor draagbare vaardigheden en workflows, en slaat een brug naar andere AI IDE's en CLI's zodat ze dezelfde skills kunnen gebruiken. Het combineert rolgebaseerde agents, expliciete workflows, realtime waarneembaarheid en standaardbewuste begeleiding voor teams die minder AI-rommel en een meer gedisciplineerde uitvoering willen.
+Orkestreer 10 gespecialiseerde domeinagents (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform)  `oh-my-agent` gebruikt `.agents/` als de enige bron van waarheid voor draagbare vaardigheden en workflows, en slaat een brug naar andere AI IDE's en CLI's zodat ze dezelfde skills kunnen gebruiken. Het combineert rolgebaseerde agents, expliciete workflows, realtime waarneembaarheid en standaardbewuste begeleiding voor teams die minder AI-rommel en een meer gedisciplineerde uitvoering willen.
 
 > **Vind je dit project leuk?** Geef het een ster!
 >
@@ -20,7 +20,6 @@ Orkestreer 10 gespecialiseerde domeinagents (PM, Frontend, Backend, DB, Mobile, 
 
 - [Architectuur](#architectuur)
 - [Waarom anders](#waarom-anders)
-- [Compatibiliteit](#compatibiliteit)
 - [`.agents` Specificatie](#agents-specificatie)
 - [Wat is dit?](#wat-is-dit)
 - [Snel starten](#snel-starten)
@@ -35,22 +34,6 @@ Orkestreer 10 gespecialiseerde domeinagents (PM, Frontend, Backend, DB, Mobile, 
 - **Standaard-bewust ontwerp**: agents dragen nu gerichte begeleiding voor ISO-gedreven planning, QA, databasecontinuïteit/veiligheid en infrastructuurgovernance.
 - **Gebouwd voor verificatie**: dashboards, manifestgeneratie, gedeelde uitvoeringsprotocollen en gestructureerde uitvoer geven de voorkeur aan traceerbaarheid boven alleen-vibe-generatie.
 
-## Compatibiliteit
-
-`oh-my-agent` is ontworpen rond `.agents/` en overbrugt dan naar andere toolspecifieke skillmappen wanneer nodig.
-
-| Tool / IDE | Skill Bron | Interop Mode | Notities |
-|------------|---------------|--------------|-------|
-| Antigravity | `.agents/skills/` | Native | Primaire bron-van-waarheid lay-out; geen aangepaste subagents |
-| Claude Code | `.claude/skills/` + `.claude/agents/` | Native + Adapter | Domeinskills via symlink, workflow skills als thin routers, subagents gegenereerd uit `.agents/agents/` |
-| Codex CLI | `.codex/agents/` + `.agents/skills/` | Native + Adapter | Agent-definities als TOML gegenereerd uit `.agents/agents/` (planned) |
-| Gemini CLI | `.gemini/agents/` + `.agents/skills/` | Native + Adapter | Agent-definities als MD gegenereerd uit `.agents/agents/` (planned) |
-| OpenCode | `.agents/skills/` | Native-compatibel | Gebruikt dezelfde projectniveau skillbron |
-| Amp | `.agents/skills/` | Native-compatibel | Deelt dezelfde projectniveau bron |
-| Cursor | `.agents/skills/` | Native-compatibel | Kan dezelfde projectniveau skillbron consumeren |
-| GitHub Copilot | `.github/skills/` | Optionele symlink | Geïnstalleerd wanneer geselecteerd tijdens setup |
-
-Zie [SUPPORTED_AGENTS.md](./SUPPORTED_AGENTS.md) voor de huidige supportmatrix en interoperabiliteitsnotities.
 
 ## Native integratie met Claude Code
 
@@ -135,7 +118,7 @@ Een verzameling **Agent Skills** die collaboratieve multi-agent ontwikkeling mog
 | **Debug Agent** | Bug diagnose, root cause analyse, regressietests | "bug", "fout", "crash" |
 | **Developer Workflow** | Monorepo-taakautomatisering, mise-taken, CI/CD, migraties, release | "dev workflow", "mise-taken", "CI/CD-pipeline" |
 | **TF Infra Agent** | Multi-cloud IaC-provisioning (AWS, GCP, Azure, OCI) | "infrastructuur", "terraform", "cloud-setup" |
-| **Orchestrator** | CLI-gebaseerde parallelle agent uitvoering met Serena Memory | "spawn agent", "parallelle uitvoering" |
+| **Orchestrator** | CLI-gebaseerde parallelle agent uitvoering  | "spawn agent", "parallelle uitvoering" |
 | **Commit** | Conventional Commits met projectspecifieke regels | "commit", "wijzigingen opslaan" |
 
 ## Snel starten

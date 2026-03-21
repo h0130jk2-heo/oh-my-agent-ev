@@ -6,13 +6,12 @@
 
 AIで本気の開発をしたいチームのためのエージェントハーネス。役割ごとにエージェントが分かれていて、特定のIDEに縛られません。
 
-**Serena Memory**で10の専門エージェント（PM、Frontend、Backend、DB、Mobile、QA、Debug、Brainstorm、DevWorkflow、Terraform）を連携させます。`oh-my-agent`は`.agents/`をスキルとワークフローの原本として使い、そこから他のAI IDEやCLIにつなぎます。役割を持ったエージェント、明確なワークフロー、リアルタイム監視、標準に沿ったガイドを組み合わせて、AIが雑に生成したコードを減らし、チームが体系的に動けるようにします。
+Antigravity、Claude Code、Cursor、Gemini、OpenCode など、すべての主要な AI IDE で動作します。役割を持ったエージェント、明確なワークフロー、リアルタイム監視、標準に沿ったガイドを組み合わせて、AIが雑に生成したコードを減らし、チームが体系的に動けるようにします。
 
 ## 目次
 
 - [アーキテクチャ](#アーキテクチャ)
 - [何が違うのか](#何が違うのか)
-- [互換性](#互換性)
 - [`.agents` 仕様](#agents-仕様)
 - [何ができるのか](#何ができるのか)
 - [クイックスタート](#クイックスタート)
@@ -71,22 +70,6 @@ flowchart TD
 - **標準を知っています**: ISO基準の企画、QA、DBセキュリティ、インフラガバナンスのガイドがエージェントに組み込まれています。
 - **検証できます**: ダッシュボード、マニフェスト生成、実行プロトコル、構造化された出力で結果を追跡できます。ただ生成するだけではありません。
 
-## 互換性
-
-`oh-my-agent`は`.agents/`を中心に設計されていて、必要に応じて他のツールのスキルフォルダとつなぎます。
-
-| ツール / IDE | スキルソース | 連携方式 | 備考 |
-|------------|---------------|--------------|-------|
-| Antigravity | `.agents/skills/` | ネイティブ | 原本のレイアウト。カスタムサブエージェントのスポーンは非対応 |
-| Claude Code | `.claude/skills/` + `.claude/agents/` | ネイティブ + アダプター | ドメインスキルはシンボリックリンク、ワークフロースキルはシンルーター、サブエージェントは`.agents/agents/`から生成 |
-| Codex CLI | `.codex/agents/` + `.agents/skills/` | ネイティブ + アダプター | `.agents/agents/`からTOML形式でエージェント定義を生成 (planned) |
-| Gemini CLI | `.gemini/agents/` + `.agents/skills/` | ネイティブ + アダプター | `.agents/agents/`からMD形式でエージェント定義を生成 (planned) |
-| OpenCode | `.agents/skills/` | 互換 | 同じスキルソースを使用 |
-| Amp | `.agents/skills/` | 互換 | 同じソースを共有 |
-| Cursor | `.agents/skills/` | 互換 | 同じスキルソースを使用可能 |
-| GitHub Copilot | `.github/skills/` | シンボリックリンク（任意） | セットアップ時に選択するとインストール |
-
-サポート状況と連携方法は[SUPPORTED_AGENTS.md](./SUPPORTED_AGENTS.md)を参照してください。
 
 ### Claude Codeとのネイティブ連携
 
@@ -128,7 +111,7 @@ Claude Codeはシンボリックリンクだけでなく、直接連携できま
 | **Debug Agent** | バグ診断、原因分析、回帰テスト | "bug"、"error"、"crash" |
 | **Developer Workflow** | モノレポ自動化、mise、CI/CD、リリース | "dev workflow"、"mise"、"CI/CD" |
 | **TF Infra Agent** | マルチクラウドIaC（AWS、GCP、Azure、OCI） | "infrastructure"、"terraform"、"cloud" |
-| **Orchestrator** | CLIでエージェントを並列実行 + Serena Memory | "spawn agent"、"parallel execution" |
+| **Orchestrator** | CLIでエージェントを並列実行  | "spawn agent"、"parallel execution" |
 | **Commit** | Conventional Commitsのルールでコミット | "commit"、"save changes" |
 
 ## クイックスタート
