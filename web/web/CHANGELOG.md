@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.1](https://github.com/first-fluke/oh-my-agent/compare/web-v0.3.0...web-v0.3.1) (2026-03-21)
+
+
+### Bug Fixes
+
+* address reviewer feedback on PR [#123](https://github.com/first-fluke/oh-my-agent/issues/123) ([bd1ba25](https://github.com/first-fluke/oh-my-agent/commit/bd1ba2570b43367c447ab08766c765b80aabd1ce))
+
+
+### Refactoring
+
+* abstract oma-backend to language-agnostic skill ([a3bdb1c](https://github.com/first-fluke/oh-my-agent/commit/a3bdb1ccd81eadf0118aed4aa21794ddfff0cfe9))
+* replace keyword-based auto-activation with explicit skill invocation ([6be9ce7](https://github.com/first-fluke/oh-my-agent/commit/6be9ce7f587e96539edf96cd049dbe274b27eb3c))
+* unify workflows and agents into .agents/ SSOT ([0195cd8](https://github.com/first-fluke/oh-my-agent/commit/0195cd806cb37aab7f6b15a4e2c4a8fbf3ce571b))
+
 ## [0.3.0](https://github.com/first-fluke/oh-my-agent/compare/web-v0.2.7...web-v0.3.0) (2026-03-21)
 
 
