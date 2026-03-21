@@ -3,6 +3,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
+import { promptUninstallCompetitors } from "../lib/competitors.js";
 import { checkStarred } from "../lib/github.js";
 import { migrateSharedLayout, migrateToAgents } from "../lib/migrate.js";
 import {
@@ -32,6 +33,9 @@ export async function install(): Promise<void> {
       "Migration",
     );
   }
+
+  // Detect and offer to remove competing tools
+  await promptUninstallCompetitors(process.cwd());
 
   const projectType = await p.select({
     message: "What type of project?",

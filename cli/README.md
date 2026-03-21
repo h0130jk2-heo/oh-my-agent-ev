@@ -116,7 +116,7 @@ A collection of **Agent Skills** enabling collaborative multi-agent development.
 
 | Agent | Specialization | Triggers |
 |-------|---------------|----------|
-| **Brainstorm** | Design-first ideation before planning | "oma-brainstorm", "ideate", "explore idea" |
+| **Brainstorm** | Design-first ideation before planning | "brainstorm", "ideate", "explore idea" |
 | **PM Agent** | Requirements analysis, task decomposition, architecture | "plan", "break down", "what should we build" |
 | **Frontend Agent** | React/Next.js, TypeScript, Tailwind CSS | "UI", "component", "styling" |
 | **Backend Agent** | FastAPI, PostgreSQL, JWT authentication | "API", "database", "authentication" |
@@ -127,7 +127,7 @@ A collection of **Agent Skills** enabling collaborative multi-agent development.
 | **Developer Workflow** | Monorepo task automation, mise tasks, CI/CD, migrations, release | "dev workflow", "mise tasks", "CI/CD pipeline" |
 | **TF Infra Agent** | Multi-cloud IaC provisioning (AWS, GCP, Azure, OCI) | "infrastructure", "terraform", "cloud setup" |
 | **Orchestrator** | CLI-based parallel agent execution with Serena Memory | "spawn agent", "parallel execution" |
-| **Commit** | Conventional Commits with project-specific rules | "oma-commit", "save changes" |
+| **Commit** | Conventional Commits with project-specific rules | "commit", "save changes" |
 
 ## Quick Start
 
@@ -160,11 +160,11 @@ Select your project type and skills will be installed to `.agents/skills/`, with
 | Preset | Skills |
 |--------|--------|
 | ✨ All | Everything |
-| 🌐 Fullstack | oma-brainstorm, frontend, backend, db, pm, qa, debug, oma-commit |
-| 🎨 Frontend | oma-brainstorm, frontend, pm, qa, debug, oma-commit |
-| ⚙️ Backend | oma-brainstorm, backend, db, pm, qa, debug, oma-commit |
-| 📱 Mobile | oma-brainstorm, mobile, pm, qa, debug, oma-commit |
-| 🚀 DevOps | oma-brainstorm, tf-infra, oma-dev-workflow, pm, qa, debug, oma-commit |
+| 🌐 Fullstack | oma-brainstorm, oma-frontend, oma-backend, oma-db, oma-pm, oma-qa, oma-debug, oma-commit |
+| 🎨 Frontend | oma-brainstorm, oma-frontend, oma-pm, oma-qa, oma-debug, oma-commit |
+| ⚙️ Backend | oma-brainstorm, oma-backend, oma-db, oma-pm, oma-qa, oma-debug, oma-commit |
+| 📱 Mobile | oma-brainstorm, oma-mobile, oma-pm, oma-qa, oma-debug, oma-commit |
+| 🚀 DevOps | oma-brainstorm, oma-tf-infra, oma-dev-workflow, oma-pm, oma-qa, oma-debug, oma-commit |
 
 ### Option 3: Global Installation (For Orchestrator)
 

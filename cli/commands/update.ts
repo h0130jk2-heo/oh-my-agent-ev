@@ -10,6 +10,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
+import { promptUninstallCompetitors } from "../lib/competitors.js";
 import {
   fetchRemoteManifest,
   getLocalVersion,
@@ -38,6 +39,9 @@ export async function update(force = false): Promise<void> {
       "Migration",
     );
   }
+  // Detect and offer to remove competing tools
+  await promptUninstallCompetitors(cwd);
+
   const spinner = p.spinner();
 
   try {
