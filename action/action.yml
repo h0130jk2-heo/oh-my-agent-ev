@@ -84,7 +84,7 @@ runs:
     - name: Create Pull Request
       id: create-pr
       if: steps.changes.outputs.updated == 'true' && inputs.mode == 'pr'
-      uses: peter-evans/create-pull-request@v7
+      uses: peter-evans/create-pull-request@v8
       with:
         token: ${{ inputs.token }}
         branch: chore/update-oh-my-agent
