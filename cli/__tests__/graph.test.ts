@@ -1,9 +1,4 @@
-import {
-  mkdtempSync,
-  mkdirSync,
-  rmSync,
-  writeFileSync,
-} from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -39,11 +34,7 @@ describe("graph", () => {
 
     writeFileSync(
       join(root, ".agents", "skills", "oma-backend", "SKILL.md"),
-      [
-        "# Backend",
-        "",
-        "See `../_shared/core/context-loading.md`.",
-      ].join("\n"),
+      ["# Backend", "", "See `../_shared/core/context-loading.md`."].join("\n"),
     );
     writeFileSync(
       join(
@@ -100,9 +91,7 @@ describe("graph", () => {
     expect(nodeIds).toContain("shared:core/api-contracts/template");
     expect(nodeIds).toContain("shared:conditional/quality-score");
 
-    expect(edgeIds).toContain(
-      "skill:oma-backend->shared:core/context-loading",
-    );
+    expect(edgeIds).toContain("skill:oma-backend->shared:core/context-loading");
     expect(edgeIds).toContain(
       "skill:oma-backend->shared:core/api-contracts/template",
     );

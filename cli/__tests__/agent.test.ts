@@ -135,10 +135,7 @@ describe("agent command", () => {
 
       expect(child_process.spawn).toHaveBeenCalledWith(
         "gemini",
-        expect.arrayContaining([
-          "-p",
-          "prompt content\n\nexecution protocol",
-        ]),
+        expect.arrayContaining(["-p", "prompt content\n\nexecution protocol"]),
         expect.objectContaining({ cwd: expect.stringContaining("/tmp") }),
       );
       expect(mockFsFunctions.writeFileSync).toHaveBeenCalledWith(

@@ -48,27 +48,25 @@ describe("auth:status command", () => {
       fetchQuotaMock.mockResolvedValue({ userName: "test-user" });
       execSyncMock.mockReturnValue(JSON.stringify({ loggedIn: true }));
       mockFsFunctions.existsSync.mockReturnValue(true);
-      mockFsFunctions.readFileSync.mockImplementation(
-        (path: string) => {
-          if (path.includes(".gemini")) {
-            return JSON.stringify({
-              access_token: "ya29.xxx",
-              refresh_token: "1//xxx",
-            });
-          }
-          if (path.includes(".codex")) {
-            return JSON.stringify({
-              tokens: { access_token: "tok_xxx" },
-            });
-          }
-          if (path.includes(".qwen")) {
-            return JSON.stringify({
-              security: { auth: { selectedType: "openai" } },
-            });
-          }
-          return "{}";
-        },
-      );
+      mockFsFunctions.readFileSync.mockImplementation((path: string) => {
+        if (path.includes(".gemini")) {
+          return JSON.stringify({
+            access_token: "ya29.xxx",
+            refresh_token: "1//xxx",
+          });
+        }
+        if (path.includes(".codex")) {
+          return JSON.stringify({
+            tokens: { access_token: "tok_xxx" },
+          });
+        }
+        if (path.includes(".qwen")) {
+          return JSON.stringify({
+            security: { auth: { selectedType: "openai" } },
+          });
+        }
+        return "{}";
+      });
 
       const consoleSpy = vi.spyOn(console, "log");
       await checkAuthStatus(true);
@@ -294,27 +292,25 @@ describe("auth:status command", () => {
       fetchQuotaMock.mockResolvedValue({ userName: "test-user" });
       execSyncMock.mockReturnValue(JSON.stringify({ loggedIn: true }));
       mockFsFunctions.existsSync.mockReturnValue(true);
-      mockFsFunctions.readFileSync.mockImplementation(
-        (path: string) => {
-          if (path.includes(".gemini")) {
-            return JSON.stringify({
-              access_token: "ya29.xxx",
-              refresh_token: "1//xxx",
-            });
-          }
-          if (path.includes(".codex")) {
-            return JSON.stringify({
-              tokens: { access_token: "tok_xxx" },
-            });
-          }
-          if (path.includes(".qwen")) {
-            return JSON.stringify({
-              security: { auth: { selectedType: "openai" } },
-            });
-          }
-          return "{}";
-        },
-      );
+      mockFsFunctions.readFileSync.mockImplementation((path: string) => {
+        if (path.includes(".gemini")) {
+          return JSON.stringify({
+            access_token: "ya29.xxx",
+            refresh_token: "1//xxx",
+          });
+        }
+        if (path.includes(".codex")) {
+          return JSON.stringify({
+            tokens: { access_token: "tok_xxx" },
+          });
+        }
+        if (path.includes(".qwen")) {
+          return JSON.stringify({
+            security: { auth: { selectedType: "openai" } },
+          });
+        }
+        return "{}";
+      });
 
       const prompts = await import("@clack/prompts");
       await checkAuthStatus(false);

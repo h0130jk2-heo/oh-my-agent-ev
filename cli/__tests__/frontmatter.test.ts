@@ -17,7 +17,8 @@ Body content here.`;
   });
 
   it("should handle file without frontmatter", () => {
-    const content = "Just a regular markdown file.\n\nWith multiple paragraphs.";
+    const content =
+      "Just a regular markdown file.\n\nWith multiple paragraphs.";
     const result = parseFrontmatter(content);
     expect(result.frontmatter).toEqual({});
     expect(result.body).toBe(content);

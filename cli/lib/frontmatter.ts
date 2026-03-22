@@ -26,7 +26,9 @@ export function parseFrontmatter(content: string): ParsedFrontmatter {
   try {
     const parsed = parseYaml(yamlBlock);
     const frontmatter =
-      parsed && typeof parsed === "object" ? (parsed as Record<string, unknown>) : {};
+      parsed && typeof parsed === "object"
+        ? (parsed as Record<string, unknown>)
+        : {};
     return { frontmatter, body };
   } catch {
     // Return body without frontmatter block even on parse failure
@@ -52,7 +54,7 @@ export function serializeFrontmatter(
       }
     } else {
       const str = String(value);
-      const needsQuote = /[:#\[\]{}|>&*!,'"%@`]/.test(str) || str.includes("\n");
+      const needsQuote = /[:#[\]{}|>&*!,'"%@`]/.test(str) || str.includes("\n");
       lines.push(`${key}: ${needsQuote ? JSON.stringify(str) : str}`);
     }
   }

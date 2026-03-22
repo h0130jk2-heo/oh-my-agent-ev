@@ -12,10 +12,10 @@ import {
   getAllSkills,
   INSTALLED_SKILLS_DIR,
   installConfigs,
-  installVendorAdaptations,
   installGlobalWorkflows,
   installShared,
   installSkill,
+  installVendorAdaptations,
   installWorkflows,
   PRESETS,
 } from "../lib/skills.js";

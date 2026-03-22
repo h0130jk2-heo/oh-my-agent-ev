@@ -4,13 +4,13 @@ import {
   lstatSync,
   mkdirSync,
   readdirSync,
+  readFileSync,
   readlinkSync,
   rmSync,
   symlinkSync,
   unlinkSync,
   writeFileSync,
 } from "node:fs";
-import { readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import type { SkillInfo, SkillsRegistry, VendorType } from "../types/index.js";
 import { parseFrontmatter, serializeFrontmatter } from "./frontmatter.js";
@@ -301,10 +301,7 @@ const CLAUDE_AGENT_DEFAULTS: Record<
 /**
  * Generate Claude-specific agent files from abstract agent definitions.
  */
-function installClaudeAgents(
-  agentsDir: string,
-  targetDir: string,
-): void {
+function installClaudeAgents(agentsDir: string, targetDir: string): void {
   if (!existsSync(agentsDir)) return;
 
   const destDir = join(targetDir, ".claude", "agents");
@@ -358,15 +355,18 @@ function installClaudeWorkflowRouters(
 
   for (const dirEntry of readdirSync(workflowsDir, { withFileTypes: true })) {
     // Skip non-files, non-md, and private partials (underscore prefix)
-    if (!dirEntry.isFile() || !dirEntry.name.endsWith(".md") || dirEntry.name.startsWith("_"))
+    if (
+      !dirEntry.isFile() ||
+      !dirEntry.name.endsWith(".md") ||
+      dirEntry.name.startsWith("_")
+    )
       continue;
     const entry = dirEntry.name;
 
     const content = readFileSync(join(workflowsDir, entry), "utf-8");
     const { frontmatter } = parseFrontmatter(content);
     const name = entry.replace(".md", "");
-    const description =
-      (frontmatter.description as string) || name;
+    const description = (frontmatter.description as string) || name;
 
     const skillDir = join(targetDir, ".claude", "skills", name);
     clearNonDirectory(skillDir);

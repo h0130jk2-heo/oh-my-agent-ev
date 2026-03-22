@@ -1,9 +1,9 @@
 import {
   cpSync,
   existsSync,
+  mkdirSync,
   readFileSync,
   rmSync,
-  mkdirSync,
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
@@ -25,27 +25,68 @@ import {
 } from "../lib/skills.js";
 import { downloadAndExtract } from "../lib/tarball.js";
 
-export async function update(force = false): Promise<void> {
-  console.clear();
-  p.intro(pc.bgMagenta(pc.white(" 🛸 oh-my-agent update ")));
+/** Thin UI abstraction: interactive (@clack/prompts) vs CI (plain console) */
+function createUI(ci: boolean) {
+  if (!ci) {
+    return {
+      intro: (msg: string) => p.intro(msg),
+      outro: (msg: string) => p.outro(msg),
+      note: (msg: string, title?: string) => p.note(msg, title),
+      logError: (msg: string) => p.log.error(msg),
+      spinnerStart: (msg: string) => {
+        const s = p.spinner();
+        s.start(msg);
+        return s;
+      },
+    };
+  }
+  const noop = {
+    start(_msg: string) {},
+    stop(msg?: string) {
+      if (msg) console.log(msg);
+    },
+    message(msg: string) {
+      console.log(msg);
+    },
+  };
+  return {
+    intro: (msg: string) => console.log(msg),
+    outro: (msg: string) => console.log(msg),
+    note: (msg: string, _title?: string) => console.log(msg),
+    logError: (msg: string) => console.error(msg),
+    spinnerStart: (msg: string) => {
+      console.log(msg);
+      return noop;
+    },
+  };
+}
+
+export async function update(force = false, ci = false): Promise<void> {
+  if (!ci && process.stdout.isTTY) console.clear();
+
+  const ui = createUI(ci);
+  ui.intro(pc.bgMagenta(pc.white(" 🛸 oh-my-agent update ")));
 
   const cwd = process.cwd();
 
   // Auto-migrate from legacy .agent/ to .agents/
   const migrations = migrateToAgents(cwd);
   if (migrations.length > 0) {
-    p.note(
+    ui.note(
       migrations.map((m) => `${pc.green("✓")} ${m}`).join("\n"),
       "Migration",
     );
   }
-  // Detect and offer to remove competing tools
-  await promptUninstallCompetitors(cwd);
 
-  const spinner = p.spinner();
+  // Detect and offer to remove competing tools (skip in CI — no stdin)
+  if (!ci) {
+    await promptUninstallCompetitors(cwd);
+  }
+
+  let spinner: ReturnType<typeof ui.spinnerStart> | undefined;
 
   try {
-    spinner.start("Checking for updates...");
+    spinner = ui.spinnerStart("Checking for updates...");
 
     const remoteManifest = await fetchRemoteManifest();
     const localVersion = await getLocalVersion(cwd);
@@ -53,13 +94,13 @@ export async function update(force = false): Promise<void> {
     if (localVersion === remoteManifest.version) {
       const sharedLayoutMigrations = migrateSharedLayout(cwd);
       if (sharedLayoutMigrations.length > 0) {
-        p.note(
+        ui.note(
           sharedLayoutMigrations.map((m) => `${pc.green("✓")} ${m}`).join("\n"),
           "Shared layout migration",
         );
       }
       spinner.stop(pc.green("Already up to date!"));
-      p.outro(`Current version: ${pc.cyan(localVersion)}`);
+      ui.outro(`Current version: ${pc.cyan(localVersion)}`);
       return;
     }
 
@@ -86,10 +127,7 @@ export async function update(force = false): Promise<void> {
         !force && existsSync(mcpPath) ? readFileSync(mcpPath) : null;
 
       // Preserve stack/ directories (user-generated or preset)
-      const stackBackupDir = join(
-        tmpdir(),
-        `oma-stack-backup-${Date.now()}`,
-      );
+      const stackBackupDir = join(tmpdir(), `oma-stack-backup-${Date.now()}`);
       const backendStackDir = join(
         cwd,
         ".agents",
@@ -118,9 +156,7 @@ export async function update(force = false): Promise<void> {
       const hasLegacyFiles =
         !force &&
         !hasBackendStack &&
-        legacyFiles.some((f) =>
-          existsSync(join(backendResourcesDir, f)),
-        );
+        legacyFiles.some((f) => existsSync(join(backendResourcesDir, f)));
 
       cpSync(join(repoDir, ".agents"), join(cwd, ".agents"), {
         recursive: true,
@@ -185,7 +221,7 @@ export async function update(force = false): Promise<void> {
       // Shared layout migration (core/, conditional/, runtime/)
       const sharedLayoutMigrations = migrateSharedLayout(cwd);
       if (sharedLayoutMigrations.length > 0) {
-        p.note(
+        ui.note(
           sharedLayoutMigrations.map((m) => `${pc.green("✓")} ${m}`).join("\n"),
           "Shared layout migration",
         );
@@ -205,7 +241,7 @@ export async function update(force = false): Promise<void> {
         if (skillNames.length > 0) {
           const { created } = createCliSymlinks(cwd, cliTools, skillNames);
           if (created.length > 0) {
-            p.note(
+            ui.note(
               created.map((s) => `${pc.green("→")} ${s}`).join("\n"),
               "Symlinks updated",
             );
@@ -213,15 +249,18 @@ export async function update(force = false): Promise<void> {
         }
       }
 
-      p.outro(
+      ui.outro(
         `${remoteManifest.metadata.totalFiles} files updated successfully`,
       );
     } finally {
       cleanup();
     }
   } catch (error) {
-    spinner.stop("Update failed");
-    p.log.error(error instanceof Error ? error.message : String(error));
+    spinner?.stop("Update failed");
+    ui.logError(error instanceof Error ? error.message : String(error));
+    if (ci) {
+      throw error;
+    }
     process.exit(1);
   }
 }

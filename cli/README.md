@@ -6,7 +6,7 @@
 
 The portable, role-based agent harness for serious AI-assisted engineering.
 
-Orchestrate 10 specialized domain agents (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform)  `oh-my-agent` uses `.agents/` as the source of truth for portable skills and workflows, then projects compatibility to other AI IDEs and CLIs. It combines role-based agents, explicit workflows, real-time observability, and standards-aware guidance for teams that want less AI slop and more disciplined execution.
+Orchestrate 10 specialized domain agents (PM, Frontend, Backend, DB, Mobile, QA, Debug, Brainstorm, DevWorkflow, Terraform). `oh-my-agent` works with all major AI IDEs including Antigravity, Claude Code, Cursor, Gemini, OpenCode, and more. It combines role-based agents, explicit workflows, real-time observability, and standards-aware guidance for teams that want less AI slop and more disciplined execution.
 
 ## Table of Contents
 
@@ -26,7 +26,7 @@ A collection of **Agent Skills** enabling collaborative multi-agent development.
 | **Brainstorm** | Design-first ideation before planning | "brainstorm", "ideate", "explore idea" |
 | **PM Agent** | Requirements analysis, task decomposition, architecture | "plan", "break down", "what should we build" |
 | **Frontend Agent** | React/Next.js, TypeScript, Tailwind CSS | "UI", "component", "styling" |
-| **Backend Agent** | FastAPI, PostgreSQL, JWT authentication | "API", "database", "authentication" |
+| **Backend Agent** | Backend (Python, Node.js, Rust, ...) | "API", "database", "authentication" |
 | **DB Agent** | SQL/NoSQL modeling, normalization, integrity, backup, capacity | "ERD", "schema", "database design", "index tuning" |
 | **Mobile Agent** | Flutter cross-platform development | "mobile app", "iOS/Android" |
 | **QA Agent** | OWASP Top 10 security, performance, accessibility | "review security", "audit", "check performance" |
@@ -45,6 +45,7 @@ A collection of **Agent Skills** enabling collaborative multi-agent development.
 - **Workflow-first orchestration**: planning, review, debug, and coordinated execution are first-class workflows, not afterthoughts.
 - **Standards-aware by design**: agents now carry focused guidance for ISO-driven planning, QA, database continuity/security, and infrastructure governance.
 - **Built for verification**: dashboards, manifest generation, shared execution protocols, and structured outputs favor traceability over vibe-only generation.
+
 
 
 
@@ -119,11 +120,11 @@ You'll also need at least one CLI tool:
 → /ultrawork → Independent tasks execute in parallel across agents
 ```
 
-**Simple task** (use /command or agent skill):
+**Simple task** (invoke a domain skill directly):
 
 ```
 "Create a login form with Tailwind CSS and form validation"
-→ oma-frontend loaded via /command or agent skills field
+→ oma-frontend skill
 ```
 
 **Commit changes** (conventional commits):
@@ -224,6 +225,4 @@ See [SPONSORS.md](https://github.com/first-fluke/oh-my-agent/blob/main/SPONSORS.
 ## License
 
 MIT
-
-
 

@@ -195,18 +195,8 @@ describe("installSkill - variant handling", () => {
 
   it("should copy variant to stack/ when variant is specified", () => {
     const variantName = "python";
-    const srcBase = join(
-      mockSourceDir,
-      ".agents",
-      "skills",
-      skillName,
-    );
-    const destBase = join(
-      mockTargetDir,
-      ".agents",
-      "skills",
-      skillName,
-    );
+    const srcBase = join(mockSourceDir, ".agents", "skills", skillName);
+    const destBase = join(mockTargetDir, ".agents", "skills", skillName);
     // Variant is read from SOURCE, not dest
     const variantSrcDir = join(srcBase, "variants", variantName);
     const destVariantsDir = join(destBase, "variants");
@@ -247,12 +237,7 @@ describe("installSkill - variant handling", () => {
   });
 
   it("should not create stack/ when variant is not specified", () => {
-    const destBase = join(
-      mockTargetDir,
-      ".agents",
-      "skills",
-      skillName,
-    );
+    const destBase = join(mockTargetDir, ".agents", "skills", skillName);
     const variantsDir = join(destBase, "variants");
     const stackYaml = join(destBase, "stack", "stack.yaml");
 
@@ -274,12 +259,7 @@ describe("installSkill - variant handling", () => {
   });
 
   it("should remove variants/ directory after install", () => {
-    const destBase = join(
-      mockTargetDir,
-      ".agents",
-      "skills",
-      skillName,
-    );
+    const destBase = join(mockTargetDir, ".agents", "skills", skillName);
     const variantsDir = join(destBase, "variants");
 
     (fs.existsSync as unknown as ReturnType<typeof vi.fn>).mockImplementation(

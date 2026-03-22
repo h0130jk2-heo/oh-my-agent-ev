@@ -1,11 +1,11 @@
+import { execSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { execSync } from "node:child_process";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { isGhAuthenticated } from "../lib/github.js";
 import { fetchQuota } from "../lib/antigravity-bridge.js";
+import { isGhAuthenticated } from "../lib/github.js";
 
 export function isClaudeAuthenticated(): boolean {
   try {
@@ -36,7 +36,7 @@ export function isCodexAuthenticated(): boolean {
   if (!existsSync(authPath)) return false;
   try {
     const auth = JSON.parse(readFileSync(authPath, "utf-8"));
-    return !!(auth.tokens?.access_token);
+    return !!auth.tokens?.access_token;
   } catch {
     return false;
   }

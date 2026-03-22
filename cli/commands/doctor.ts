@@ -3,12 +3,6 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import {
-  isClaudeAuthenticated,
-  isCodexAuthenticated,
-  isGeminiAuthenticated,
-  isQwenAuthenticated,
-} from "./auth.js";
 import { checkStarred } from "../lib/github.js";
 import {
   getAllSkills,
@@ -17,6 +11,12 @@ import {
   installSkill,
 } from "../lib/skills.js";
 import type { CLICheck, SkillCheck } from "../types/index.js";
+import {
+  isClaudeAuthenticated,
+  isCodexAuthenticated,
+  isGeminiAuthenticated,
+  isQwenAuthenticated,
+} from "./auth.js";
 
 async function checkCLI(
   name: string,
@@ -187,7 +187,9 @@ export async function doctor(jsonMode = false): Promise<void> {
         name: c.name,
         installed: c.installed,
         version: c.version || null,
-        authenticated: c.installed ? (authCheckers[c.name]?.() ?? false) : false,
+        authenticated: c.installed
+          ? (authCheckers[c.name]?.() ?? false)
+          : false,
       })),
       mcp: mcpChecks.map((c) => ({
         name: c.name,

@@ -44,11 +44,9 @@ const AGENT_SKILL_MAP: Record<string, string> = {
 
 function findSharedRefs(content: string): string[] {
   const refs = new Set<string>();
-  for (
-    const m of content.matchAll(
-      /_shared\/((?:[a-z][a-z0-9_-]*\/)*[a-z][a-z0-9_-]*)(?:\.md)?(?=[`)\s/}]|$)/gi,
-    )
-  ) {
+  for (const m of content.matchAll(
+    /_shared\/((?:[a-z][a-z0-9_-]*\/)*[a-z][a-z0-9_-]*)(?:\.md)?(?=[`)\s/}]|$)/gi,
+  )) {
     refs.add(m[1]);
   }
   return [...refs];
@@ -170,11 +168,9 @@ export function buildGraph(root: string): Graph {
       group: "Shared",
     });
     if (!entry.isDirectory) {
-      for (
-        const ref of findSharedRefs(
-          tryRead(join(sharedDir, `${entry.path}.md`)),
-        )
-      ) {
+      for (const ref of findSharedRefs(
+        tryRead(join(sharedDir, `${entry.path}.md`)),
+      )) {
         if (ref !== entry.path) edge(id, `shared:${ref}`, "references");
       }
     }

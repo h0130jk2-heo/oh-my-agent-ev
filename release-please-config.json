@@ -12,7 +12,7 @@
       "changelog-path": "cli/CHANGELOG.md",
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": true,
-      "exclude-paths": ["web", "prompt-manifest.json"],
+      "exclude-paths": ["web", "action", "prompt-manifest.json"],
       "extra-files": [
         {
           "type": "json",
@@ -35,6 +35,14 @@
           "jsonpath": "$.version"
         }
       ]
+    },
+    "action": {
+      "component": "action",
+      "package-name": "oh-my-agent-action",
+      "release-type": "node",
+      "changelog-path": "action/CHANGELOG.md",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true
     },
     "web": {
       "component": "web",
