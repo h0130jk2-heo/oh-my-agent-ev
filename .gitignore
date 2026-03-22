@@ -27,6 +27,9 @@ bin/*.js
 .serena/memories/*
 !.serena/memories/.gitkeep
 
+# OMA runtime state (hook persistent mode)
+.agents/state/
+
 # IDE
 .vscode/
 .idea/

@@ -386,6 +386,97 @@ function installClaudeWorkflowRouters(
 }
 
 /**
+ * Install Claude Code hooks and merge settings.json.
+ * Source: .claude/hooks/ (from downloaded repo)
+ * Target: .claude/hooks/ + .claude/settings.json (hooks section merged)
+ */
+function installClaudeHooks(sourceDir: string, targetDir: string): void {
+  const hooksSrc = join(sourceDir, ".claude", "hooks");
+  if (!existsSync(hooksSrc)) return;
+
+  const hooksDest = join(targetDir, ".claude", "hooks");
+  mkdirSync(hooksDest, { recursive: true });
+  cpSync(hooksSrc, hooksDest, { recursive: true, force: true });
+
+  // Merge hooks config into .claude/settings.json (preserve existing settings)
+  const settingsPath = join(targetDir, ".claude", "settings.json");
+  // biome-ignore lint/suspicious/noExplicitAny: settings.json schema is dynamic
+  let settings: any = {};
+
+  if (existsSync(settingsPath)) {
+    try {
+      settings = JSON.parse(readFileSync(settingsPath, "utf-8"));
+    } catch {
+      // Corrupted settings — start fresh
+    }
+  }
+
+  const omaHooks = {
+    UserPromptSubmit: [
+      {
+        hooks: [
+          {
+            type: "command",
+            command:
+              'bun "$CLAUDE_PROJECT_DIR/.claude/hooks/keyword-detector.ts"',
+            timeout: 5,
+          },
+        ],
+      },
+    ],
+    Stop: [
+      {
+        hooks: [
+          {
+            type: "command",
+            command:
+              'bun "$CLAUDE_PROJECT_DIR/.claude/hooks/persistent-mode.ts"',
+            timeout: 5,
+          },
+        ],
+      },
+    ],
+  };
+
+  settings.hooks = { ...(settings.hooks || {}), ...omaHooks };
+  writeFileSync(settingsPath, `${JSON.stringify(settings, null, 2)}\n`);
+}
+
+const OMA_START = "<!-- OMA:START";
+const OMA_END = "<!-- OMA:END -->";
+
+/**
+ * Merge OMA instructions into the project's CLAUDE.md using markers.
+ * Preserves any user content outside the OMA block.
+ * Source: .claude/CLAUDE.md.template (from downloaded repo)
+ */
+function mergeClaudeMd(sourceDir: string, targetDir: string): void {
+  const templatePath = join(sourceDir, ".claude", "CLAUDE.md.template");
+  if (!existsSync(templatePath)) return;
+
+  const omaBlock = readFileSync(templatePath, "utf-8").trim();
+  const claudeMdPath = join(targetDir, "CLAUDE.md");
+
+  if (existsSync(claudeMdPath)) {
+    const existing = readFileSync(claudeMdPath, "utf-8");
+    const startIdx = existing.indexOf(OMA_START);
+    const endIdx = existing.indexOf(OMA_END);
+
+    if (startIdx !== -1 && endIdx !== -1) {
+      // Replace existing OMA block
+      const before = existing.slice(0, startIdx);
+      const after = existing.slice(endIdx + OMA_END.length);
+      writeFileSync(claudeMdPath, `${before}${omaBlock}${after}`);
+    } else {
+      // Append OMA block to end
+      writeFileSync(claudeMdPath, `${existing.trimEnd()}\n\n${omaBlock}\n`);
+    }
+  } else {
+    writeFileSync(claudeMdPath, `${omaBlock}\n`);
+  }
+}
+
+/**
  * Install vendor-specific agent and workflow adaptations.
  * Replaces installClaudeSkills() for agent/workflow generation.
  */
@@ -402,6 +493,8 @@ export function installVendorAdaptations(
       case "claude":
         installClaudeAgents(agentsDir, targetDir);
         installClaudeWorkflowRouters(workflowsDir, targetDir);
+        installClaudeHooks(sourceDir, targetDir);
+        mergeClaudeMd(sourceDir, targetDir);
         break;
       case "codex":
         // Phase 3: installCodexAgents(agentsDir, targetDir);
