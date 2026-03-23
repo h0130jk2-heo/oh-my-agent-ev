@@ -229,10 +229,10 @@ export async function update(force = false, ci = false): Promise<void> {
 
       await saveLocalVersion(cwd, remoteManifest.version);
 
+      // Always update all vendor adaptations (hooks, settings, CLAUDE.md)
+      installVendorAdaptations(repoDir, cwd, ["claude", "codex", "gemini"]);
+
       const cliTools = detectExistingCliSymlinkDirs(cwd);
-      if (cliTools.includes("claude")) {
-        installVendorAdaptations(repoDir, cwd, ["claude"]);
-      }
 
       spinner.stop(`Updated to version ${pc.cyan(remoteManifest.version)}!`);
 

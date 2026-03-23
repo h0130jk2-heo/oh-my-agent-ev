@@ -162,12 +162,10 @@ export async function install(): Promise<void> {
 
       spinner.stop("Skills installed!");
 
-      // Install Claude Code workflow routers and agent definitions from SSOT
-      if (selectedClis.includes("claude")) {
-        spinner.start("Installing Claude Code skills...");
-        installVendorAdaptations(repoDir, cwd, ["claude"]);
-        spinner.stop("Claude Code skills installed!");
-      }
+      // Install vendor-specific adaptations (agents, routers, hooks, CLAUDE.md)
+      spinner.start("Installing vendor adaptations...");
+      installVendorAdaptations(repoDir, cwd, ["claude", "codex", "gemini"]);
+      spinner.stop("Vendor adaptations installed!");
 
       const sharedLayoutMigrations = migrateSharedLayout(cwd);
       if (sharedLayoutMigrations.length > 0) {
