@@ -479,14 +479,14 @@ function installClaudeHooks(sourceDir: string, targetDir: string): void {
 }
 
 /**
- * Install Codex CLI hooks and hooks.json.
- * Codex has no project dir env var — uses relative paths (cwd passed via stdin).
+ * Install Codex CLI hooks, hooks.json, and enable codex_hooks feature.
+ * Codex hooks.json requires the codex_hooks feature flag in config.toml.
  */
 function installCodexHooks(sourceDir: string, targetDir: string): void {
   const hooksDir = join(targetDir, ".codex", "hooks");
   copyHookScripts(sourceDir, hooksDir);
 
-  // Codex uses hooks.json (discovered from .codex/)
+  // hooks.json — discovered from .codex/
   mergeIntoSettings(join(targetDir, ".codex", "hooks.json"), {
     UserPromptSubmit: [
       {
@@ -511,6 +511,43 @@ function installCodexHooks(sourceDir: string, targetDir: string): void {
       },
     ],
   });
+
+  // Enable codex_hooks feature in config.toml (required for hooks.json to load)
+  ensureCodexFeatureFlag(join(targetDir, ".codex", "config.toml"));
+}
+
+/**
+ * Ensure codex_hooks = true in [features] section of config.toml.
+ * Creates file if missing, appends section if not present.
+ */
+function ensureCodexFeatureFlag(configPath: string): void {
+  mkdirSync(dirname(configPath), { recursive: true });
+
+  let content = "";
+  if (existsSync(configPath)) {
+    content = readFileSync(configPath, "utf-8");
+  }
+
+  // Already enabled
+  if (/codex_hooks\s*=\s*true/i.test(content)) return;
+
+  // Replace false with true
+  if (/codex_hooks\s*=\s*false/i.test(content)) {
+    content = content.replace(/codex_hooks\s*=\s*false/i, "codex_hooks = true");
+    writeFileSync(configPath, content);
+    return;
+  }
+
+  // Append to existing [features] section
+  if (/\[features\]/i.test(content)) {
+    content = content.replace(/(\[features\][^[]*)/i, `$1codex_hooks = true\n`);
+    writeFileSync(configPath, content);
+    return;
+  }
+
+  // Add new [features] section
+  const section = `\n[features]\ncodex_hooks = true\n`;
+  writeFileSync(configPath, content.trimEnd() + section);
 }
 
 /**
