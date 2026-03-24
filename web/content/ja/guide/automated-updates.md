@@ -1,23 +1,26 @@
 ---
-title: GitHub Action による自動更新
-description: 公式 GitHub Action を使用して、oh-my-agent のスキルを自動的に最新の状態に保つ方法。
+title: "ガイド：自動更新"
+description: oh-my-agent GitHub Actionの完全ドキュメント — セットアップ、全入出力、詳細例、内部動作、セントラルレジストリとの比較。
 ---
 
-# GitHub Action による自動更新
+# ガイド：自動更新
 
-**oh-my-agent update action** はスケジュールに従って `oma update` を実行し、新しいスキルバージョンが利用可能になると PR を作成（または直接コミット）します。
+## 概要
 
-## クイックスタート
+oh-my-agent GitHub Action（`first-fluke/oh-my-agent/action@v1`）は、CIで`oma update`を実行してプロジェクトのエージェントスキルを自動更新します。PRを作成してレビューするモードと、ブランチに直接コミットするモードをサポート。
 
-oh-my-agent を使用するリポジトリにこのワークフローを追加します:
+---
+
+## クイックセットアップ
+
+`.github/workflows/update-oh-my-agent.yml`として追加：
 
 ```yaml
-# .github/workflows/update-oma.yml
 name: Update oh-my-agent
 
 on:
   schedule:
-    - cron: "0 9 * * 1" # Every Monday at 09:00 UTC
+    - cron: '0 9 * * 1'  # 毎週月曜9時UTC
   workflow_dispatch:
 
 permissions:
@@ -28,100 +31,112 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       - uses: first-fluke/oh-my-agent/action@v1
 ```
 
-これにより毎週更新が確認され、変更が見つかった場合は PR が作成されます。
+---
 
-## Action リファレンス
+## 全Action入力
 
-Action は以下から利用できます:
+| 入力 | 型 | デフォルト | 説明 |
+|:------|:-----|:--------|:-----------|
+| `mode` | string | `"pr"` | `"pr"`でPR作成、`"commit"`で直接コミット |
+| `base-branch` | string | `"main"` | PRのベースブランチまたはコミット先 |
+| `force` | string | `"false"` | `"true"`でカスタム設定を上書き |
+| `pr-title` | string | `"chore(deps): update oh-my-agent skills"` | PRタイトル |
+| `pr-labels` | string | `"dependencies,automated"` | カンマ区切りラベル |
+| `commit-message` | string | `"chore(deps): update oh-my-agent skills"` | コミットメッセージ |
+| `token` | string | `${{ github.token }}` | GitHubトークン |
 
-- **モノレポパス**: `first-fluke/oh-my-agent/action@v1`
-- **Marketplace**: [`first-fluke/oma-update-action@v1`](https://github.com/marketplace/actions/oh-my-agent-update)
+## 全Action出力
 
-### Inputs
-
-| Input | 説明 | デフォルト |
-|:------|:-----------|:--------|
-| `mode` | `pr` はプルリクエストを作成、`commit` は直接プッシュ | `pr` |
-| `base-branch` | PR のベースブランチ、または直接コミット先のブランチ | `main` |
-| `force` | ユーザー設定ファイルを上書き（`--force`） | `false` |
-| `pr-title` | カスタム PR タイトル | `chore(deps): update oh-my-agent skills` |
-| `pr-labels` | PR に付与するカンマ区切りのラベル | `dependencies,automated` |
-| `commit-message` | カスタムコミットメッセージ | `chore(deps): update oh-my-agent skills` |
-| `token` | PR 作成に使用する GitHub トークン | `${{ github.token }}` |
-
-### Outputs
-
-| Output | 説明 |
+| 出力 | 説明 |
 |:-------|:-----------|
-| `updated` | 変更が検出された場合は `true` |
-| `version` | 更新後の oh-my-agent バージョン |
-| `pr-number` | PR 番号（`pr` モード時のみ） |
-| `pr-url` | PR の URL（`pr` モード時のみ） |
+| `updated` | 変更検出時`"true"` |
+| `version` | 更新後のバージョン |
+| `pr-number` | PR番号（prモード） |
+| `pr-url` | PR URL（prモード） |
 
-## 使用例
+---
 
-### ダイレクトコミットモード
+## 詳細例
 
-PR をスキップして、ベースブランチに直接変更をプッシュします:
+### 例1：デフォルトPRモード
 
 ```yaml
+- uses: first-fluke/oh-my-agent/action@v1
+  id: update
+- name: Summary
+  if: steps.update.outputs.updated == 'true'
+  run: echo "Updated to v${{ steps.update.outputs.version }}"
+```
+
+### 例2：直接コミット + PAT
+
+```yaml
+- uses: actions/checkout@v4
+  with:
+    token: ${{ secrets.OH_MY_AGENT_PAT }}
 - uses: first-fluke/oh-my-agent/action@v1
   with:
     mode: commit
-    commit-message: "chore: sync oh-my-agent skills"
+    token: ${{ secrets.OH_MY_AGENT_PAT }}
+    base-branch: develop
 ```
 
-### Personal Access Token の使用
+### 例3：Slack通知付き
 
-`GITHUB_TOKEN` に書き込み権限がないフォークリポジトリで必要です:
+```yaml
+- uses: first-fluke/oh-my-agent/action@v1
+  id: update
+- name: Notify Slack
+  if: steps.update.outputs.updated == 'true'
+  uses: slackapi/slack-github-action@v2
+  with:
+    webhook: ${{ secrets.SLACK_WEBHOOK }}
+    webhook-type: incoming-webhook
+    payload: |
+      {"text": "oh-my-agent updated to v${{ steps.update.outputs.version }}"}
+```
+
+### 例4：強制更新
 
 ```yaml
 - uses: first-fluke/oh-my-agent/action@v1
   with:
-    token: ${{ secrets.PAT_TOKEN }}
+    force: 'true'
+    pr-title: "chore(deps): force-update oh-my-agent skills (reset configs)"
 ```
 
-### 条件付き通知
+**注意：** forceモードは`user-preferences.yaml`、`mcp.json`、`stack/`を上書きします。
 
-更新が適用された場合のみ後続ステップを実行します:
+---
 
-```yaml
-jobs:
-  update:
-    runs-on: ubuntu-latest
-    outputs:
-      updated: ${{ steps.oma.outputs.updated }}
-    steps:
-      - uses: actions/checkout@v6
-      - uses: first-fluke/oh-my-agent/action@v1
-        id: oma
+## 内部動作
 
-  notify:
-    needs: update
-    if: needs.update.outputs.updated == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "oh-my-agent was updated to ${{ needs.update.outputs.version }}"
-```
+1. **Bunセットアップ** — `oven-sh/setup-bun@v2`
+2. **oh-my-agentインストール** — `bun install -g oh-my-agent`
+3. **oma update実行** — `--ci`フラグ（非インタラクティブ）、オプションで`--force`
+4. **変更チェック** — `.agents/`と`.claude/`のgit status確認
+5. **モードに応じて処理** — PRモード：`peter-evans/create-pull-request@v8`使用。コミットモード：直接コミット・プッシュ。
 
-## 動作の仕組み
+`oma update --ci`の内部処理：
+1. レジストリから`prompt-manifest.json`取得
+2. ローカルバージョンと比較
+3. 最新tarballダウンロード・展開
+4. ユーザーカスタム設定を保持（`--force`除く）
+5. ベンダー適応とシンボリックリンクを更新
 
-1. Bun を使用して `oh-my-agent` CLI をインストール
-2. `oma update --ci`（非インタラクティブモード、プロンプトなし）を実行
-3. `.agents/` および `.claude/` ディレクトリの変更を検出
-4. `mode` の設定に基づいて PR を作成するか、直接コミット
+---
 
-## セントラルレジストリとの比較
+## GitHub Action vs セントラルレジストリ
 
-| | GitHub Action | Central Registry |
-|:--|:--:|:--:|
-| セットアップ | ワークフローファイル 1 つ | 3 ファイル（設定 + ワークフロー 2 つ） |
-| 更新方法 | `oma update` CLI | Tarball ダウンロード + 手動同期 |
-| カスタマイズ | Action の inputs | `.agent-registry.yml` |
-| バージョン固定 | 常に最新 | 明示的なバージョン固定 |
-
-ほとんどのプロジェクトでは **GitHub Action** を使用してください。厳密なバージョン固定が必要な場合や、サードパーティの Action が使用できない場合は **Central Registry** アプローチを使用してください。
+| 側面 | GitHub Action | セントラルレジストリ |
+|:-------|:-------------|:----------------|
+| **追加ファイル** | 1ワークフロー | 3ファイル |
+| **バージョンピニング** | なし — 常に最新 | あり |
+| **チェックサム検証** | なし | あり（SHA256） |
+| **設定保持** | 自動 | 手動設定 |
+| **直接コミット** | あり | なし |
+| **最適な用途** | シンプルプロジェクト | 複数プロジェクト組織 |

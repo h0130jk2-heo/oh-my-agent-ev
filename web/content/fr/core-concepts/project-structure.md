@@ -1,73 +1,430 @@
 ---
 title: Structure du Projet
-description: Arborescence mise à jour après la séparation des workspaces CLI et docs web.
+description: Arborescence exhaustive d'une installation oh-my-agent avec chaque fichier et répertoire expliqué — .agents/, .claude/, .serena/memories/, et la structure du dépôt source oh-my-agent.
 ---
 
-# Structure du projet
+# Structure du Projet
 
-Arborescence détaillée des répertoires pour ce dépôt.
+After installing oh-my-agent, your project gains three directory trees: `.agents/` (the single source of truth), `.claude/` (IDE integration layer), and `.serena/` (runtime state). This page documents every file and its purpose.
 
-```text
-.
-├── .agents/
-│   ├── config/
-│   │   └── user-preferences.yaml   # Langue, fuseau horaire, mappage CLI
-│   ├── workflows/
-│   │   ├── brainstorm.md           # /brainstorm (idéation et exploration de concepts)
-│   │   ├── coordinate.md           # /coordinate (orchestration multi-agents via UI)
-│   │   ├── deepinit.md             # /deepinit (initialisation profonde du projet)
-│   │   ├── exec-plan.md            # /exec-plan (exécution et gestion de plan)
-│   │   ├── orchestrate.md          # /orchestrate (exécution parallèle CLI automatisée)
-│   │   ├── plan.md                 # /plan (décomposition tâches PM)
-│   │   ├── review.md               # /review (pipeline QA complet)
-│   │   ├── debug.md                # /debug (correction bugs structurée)
-│   │   ├── setup.md                # /setup (configuration CLI & MCP)
-│   │   ├── tools.md                # /tools (gestion outils MCP)
-│   │   └── ultrawork.md            # /ultrawork (exécution maximale parallèle)
-│   └── skills/
-│       ├── _shared/                    # Ressources communes (pas une compétence)
-│       │   ├── serena-memory-protocol.md
-│       │   ├── common-checklist.md
-│       │   ├── skill-routing.md
-│       │   ├── context-loading.md
-│       │   ├── context-budget.md
-│       │   ├── reasoning-templates.md
-│       │   ├── clarification-protocol.md
-│       │   ├── difficulty-guide.md
-│       │   ├── lessons-learned.md
-│       │   ├── verify.sh
-│       │   └── api-contracts/
-│       ├── oma-backend/              # Backend (multi-stack : Python, Node.js, Rust, ...)
-│       ├── oma-brainstorm/                 # Idéation et exploration de concepts
-│       ├── oma-commit/                     # Compétence commits conventionnels
-│       ├── oma-db/                   # Base de données, schémas, requêtes
-│       ├── oma-debug/                # Correction bugs
-│       ├── oma-dev-workflow/               # Workflows de développement et CI/CD
-│       ├── oma-frontend/             # React/Next.js
-│       ├── oma-mobile/               # Flutter
-│       ├── oma-orchestrator/               # Générateur sous-agents basé CLI
-│       ├── oma-pm/                   # Chef de projet
-│       ├── oma-qa/                   # Sécurité & QA
-│       ├── oma-tf-infra/             # Infrastructure as code Terraform
-│       ├── oma-translator/                 # Traduction multilingue
-│       └── oma-coordination/             # Coordination multi-agents
-│       # Chaque compétence contient :
-│       #   SKILL.md              (~40 lignes, optimisé tokens)
-│       #   resources/
-│       #     ├── execution-protocol.md  (étapes chaîne de pensée)
-│       #     ├── examples.md            (entrée/sortie few-shot)
-│       #     ├── checklist.md           (auto-vérification)
-│       #     ├── error-playbook.md      (récupération échec)
-│       #     ├── tech-stack.md          (spécifications tech détaillées)
-│       #     └── snippets.md            (modèles copier-coller)
-├── .serena/
-│   └── memories/                   # État d'exécution (gitignored)
-├── package.json
-├── docs/
-│   ├── USAGE.md                    # Guide utilisation détaillé (Anglais)
-│   ├── USAGE.ko.md                 # Guide utilisation détaillé (Coréen)
-│   ├── project-structure.md        # Référence structure complète (Anglais)
-│   └── project-structure.ko.md     # Référence structure complète (Coréen)
-├── README.md                       # Ce fichier (Anglais)
-└── README.ko.md                    # Guide coréen
+---
+
+## Arborescence Complète
+
 ```
+your-project/
+├── .agents/                          ← Single Source of Truth (SSOT)
+│   ├── config/
+│   │   └── user-preferences.yaml    ← Language, timezone, CLI mapping
+│   │
+│   ├── skills/
+│   │   ├── _shared/                  ← Resources used by ALL agents
+│   │   │   ├── README.md
+│   │   │   ├── core/
+│   │   │   │   ├── skill-routing.md
+│   │   │   │   ├── context-loading.md
+│   │   │   │   ├── prompt-structure.md
+│   │   │   │   ├── clarification-protocol.md
+│   │   │   │   ├── context-budget.md
+│   │   │   │   ├── difficulty-guide.md
+│   │   │   │   ├── reasoning-templates.md
+│   │   │   │   ├── quality-principles.md
+│   │   │   │   ├── vendor-detection.md
+│   │   │   │   ├── session-metrics.md
+│   │   │   │   ├── common-checklist.md
+│   │   │   │   ├── lessons-learned.md
+│   │   │   │   └── api-contracts/
+│   │   │   │       ├── README.md
+│   │   │   │       └── template.md
+│   │   │   ├── runtime/
+│   │   │   │   ├── memory-protocol.md
+│   │   │   │   └── execution-protocols/
+│   │   │   │       ├── claude.md
+│   │   │   │       ├── gemini.md
+│   │   │   │       ├── codex.md
+│   │   │   │       └── qwen.md
+│   │   │   └── conditional/
+│   │   │       ├── quality-score.md
+│   │   │       ├── experiment-ledger.md
+│   │   │       └── exploration-loop.md
+│   │   │
+│   │   ├── oma-frontend/
+│   │   │   ├── SKILL.md
+│   │   │   └── resources/
+│   │   │       ├── execution-protocol.md
+│   │   │       ├── tech-stack.md
+│   │   │       ├── tailwind-rules.md
+│   │   │       ├── component-template.tsx
+│   │   │       ├── snippets.md
+│   │   │       ├── error-playbook.md
+│   │   │       ├── checklist.md
+│   │   │       └── examples.md
+│   │   │
+│   │   ├── oma-backend/
+│   │   │   ├── SKILL.md
+│   │   │   ├── resources/
+│   │   │   │   ├── execution-protocol.md
+│   │   │   │   ├── examples.md
+│   │   │   │   ├── orm-reference.md
+│   │   │   │   ├── checklist.md
+│   │   │   │   └── error-playbook.md
+│   │   │   └── stack/                 ← Generated by /stack-set
+│   │   │       ├── stack.yaml
+│   │   │       ├── tech-stack.md
+│   │   │       ├── snippets.md
+│   │   │       └── api-template.*
+│   │   │
+│   │   ├── oma-mobile/
+│   │   │   ├── SKILL.md
+│   │   │   └── resources/
+│   │   │       ├── execution-protocol.md
+│   │   │       ├── tech-stack.md
+│   │   │       ├── snippets.md
+│   │   │       ├── screen-template.dart
+│   │   │       ├── checklist.md
+│   │   │       ├── error-playbook.md
+│   │   │       └── examples.md
+│   │   │
+│   │   ├── oma-db/
+│   │   │   ├── SKILL.md
+│   │   │   └── resources/
+│   │   │       ├── execution-protocol.md
+│   │   │       ├── document-templates.md
+│   │   │       ├── anti-patterns.md
+│   │   │       ├── vector-db.md
+│   │   │       ├── iso-controls.md
+│   │   │       ├── checklist.md
+│   │   │       ├── error-playbook.md
+│   │   │       └── examples.md
+│   │   │
+│   │   ├── oma-design/
+│   │   │   ├── SKILL.md
+│   │   │   ├── resources/
+│   │   │   │   ├── execution-protocol.md
+│   │   │   │   ├── anti-patterns.md
+│   │   │   │   ├── checklist.md
+│   │   │   │   ├── design-md-spec.md
+│   │   │   │   ├── design-tokens.md
+│   │   │   │   ├── prompt-enhancement.md
+│   │   │   │   ├── stitch-integration.md
+│   │   │   │   └── error-playbook.md
+│   │   │   ├── reference/
+│   │   │   │   ├── typography.md
+│   │   │   │   ├── color-and-contrast.md
+│   │   │   │   ├── spatial-design.md
+│   │   │   │   ├── motion-design.md
+│   │   │   │   ├── responsive-design.md
+│   │   │   │   ├── component-patterns.md
+│   │   │   │   ├── accessibility.md
+│   │   │   │   └── shader-and-3d.md
+│   │   │   └── examples/
+│   │   │       ├── design-context-example.md
+│   │   │       └── landing-page-prompt.md
+│   │   │
+│   │   ├── oma-pm/
+│   │   │   ├── SKILL.md
+│   │   │   └── resources/
+│   │   │       ├── execution-protocol.md
+│   │   │       ├── examples.md
+│   │   │       ├── iso-planning.md
+│   │   │       ├── task-template.json
+│   │   │       └── error-playbook.md
+│   │   │
+│   │   ├── oma-qa/
+│   │   │   ├── SKILL.md
+│   │   │   └── resources/
+│   │   │       ├── execution-protocol.md
+│   │   │       ├── iso-quality.md
+│   │   │       ├── checklist.md
+│   │   │       ├── self-check.md
+│   │   │       ├── error-playbook.md
+│   │   │       └── examples.md
+│   │   │
+│   │   ├── oma-debug/
+│   │   │   ├── SKILL.md
+│   │   │   └── resources/
+│   │   │       ├── execution-protocol.md
+│   │   │       ├── common-patterns.md
+│   │   │       ├── debugging-checklist.md
+│   │   │       ├── bug-report-template.md
+│   │   │       ├── error-playbook.md
+│   │   │       └── examples.md
+│   │   │
+│   │   ├── oma-tf-infra/
+│   │   │   ├── SKILL.md
+│   │   │   └── resources/
+│   │   │       ├── execution-protocol.md
+│   │   │       ├── multi-cloud-examples.md
+│   │   │       ├── cost-optimization.md
+│   │   │       ├── policy-testing-examples.md
+│   │   │       ├── iso-42001-infra.md
+│   │   │       ├── checklist.md
+│   │   │       ├── error-playbook.md
+│   │   │       └── examples.md
+│   │   │
+│   │   ├── oma-dev-workflow/
+│   │   │   ├── SKILL.md
+│   │   │   └── resources/
+│   │   │       ├── validation-pipeline.md
+│   │   │       ├── database-patterns.md
+│   │   │       ├── api-workflows.md
+│   │   │       ├── i18n-patterns.md
+│   │   │       ├── release-coordination.md
+│   │   │       └── troubleshooting.md
+│   │   │
+│   │   ├── oma-translator/
+│   │   │   ├── SKILL.md
+│   │   │   └── resources/
+│   │   │       ├── translation-rubric.md
+│   │   │       └── anti-ai-patterns.md
+│   │   │
+│   │   ├── oma-orchestrator/
+│   │   │   ├── SKILL.md
+│   │   │   ├── resources/
+│   │   │   │   ├── subagent-prompt-template.md
+│   │   │   │   └── memory-schema.md
+│   │   │   ├── scripts/
+│   │   │   │   ├── spawn-agent.sh
+│   │   │   │   ├── parallel-run.sh
+│   │   │   │   └── verify.sh
+│   │   │   ├── templates/
+│   │   │   └── config/
+│   │   │       └── cli-config.yaml
+│   │   │
+│   │   ├── oma-brainstorm/
+│   │   │   └── SKILL.md
+│   │   │
+│   │   ├── oma-coordination/
+│   │   │   ├── SKILL.md
+│   │   │   └── resources/
+│   │   │       └── examples.md
+│   │   │
+│   │   └── oma-commit/
+│   │       ├── SKILL.md
+│   │       ├── config/
+│   │       │   └── commit-config.yaml
+│   │       └── resources/
+│   │           └── conventional-commits.md
+│   │
+│   ├── workflows/
+│   │   ├── orchestrate.md             ← Persistent: automated parallel execution
+│   │   ├── coordinate.md             ← Persistent: step-by-step coordination
+│   │   ├── ultrawork.md              ← Persistent: 5-phase quality workflow
+│   │   ├── plan.md                   ← PM task breakdown
+│   │   ├── exec-plan.md              ← Execution plan management
+│   │   ├── brainstorm.md             ← Design-first ideation
+│   │   ├── deepinit.md               ← Project initialization
+│   │   ├── review.md                 ← QA review pipeline
+│   │   ├── debug.md                  ← Structured debugging
+│   │   ├── design.md                 ← 7-phase design workflow
+│   │   ├── commit.md                 ← Conventional commits
+│   │   ├── setup.md                  ← Project configuration
+│   │   ├── tools.md                  ← MCP tool management
+│   │   └── stack-set.md              ← Tech stack configuration
+│   │
+│   ├── agents/
+│   │   ├── backend-engineer.md        ← Subagent def: backend
+│   │   ├── frontend-engineer.md       ← Subagent def: frontend
+│   │   ├── mobile-engineer.md         ← Subagent def: mobile
+│   │   ├── db-engineer.md             ← Subagent def: database
+│   │   ├── qa-reviewer.md             ← Subagent def: QA
+│   │   ├── debug-investigator.md      ← Subagent def: debug
+│   │   └── pm-planner.md             ← Subagent def: PM
+│   │
+│   ├── plan.json                      ← Generated plan output (populated by /plan)
+│   ├── state/                         ← Active workflow state files
+│   │   ├── orchestrate-state.json     ← (exists only when workflow is active)
+│   │   ├── ultrawork-state.json
+│   │   └── coordinate-state.json
+│   ├── results/                       ← Agent result files
+│   │   └── result-{agent}.md          ← (created by completed agents)
+│   └── mcp.json                       ← MCP server configuration
+│
+├── .claude/                           ← IDE Integration Layer
+│   ├── settings.json                  ← Hooks registration and permissions
+│   ├── hooks/
+│   │   ├── triggers.json              ← Keyword-to-workflow mapping (11 languages)
+│   │   ├── keyword-detector.ts        ← Auto-detection logic
+│   │   ├── persistent-mode.ts         ← Persistent workflow enforcement
+│   │   └── hud.ts                     ← [OMA] statusline indicator
+│   ├── skills/                        ← Symlinks → .agents/skills/
+│   │   ├── oma-frontend -> ../../.agents/skills/oma-frontend
+│   │   ├── oma-backend -> ../../.agents/skills/oma-backend
+│   │   └── ...
+│   └── agents/                        ← Subagent definitions for Claude Code
+│       ├── backend-engineer.md
+│       ├── frontend-engineer.md
+│       └── ...
+│
+└── .serena/                           ← Runtime State (Serena MCP)
+    └── memories/
+        ├── orchestrator-session.md    ← Session ID, status, phase tracking
+        ├── task-board.md              ← Task assignments and status
+        ├── progress-{agent}.md        ← Per-agent progress updates
+        ├── result-{agent}.md          ← Per-agent final outputs
+        ├── session-metrics.md         ← Clarification Debt and Quality Score tracking
+        ├── experiment-ledger.md       ← Experiment tracking (conditional)
+        ├── session-coordinate.md      ← Coordinate workflow session state
+        ├── session-ultrawork.md       ← Ultrawork workflow session state
+        ├── tool-overrides.md          ← Temporary tool restrictions (/tools --temp)
+        └── archive/
+            └── metrics-{date}.md      ← Archived session metrics
+```
+
+---
+
+## .agents/ — The Source of Truth
+
+This is the core directory. Everything agents need lives here. It is the only directory that matters for agent behavior — all other directories are derived from it.
+
+### config/
+
+**`user-preferences.yaml`** — Central configuration file with:
+- `language`: Response language code (en, ko, ja, zh, es, fr, de, pt, ru, nl, pl)
+- `date_format`: Timestamp format string (default: `YYYY-MM-DD`)
+- `timezone`: Timezone identifier (default: `UTC`)
+- `default_cli`: Fallback CLI vendor (gemini, claude, codex, qwen)
+- `agent_cli_mapping`: Per-agent CLI routing overrides
+
+### skills/
+
+Where agent expertise lives. 15 directories total: 14 agent skills + 1 shared resource directory.
+
+**`_shared/`** — Resources used by all agents:
+- `core/` — Routing, context loading, prompt structure, clarification protocol, context budget, difficulty assessment, reasoning templates, quality principles, vendor detection, session metrics, common checklist, lessons learned, API contract templates
+- `runtime/` — Memory protocol for CLI subagents, vendor-specific execution protocols (claude, gemini, codex, qwen)
+- `conditional/` — Quality score measurement, experiment ledger tracking, exploration loop protocol (loaded only when triggered)
+
+**`oma-{agent}/`** — Per-agent skill directories. Each contains:
+- `SKILL.md` (~800 bytes) — Layer 1: always loaded. Identity, routing, core rules.
+- `resources/` — Layer 2: on-demand. Execution protocols, examples, checklists, error playbooks, tech stacks, snippets, templates.
+- Some agents have additional subdirectories: `stack/` (oma-backend, generated by /stack-set), `reference/` (oma-design), `examples/` (oma-design), `scripts/` (oma-orchestrator), `config/` (oma-orchestrator, oma-commit).
+
+### workflows/
+
+14 Markdown files defining slash command behavior. Each file contains:
+- YAML frontmatter with `description`
+- Mandatory rules section (response language, step ordering, MCP tool requirements)
+- Vendor detection instructions
+- Step-by-step execution protocol
+- Gate definitions (for persistent workflows)
+
+Persistent workflows: `orchestrate.md`, `coordinate.md`, `ultrawork.md`.
+Non-persistent: `plan.md`, `exec-plan.md`, `brainstorm.md`, `deepinit.md`, `review.md`, `debug.md`, `design.md`, `commit.md`, `setup.md`, `tools.md`, `stack-set.md`.
+
+### agents/
+
+7 subagent definition files used when spawning agents via the Task tool (Claude Code) or CLI. Each file defines:
+- Frontmatter: `name`, `description`, `skills` (which skill to load)
+- Execution protocol reference
+- Charter preflight (CHARTER_CHECK) template
+- Architecture summary
+- Domain-specific rules (10 rules)
+- Statement: "Never modify `.agents/` files"
+
+### plan.json
+
+Generated by the `/plan` workflow. Contains the structured task breakdown with agent assignments, priorities, dependencies, and acceptance criteria. Consumed by `/orchestrate`, `/coordinate`, and `/exec-plan`.
+
+### state/
+
+Active workflow state files for persistent workflows. These JSON files exist only while a persistent workflow is running. Deleting them (or saying "workflow done") deactivates the workflow.
+
+### results/
+
+Agent result files. Created by completed agents with status (completed/failed), summary, files changed, and acceptance criteria checklist. Read by the orchestrator during collection and by dashboards for monitoring.
+
+### mcp.json
+
+MCP server configuration including:
+- Server definitions (Serena, etc.)
+- Memory configuration: `memoryConfig.provider`, `memoryConfig.basePath`, `memoryConfig.tools` (read/write/edit tool names)
+- Tool group definitions for `/tools` management
+
+---
+
+## .claude/ — IDE Integration
+
+This directory connects oh-my-agent to Claude Code and other IDEs.
+
+### settings.json
+
+Registers hooks and permissions for Claude Code. Contains references to the hook scripts and their trigger conditions (e.g., `UserPromptSubmit`).
+
+### hooks/
+
+**`triggers.json`** — The keyword-to-workflow mapping. Defines:
+- `workflows`: Map of workflow name to `{ persistent: boolean, keywords: { language: [...] } }`
+- `informationalPatterns`: Phrases that indicate questions (filtered out from auto-detection)
+- `excludedWorkflows`: Workflows that require explicit `/command` invocation
+- `cjkScripts`: Language codes using CJK scripts (ko, ja, zh)
+
+**`keyword-detector.ts`** — TypeScript hook that:
+1. Scans user input against trigger keywords
+2. Checks for informational patterns
+3. Injects `[OMA WORKFLOW: ...]` or `[OMA PERSISTENT MODE: ...]` into context
+
+**`persistent-mode.ts`** — Checks for active state files in `.agents/state/` and reinforces persistent workflow execution.
+
+**`hud.ts`** — Renders the `[OMA]` indicator in the status bar showing: model name, context usage (color-coded: green/yellow/red), and active workflow state.
+
+### skills/
+
+Symlinks pointing to `.agents/skills/`. This makes skills visible to IDEs that read from `.claude/skills/` while keeping `.agents/` as the single source of truth.
+
+### agents/
+
+Subagent definitions formatted for Claude Code's Agent tool. These reference the skill files and include the CHARTER_CHECK template.
+
+---
+
+## .serena/memories/ — Runtime State
+
+Where agents write their progress during orchestration sessions. This directory is watched by dashboards for real-time updates.
+
+| File | Owner | Purpose |
+|------|-------|---------|
+| `orchestrator-session.md` | Orchestrator | Session metadata: ID, status, start time, current phase |
+| `task-board.md` | Orchestrator | Task assignments: agent, task, priority, status, dependencies |
+| `progress-{agent}.md` | That agent | Turn-by-turn updates: actions taken, files read/modified, current status |
+| `result-{agent}.md` | That agent | Final output: completion status, summary, files changed, acceptance criteria |
+| `session-metrics.md` | Orchestrator | Clarification Debt events, Quality Score progression |
+| `experiment-ledger.md` | Orchestrator/QA | Experiment rows when Quality Score is active |
+| `session-coordinate.md` | Coordinate workflow | Coordinate-specific session state |
+| `session-ultrawork.md` | Ultrawork workflow | Ultrawork-specific phase tracking |
+| `tool-overrides.md` | /tools workflow | Temporary tool restrictions (session-scoped) |
+| `archive/metrics-{date}.md` | System | Archived session metrics (30-day retention) |
+
+Memory file paths and tool names are configurable in `.agents/mcp.json` via `memoryConfig`.
+
+---
+
+## oh-my-agent Source Repository Structure
+
+If you are working on oh-my-agent itself (not just using it), the repository is a monorepo:
+
+```
+oh-my-agent/
+├── cli/                  ← CLI tool source (TypeScript, built with bun)
+│   ├── src/              ← Source code
+│   ├── package.json
+│   └── install.sh        ← Bootstrap installer
+├── web/                  ← Documentation site (Next.js)
+│   └── content/
+│       └── en/           ← English documentation pages
+├── action/               ← GitHub Action for automated skill updates
+├── docs/                 ← Translated READMEs and specifications
+├── .agents/              ← EDITABLE in source repo (this IS the source)
+├── .claude/              ← IDE integration
+├── .serena/              ← Development runtime state
+├── CLAUDE.md             ← Project instructions for Claude Code
+└── package.json          ← Root workspace config
+```
+
+In the source repo, `.agents/` modifications are allowed (this is the SSOT exception for the source repo itself). The `.agents/` rules about not modifying this directory apply to consumer projects, not the oh-my-agent repository.
+
+Development commands:
+- `bun run test` — CLI tests (vitest)
+- `bun run lint` — Lint
+- `bun run build` — CLI build
+- Commits must follow conventional commit format (commitlint enforced)

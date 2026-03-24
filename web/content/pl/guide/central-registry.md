@@ -1,79 +1,87 @@
 ---
-title: Centralny rejestr dla konfiguracji wielorepozytoryjnej
-description: Wykorzystanie tego repozytorium jako wersjonowanego centralnego rejestru i bezpieczna synchronizacja projektów konsumenckich za pomocą aktualizacji opartych na PR.
+title: Centralny rejestr
+description: Szczegółowa dokumentacja centralnego rejestru — workflow release-please, konwencjonalne commity, szablony konsumentów, format .agent-registry.yml i porównanie z podejściem GitHub Action.
 ---
 
-# Centralny rejestr dla konfiguracji wielorepozytoryjnej
+# Centralny rejestr
 
-To repozytorium może służyć jako **centralny rejestr** umiejętności agentów, dzięki czemu wiele repozytoriów konsumenckich pozostaje zsynchronizowanych z wersjonowanymi aktualizacjami.
+## Przegląd
+
+Model centralnego rejestru traktuje repozytorium GitHub oh-my-agent (`first-fluke/oh-my-agent`) jako wersjonowane źródło artefaktów. Projekty konsumenckie pobierają konkretne wersje umiejętności i workflow z tego rejestru, zapewniając spójność między zespołami i projektami.
+
+To podejście klasy enterprise dla organizacji potrzebujących: przypinania wersji, audytowalnych śladów aktualizacji, weryfikacji sum kontrolnych, automatycznych cotygodniowych sprawdzeń i ręcznego przeglądu przed każdą aktualizacją.
+
+---
 
 ## Architektura
 
-```text
-┌─────────────────────────────────────────────────────────┐
-│  Centralny rejestr (to repozytorium)                     │
-│  • release-please do automatycznego wersjonowania        │
-│  • Automatyczne generowanie CHANGELOG.md                 │
-│  • prompt-manifest.json (wersja/pliki/sumy kontrolne)    │
-│  • agent-skills.tar.gz artefakt wydania                  │
-└─────────────────────────────────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────┐
-│  Repozytorium konsumenckie                               │
-│  • .agent-registry.yml do przypinania wersji            │
-│  • Wykrywanie nowej wersji → PR (bez auto-merge)         │
-│  • Akcja wielokrotnego użytku do synchronizacji plików   │
-└─────────────────────────────────────────────────────────┘
-```
+Centralny rejestr (first-fluke/oh-my-agent) produkuje wydania z tarballem, sumą SHA256 i manifestem. Każdy projekt konsumencki posiada `.agent-registry.yml` z przypiętą wersją, workflow `check-registry-updates.yml` do sprawdzania nowych wersji i `sync-agent-registry.yml` do stosowania aktualizacji.
 
-## Dla opiekunów rejestru
+---
 
-Wydania są automatyzowane za pomocą [release-please](https://github.com/googleapis/release-please):
+## Dla maintainerów: Wydawanie nowych wersji
 
-1. Używaj Conventional Commits (`feat:`, `fix:`, `chore:`, ...).
-2. Wypchnij do `main`, aby utworzyć/zaktualizować PR wydania.
-3. Scal PR wydania, aby opublikować artefakty GitHub Release:
-   - `CHANGELOG.md` (generowany automatycznie)
-   - `prompt-manifest.json` (lista plików + sumy kontrolne SHA256)
-   - `agent-skills.tar.gz` (skompresowany katalog `.agents/`)
+oh-my-agent używa [release-please](https://github.com/googleapis/release-please) do automatyzacji wydań. Konwencjonalne commity na `main` wyzwalają:
 
-## Dla projektów konsumenckich
+| Prefiks | Znaczenie | Podbicie wersji |
+|:-------|:--------|:-------------|
+| `feat:` | Nowa funkcjonalność | Minor (1.x.0) |
+| `fix:` | Naprawa błędu | Patch (1.0.x) |
+| `feat!:` | Zmiana łamiąca | Major (x.0.0) |
+| `chore:`, `docs:`, `refactor:` | Utrzymanie/dokumentacja | Brak podbicia |
 
-Skopiuj szablony z `docs/consumer-templates/` do swojego projektu:
+Artefakty wydania: `agent-skills.tar.gz`, `agent-skills.tar.gz.sha256`, `prompt-manifest.json`.
 
-```bash
-# Configuration file
-cp docs/consumer-templates/.agent-registry.yml /path/to/your-project/
+---
 
-# GitHub workflows
-cp docs/consumer-templates/check-registry-updates.yml /path/to/your-project/.github/workflows/
-cp docs/consumer-templates/sync-agent-registry.yml /path/to/your-project/.github/workflows/
-```
+## Dla konsumentów: Konfiguracja projektu
 
-Następnie przypnij żądaną wersję w `.agent-registry.yml`:
+### Format .agent-registry.yml
 
 ```yaml
 registry:
-  repo: first-fluke/oh-my-agent
-  version: "1.2.0"
+  repo: first-fluke/oh-my-ag
+
+version: "4.7.0"
+
+auto_update:
+  enabled: true
+  schedule: "0 9 * * 1"  # Każdy poniedziałek o 9:00 UTC
+  pr:
+    auto_merge: false     # Z założenia wymagany ręczny przegląd
+    labels: ["dependencies", "agent-registry"]
+
+sync:
+  target_dir: "."
+  backup_existing: true
+  preserve:
+    - ".agent/config/user-preferences.yaml"
+    - ".agent/config/local-*"
 ```
 
-Role przepływów pracy:
+### Role workflow
 
-- `check-registry-updates.yml`: sprawdza dostępność nowych wersji i otwiera PR.
-- `sync-agent-registry.yml`: synchronizuje `.agents/` po zmianie przypiętej wersji.
+**check-registry-updates.yml** — Sprawdza nowe wersje, tworzy PR z aktualizacją jeśli dostępna.
 
-**Ważne**: Auto-merge jest celowo wyłączony. Wszystkie aktualizacje powinny być ręcznie przeglądane.
+**sync-agent-registry.yml** — Pobiera i stosuje pliki rejestru po zmianie wersji. Weryfikuje sumę SHA256, tworzy backup, wyodrębnia, przywraca zachowane pliki.
 
-## Użycie akcji wielokrotnego użytku
+---
 
-Repozytoria konsumenckie mogą wywoływać akcję synchronizacji bezpośrednio:
+## Porównanie: Centralny rejestr vs GitHub Action
 
-```yaml
-- uses: first-fluke/oh-my-agent/.github/actions/sync-agent-registry@main
-  with:
-    registry-repo: first-fluke/oh-my-agent
-    version: "1.2.0" # or "latest"
-    github-token: ${{ secrets.GITHUB_TOKEN }}
-```
+| Aspekt | Centralny rejestr | GitHub Action |
+|:-------|:----------------|:-------------|
+| **Złożoność konfiguracji** | Wyższa — 3 pliki | Niższa — 1 plik workflow |
+| **Kontrola wersji** | Jawne przypinanie | Zawsze najnowsza |
+| **Weryfikacja sum kontrolnych** | Tak — SHA256 | Nie |
+| **Wycofanie** | Zmiana wersji w pliku | Revert commita |
+| **Zatwierdzanie** | Wymagany przegląd PR | Konfigurowalne |
+| **Najlepsze dla** | Wiele projektów, zgodność | Proste projekty |
+
+---
+
+## Kiedy którego używać
+
+**Centralny rejestr** — wiele projektów na tej samej wersji, audytowalne PR z sumami kontrolnymi, polityka bezpieczeństwa wymagająca jawnego zatwierdzenia, środowiska air-gapped.
+
+**GitHub Action** — pojedynczy projekt, najprostsza konfiguracja, automatyczne aktualizacje, wbudowane zachowanie plików konfiguracyjnych.

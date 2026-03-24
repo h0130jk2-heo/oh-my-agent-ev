@@ -1,333 +1,214 @@
 ---
 title: Przewodnik użytkowania
-description: Kompletny przewodnik użytkowania z przykładami, przepływami pracy, obsługą dashboardu i rozwiązywaniem problemów.
+description: Kompleksowy przewodnik użytkowania oh-my-agent — szybki start, szczegółowe przykłady z życia wzięte obejmujące pojedyncze zadania, projekty wielodomenowe, naprawy błędów, systemy projektowe, równoległe wykonanie CLI i ultrawork. Wszystkie polecenia workflow, przykłady automatycznego wykrywania w wielu językach, wszystkie 14 umiejętności z przypadkami użycia, konfiguracja panelu kontrolnego, kluczowe koncepcje, wskazówki i rozwiązywanie problemów.
 ---
 
-# Jak używać umiejętności Multi-Agent Antigravity
+# Jak używać oh-my-agent
 
 ## Szybki start
 
-1. **Otwórz w Antigravity IDE**
-   ```bash
-   antigravity open /path/to/oh-my-agent
-   ```
+1. Otwórz projekt w IDE zasilanym AI (Claude Code, Gemini CLI, Cursor, Antigravity, itp.)
+2. Umiejętności są automatycznie wykrywane z `.agents/skills/`
+3. Opisz czego potrzebujesz w języku naturalnym — oh-my-agent kieruje do właściwego agenta
+4. Do pracy wieloagentowej użyj `/coordinate` lub `/orchestrate`
 
-2. **Umiejętności są wykrywane automatycznie.** Antigravity skanuje `.agents/skills/` i indeksuje wszystkie dostępne umiejętności.
-
-3. **Rozmawiaj w IDE.** Opisz co chcesz zbudować.
+To cały workflow. Nie potrzeba specjalnej składni do zadań jednodomenowych.
 
 ---
 
-## Przykłady użycia
-
-### Przykład 1: Proste zadanie jednodomeno we
+## Przykład 1: Proste pojedyncze zadanie
 
 **Wpisujesz:**
 ```
-"Utwórz komponent formularza logowania z polami email i hasło używając Tailwind CSS"
-```
-
-**Co się dzieje:**
-- Wywołujesz `oma-frontend` przez /command lub pole skills agenta
-- Umiejętność ładuje się na żądanie (Progresywne ujawnianie)
-- Otrzymujesz komponent React z TypeScript, Tailwind, walidacją formularza
-
-### Przykład 2: Złożony projekt wielodomenowy
-
-**Wpisujesz:**
-```
-"Zbuduj aplikację TODO z uwierzytelnianiem użytkownika"
+Create a login form component with email and password fields, client-side validation, and accessible labels using Tailwind CSS
 ```
 
 **Co się dzieje:**
 
-1. **Workflow Guide aktywuje się** — wykrywa złożoność wielodomenową
-2. **PM Agent planuje** — tworzy podział zadań z priorytetami
-3. **Uruchamiasz agentów przez CLI**:
-   ```bash
-   oma agent:spawn backend "API uwierzytelniania JWT" session-01 &
-   oma agent:spawn frontend "UI logowania i TODO" session-01 &
-   wait
+1. Skill `oma-frontend` aktywuje się automatycznie (słowa kluczowe: "form", "component", "Tailwind CSS")
+2. Warstwa 1 (SKILL.md) jest już załadowana — tożsamość agenta, podstawowe reguły, lista bibliotek
+3. Zasoby Warstwy 2 ładują się na żądanie:
+   - `execution-protocol.md` — 4-krokowy workflow (Analiza, Plan, Implementacja, Weryfikacja)
+   - `snippets.md` — wzorce formularzy + walidacji Zod
+   - `component-template.tsx` — struktura komponentu React
+4. Agent generuje **CHARTER_CHECK**:
    ```
-4. **Agenci pracują równolegle** — zapisują wyniki do bazy wiedzy
-5. **Ty koordynujesz** — przeglądasz `.agents/results/` pod kątem spójności
-6. **QA Agent przegląda** — audyt bezpieczeństwa/wydajności
-7. **Napraw i iteruj** — ponownie uruchom agentów z poprawkami
+   CHARTER_CHECK:
+   - Clarification level: LOW
+   - Task domain: frontend
+   - Must NOT do: backend API, database, mobile screens
+   - Success criteria: email/password validation, accessible labels, keyboard-friendly
+   - Assumptions: React + TypeScript, shadcn/ui, TailwindCSS v4, @tanstack/react-form + Zod
+   ```
+5. Agent implementuje:
+   - Komponent React z TypeScript w `src/features/auth/components/login-form.tsx`
+   - Schemat walidacji Zod w `src/features/auth/utils/login-validation.ts`
+   - Testy Vitest w `src/features/auth/utils/__tests__/login-validation.test.ts`
+   - Loading skeleton w `src/features/auth/components/skeleton/login-form-skeleton.tsx`
+6. Agent uruchamia listę kontrolną: dostępność (etykiety ARIA, semantyczny HTML, nawigacja klawiaturą), widok mobilny, wydajność (brak CLS), error boundaries
 
-### Przykład 3: Naprawianie błędów
+**Wyjście:** Gotowy do produkcji komponent React z TypeScript, walidacją, testami i dostępnością — nie tylko sugestia.
+
+---
+
+## Przykład 2: Projekt wielodomenowy
 
 **Wpisujesz:**
 ```
-"Jest błąd — kliknięcie logowania pokazuje 'Cannot read property map of undefined'"
+Build a TODO app with user authentication, task CRUD, and a mobile companion app
 ```
 
 **Co się dzieje:**
 
-1. **oma-debug aktywuje się** — analizuje błąd
-2. **Znaleziona przyczyna źródłowa** — komponent mapuje `todos` zanim dane się załadują
-3. **Dostarczono poprawkę** — dodane stany ładowania i kontrole null
-4. **Napisany test regresji** — zapewnia że błąd się nie powtórzy
-5. **Znalezione podobne wzorce** — proaktywnie naprawia 3 inne komponenty
+1. Wykrywanie słów kluczowych identyfikuje to jako wielodomenowe (frontend + backend + mobile)
+2. Jeśli nie użyłeś polecenia workflow, oh-my-agent sugeruje `/coordinate` lub `/orchestrate`
 
-### Przykład: Tworzenie systemu projektowego
+**Używając `/coordinate` (krok po kroku z kontrolą użytkownika):**
+
+3. **Krok 1 — Agent PM planuje:** Identyfikuje domeny, definiuje kontrakty API, tworzy priorytetyzowany rozkład zadań, zapisuje do `.agents/plan.json`
+4. **Krok 2 — Przeglądasz i potwierdzasz plan**
+5. **Krok 3 — Agenci uruchamiani wg priorytetu** (P0 równolegle, potem P1...)
+6. **Krok 4 — Agent QA przegląda:** Bezpieczeństwo OWASP Top 10, wydajność, dostępność WCAG 2.1 AA, zgodność kontraktów API
+7. **Krok 5 — Iteracja:** Jeśli QA znajdzie problemy CRITICAL, ponowne uruchomienie odpowiedzialnego agenta z raportem QA.
+
+---
+
+## Przykład 3: Naprawa błędu
 
 **Wpisujesz:**
 ```
-"Zaprojektuj ciemną, premium stronę docelową dla mojego produktu SaaS"
+There's a bug — clicking the save button shows "Cannot read property 'map' of undefined" in the task list
 ```
 
 **Co się dzieje:**
 
-1. **oma-design się aktywuje** — sprawdza `.design-context.md`
-2. **Kontekst zebrany** — pyta o grupę docelową, markę, kierunek estetyczny
-3. **Prompt ulepszony** — niejasne żądanie zamienione w specyfikację sekcja po sekcji
-4. **Zaproponowane 2-3 kierunki** — opcje kolorów, typografii, układu, animacji
-5. **DESIGN.md wygenerowany** — 6-sekcyjny system projektowy + tokeny
-6. **Audyt przeprowadzony** — responsywność, WCAG, heurystyki Nielsena, kontrola AI slop
-7. **Przekazanie** — gotowe do implementacji z oma-frontend
+1. `oma-debug` aktywuje się automatycznie (słowa kluczowe: "bug", "error")
+2. **Krok 2 — Reprodukcja:** MCP `search_for_pattern` znajduje wywołanie `.map()` w `src/features/tasks/components/task-list.tsx`
+3. **Krok 3 — Diagnoza:** Śledzenie przepływu danych — `tasks` jest `undefined` podczas stanu ładowania
+4. **Krok 4 — Propozycja minimalnej poprawki** z potwierdzeniem użytkownika
+5. **Krok 5 — Implementacja:** Loading skeleton + null guard + test regresji
+6. **Krok 6 — Skan podobnych wzorców:** Znajduje 3 podobne wzorce w innych komponentach — proaktywnie naprawia
+7. **Krok 7 — Dokumentacja:** Raport o błędzie zapisany do pamięci
 
-### Przykład 4: Równoległe wykonywanie oparte na CLI
+---
+
+## Przykład 4: System projektowy
+
+**Wpisujesz:**
+```
+Design a dark premium landing page for my B2B SaaS analytics product
+```
+
+Aktywuje się `oma-design`, przechodzi przez 7 faz: SETUP (kontekst), ENHANCE (specyfikacja), PROPOSE (3 kierunki projektowe), GENERATE (DESIGN.md + tokeny), AUDIT (WCAG, responsive, AI slop), HANDOFF.
+
+---
+
+## Przykład 5: Wykonanie równoległe CLI
 
 ```bash
-# Pojedynczy agent (workspace wykrywany automatycznie)
-oma agent:spawn backend "Implementuj API uwierzytelniania JWT" session-01
+# Pojedynczy agent — proste zadanie
+oma agent:spawn frontend "Add dark mode toggle to the header" session-ui-01
 
-# Równoległe agenty
-oma agent:spawn backend "Implementuj API uwierzytelniania" session-01 &
-oma agent:spawn frontend "Utwórz formularz logowania" session-01 &
-oma agent:spawn mobile "Zbuduj ekrany uwierzytelniania" session-01 &
+# Trzech agentów równolegle — funkcjonalność full-stack
+oma agent:spawn backend "Implement notification API with WebSocket support" session-notif-01 -w ./apps/api &
+oma agent:spawn frontend "Build notification center with real-time updates" session-notif-01 -w ./apps/web &
+oma agent:spawn mobile "Add push notification screens and in-app notification list" session-notif-01 -w ./apps/mobile &
 wait
-```
 
-**Monitoruj w czasie rzeczywistym:**
-```bash
-# Terminal (oddzielne okno terminala)
-bunx oh-my-agent dashboard
+# Monitoruj podczas pracy agentów (oddzielny terminal)
+oma dashboard        # TUI z żywą tabelą
+oma dashboard:web    # Web UI pod http://localhost:9847
 
-# Lub przeglądarka
-bunx oh-my-agent dashboard:web
-# → http://localhost:9847
+# Po implementacji, uruchom QA
+oma agent:spawn qa "Review notification feature across all platforms" session-notif-01
 ```
 
 ---
 
-## Dashboardy w czasie rzeczywistym
+## Przykład 6: Ultrawork — maksymalna jakość
 
-### Dashboard terminalowy
-
-```bash
-bunx oh-my-agent dashboard
+```
+/ultrawork Build a payment processing module with Stripe integration
 ```
 
-Obserwuje `.serena/memories/` używając `fswatch` (macOS) lub `inotifywait` (Linux). Wyświetla tabelę na żywo ze statusem sesji, stanami agentów, turami i najnowszą aktywnością. Aktualizuje się automatycznie gdy zmieniają się pliki pamięci.
+5 faz, 17 kroków, 11 kroków przeglądu:
 
-**Wymagania:**
-- macOS: `brew install fswatch`
-- Linux: `apt install inotify-tools`
-
-### Dashboard webowy
-
-```bash
-npm install          # tylko za pierwszym razem
-bunx oh-my-agent dashboard:web
-```
-
-Otwórz `http://localhost:9847` w przeglądarce. Funkcje:
-
-- **Aktualizacje w czasie rzeczywistym** przez WebSocket (sterowane zdarzeniami, nie odpytywanie)
-- **Auto-ponowne łączenie** jeśli połączenie zostanie przerwane
-- **UI w stylu Serena** z fioletowymi kolorami akcentu
-- **Status sesji** — ID i stan uruchomiony/ukończony/nieudany
-- **Tabela agentów** — nazwa, status (z kolorowymi kropkami), liczba tur, opis zadania
-- **Dziennik aktywności** — najnowsze zmiany z plików postępu i wyników
-
-Serwer obserwuje `.serena/memories/` używając chokidar z debounce (100ms). Tylko zmienione pliki wyzwalają odczyty — bez pełnego ponownego skanowania.
+- **PLAN (Kroki 1-4):** Stworzenie planu, przegląd kompletności, meta-przegląd, przegląd nadmiernej inżynierii
+- **IMPL (Krok 5):** Agenci Dev implementują, mierzony bazowy Quality Score
+- **VERIFY (Kroki 6-8):** Przegląd zgodności, bezpieczeństwa/błędów, ulepszenia/regresji
+- **REFINE (Kroki 9-13):** Dzielenie plików, ponowne użycie, efekty uboczne, spójność, martwy kod
+- **SHIP (Kroki 14-17):** Jakość kodu, przepływ UX, powiązane problemy, gotowość do wdrożenia
 
 ---
 
-## Kluczowe koncepcje
+## Wszystkie polecenia workflow
 
-### Progresywne ujawnianie
-Umiejętności są wywoływane jawnie przez /command lub ładowane przez pole skills agenta. Tylko potrzebna umiejętność ładuje się do kontekstu.
-
-### Projekt umiejętności zoptymalizowany tokenowo
-Każda umiejętność wykorzystuje dwuwarstwową architekturę dla maksymalnej efektywności tokenowej:
-- **SKILL.md** (~40 linii): Tożsamość, routing, podstawowe zasady — ładowane natychmiast
-- **resources/**: Protokoły wykonania, przykłady, listy kontrolne, podręczniki błędów — ładowane na żądanie
-
-Współdzielone zasoby znajdują się w `_shared/` (nie jest to umiejętność) i są odwoływane przez wszystkich agentów:
-- Protokoły wykonania chain-of-thought z 4-etapowym przepływem pracy
-- Przykłady few-shot wejście/wyjście dla wskazówek modeli średniego poziomu
-- Podręczniki odzyskiwania po błędach z eskalacją "3 strikes"
-- Szablony rozumowania dla ustrukturyzowanej analizy wieloetapowej
-- Zarządzanie budżetem kontekstu dla poziomów modeli Flash/Pro
-- Automatyczna weryfikacja przez `verify.sh`
-- Akumulacja nauk z wielu sesji
-
-### Uruchamianie agentów przez CLI
-Użyj `oma agent:spawn` aby uruchamiać agentów przez CLI. Respektuje `agent_cli_mapping` w `user-preferences.yaml` aby wybrać odpowiednie CLI (gemini, claude, codex, qwen) dla typu agenta. Workspace jest wykrywany automatycznie z typowych konwencji monorepo lub może być ustawiony jawnie z `-w`.
-
-### Baza wiedzy
-Wyniki agentów przechowywane w `.agents/results/`. Zawiera plany, kod, raporty i notatki koordynacyjne.
-
-### Pamięć Serena
-Ustrukturyzowany stan runtime w `.serena/memories/`. Orchestrator zapisuje informacje o sesji, tablice zadań, postęp dla poszczególnych agentów i wyniki. Dashboardy obserwują te pliki do monitorowania.
-
-### Przestrzenie robocze
-Agenci mogą pracować w oddzielnych katalogach aby uniknąć konfliktów. Workspace jest wykrywany automatycznie z typowych konwencji monorepo:
-```
-./apps/api   or ./backend   → Workspace Backend Agent
-./apps/web   or ./frontend  → Workspace Frontend Agent
-./apps/mobile or ./mobile   → Workspace Mobile Agent
-```
+| Polecenie | Typ | Co robi | Kiedy używać |
+|---------|------|-------------|-------------|
+| `/orchestrate` | Trwały | Automatyczne równoległe wykonanie agentów z monitoringiem i pętlami weryfikacji | Duże projekty wymagające maksymalnej równoległości |
+| `/coordinate` | Trwały | Krokowa koordynacja wielodomenowa z zatwierdzeniem użytkownika | Funkcjonalności obejmujące wielu agentów z kontrolą |
+| `/ultrawork` | Trwały | 5-fazowy, 17-krokowy workflow jakości z 11 punktami kontrolnymi | Maksymalna jakość dostarczenia, kod krytyczny dla produkcji |
+| `/plan` | Nietrwały | Rozkład zadań sterowany przez PM i definicja kontraktów API | Przed złożoną pracą wieloagentową |
+| `/exec-plan` | Nietrwały | Tworzenie i śledzenie planów wykonawczych jako artefaktów repozytorium | Złożone funkcjonalności wymagające śledzonego postępu |
+| `/brainstorm` | Nietrwały | Ideacja z priorytetem projektowania z 2-3 propozycjami podejść | Przed zobowiązaniem się do podejścia implementacyjnego |
+| `/deepinit` | Nietrwały | Pełna inicjalizacja projektu — AGENTS.md, ARCHITECTURE.md, docs/ | Konfiguracja oh-my-agent w istniejącej bazie kodu |
+| `/review` | Nietrwały | Pipeline QA: bezpieczeństwo OWASP, wydajność, dostępność, jakość kodu | Przed mergowaniem kodu, przegląd przedwdrożeniowy |
+| `/debug` | Nietrwały | Ustrukturyzowane debugowanie: reprodukcja, diagnoza, poprawka, test regresji, skan | Śledztwo w sprawie błędów |
+| `/design` | Nietrwały | 7-fazowy workflow projektowy produkujący DESIGN.md z tokenami | Budowa systemów projektowych, stron landing page |
+| `/commit` | Nietrwały | Konwencjonalny commit z automatycznym wykryciem typu/zakresu | Po zakończeniu zmian w kodzie |
+| `/setup` | Nietrwały | Interaktywna konfiguracja projektu (język, CLI, MCP) | Pierwsza konfiguracja lub rekonfiguracja |
+| `/tools` | Nietrwały | Zarządzanie widocznością narzędzi MCP (włączanie/wyłączanie grup) | Kontrola dostępnych narzędzi MCP |
+| `/stack-set` | Nietrwały | Automatyczne wykrywanie stosu technologicznego i generowanie referencji backend | Konfiguracja konwencji kodowania per język |
 
 ---
 
-## Dostępne umiejętności
+## Automatyczne wykrywanie — przykłady
 
-| Umiejętność | Przypadek użycia | Wynik |
-|-------|-------------------|--------|
-| oma-coordination | Złożonych projektów wielodomenowych | Koordynacja agentów krok po kroku |
-| oma-pm | "zaplanuj to", "rozbij" | `.agents/plan.json` |
-| oma-frontend | UI, komponenty, stylizacja | Komponenty React, testy |
-| oma-backend | API, bazy danych, uwierzytelnianie | Endpointy API, modele, testy |
-| oma-mobile | Aplikacje mobilne, iOS/Android | Ekrany Flutter, zarządzanie stanem |
-| oma-brainstorm | Ideacja, eksploracja koncepcji | Dokument projektowy |
-| oma-db | Baza danych, schemat, ERD, migracja | Projektowanie schematów, optymalizacja zapytań |
-| oma-dev-workflow | CI/CD, git hooks, konfiguracja monorepo | Konfiguracje przepływu, automatyzacja |
-| oma-tf-infra | Terraform, infrastruktura chmurowa | Moduły IaC, zarządzanie stanem |
-| oma-translator | Tłumaczenie, treści wielojęzyczne | Przetłumaczony tekst z zachowaniem tonu |
-| oma-qa | "sprawdź bezpieczeństwo", "audyt" | Raport QA z priorytetowymi poprawkami |
-| oma-debug | Raporty błędów, komunikaty o błędach | Naprawiony kod, testy regresji |
-| oma-orchestrator | Wykonywanie pod-agentów przez CLI | Wyniki w `.agents/results/` |
-| oma-commit | "commit", "zapisz zmiany" | Commity Git (auto-podział według funkcji) |
+oh-my-agent wykrywa słowa kluczowe workflow w 11 językach:
 
----
+| Wpisujesz | Wykryty workflow | Język |
+|----------|------------------|----------|
+| "plan the authentication feature" | `/plan` | Angielski |
+| "do everything in parallel" | `/orchestrate` | Angielski |
+| "review the code for security" | `/review` | Angielski |
+| "계획 세워줘" | `/plan` | Koreański |
+| "버그 수정해줘" | `/debug` | Koreański |
+| "コードレビューして" | `/review` | Japoński |
+| "修复这个 bug" | `/debug` | Chiński |
+| "coordonner étape par étape" | `/coordinate` | Francuski |
 
-## Polecenia przepływów pracy
-
-Wpisz te w czacie Antigravity IDE aby wyzwolić przepływy pracy krok po kroku:
-
-| Polecenie | Opis |
-|---------|-------------|
-| `/brainstorm` | Ideacja i eksploracja koncepcji z priorytetem projektowania |
-| `/coordinate` | Orkiestracja multi-agentowa przez CLI z wskazówkami krok po kroku |
-| `/deepinit` | Głęboka inicjalizacja projektu z hierarchiczną strukturą AGENTS.md |
-| `/exec-plan` | Zarządzanie i wykonywanie istniejącego planu zadań |
-| `/orchestrate` | Automatyczne równoległe wykonywanie agentów przez CLI |
-| `/plan` | Dekompozycja zadań PM z kontraktami API |
-| `/review` | Pełny pipeline QA (bezpieczeństwo, wydajność, dostępność, jakość kodu) |
-| `/debug` | Strukturalne naprawianie błędów (odtwórz → zdiagnozuj → napraw → test regresji) |
-| `/setup` | Konfiguracja CLI i MCP dla środowiska deweloperskiego |
-| `/tools` | Zarządzanie narzędziami MCP i ich konfiguracją |
-| `/ultrawork` | Maksymalna równoległość z bramkami fazowymi dla złożonych zadań |
-| `/stack-set` | Ustawienie stosu językowego backendu oma-backend (Python, Node.js, Rust) |
-
-Są to oddzielne od **umiejętności** (wywoływanych przez /command lub pole skills agenta). Przepływy pracy dają Ci jawną kontrolę nad procesami wieloetapowymi.
-
----
-
-## Typowe przepływy pracy
-
-### Przepływ pracy A: Pojedyncza umiejętność
-
-```
-Ty: "Utwórz komponent przycisku"
-  → Antigravity ładuje oma-frontend
-  → Otrzymujesz komponent natychmiast
-```
-
-### Przepływ pracy B: Projekt multi-agentowy (Auto)
-
-```
-Ty: "Zbuduj aplikację TODO z uwierzytelnianiem"
-  → użyj /coordinate aby uruchomić oma-coordination
-  → PM Agent tworzy plan
-  → Uruchamiasz agentów przez CLI (oma agent:spawn)
-  → Agenci pracują równolegle
-  → QA Agent przegląda
-  → Naprawiaj problemy, iteruj
-```
-
-### Przepływ pracy B-2: Projekt multi-agentowy (Jawny)
-
-```
-Ty: /coordinate
-  → Przepływ pracy krok po kroku z przewodnikiem
-  → Planowanie PM → przegląd planu → uruchamianie agentów → monitorowanie → przegląd QA
-```
-
-### Przepływ pracy C: Naprawianie błędów
-
-```
-Ty: "Przycisk logowania rzuca TypeError"
-  → oma-debug aktywuje się
-  → Analiza przyczyny źródłowej
-  → Poprawka + test regresji
-  → Sprawdzone podobne wzorce
-```
-
-### Przepływ pracy D: Orkiestracja CLI z dashboardem
-
-```
-Terminal 1: bunx oh-my-agent dashboard:web
-Terminal 2: oma agent:spawn backend "zadanie" session-01 &
-            oma agent:spawn frontend "zadanie" session-01 &
-Przeglądarka: http://localhost:9847 → status w czasie rzeczywistym
-```
+**Zapytania informacyjne są odfiltrowywane:** "what is orchestrate?" nie wyzwala żadnego workflow.
 
 ---
 
 ## Wskazówki
 
-1. **Bądź konkretny** — "Zbuduj aplikację TODO z uwierzytelnianiem JWT, frontendem React, backendem Express" jest lepsze niż "zrób aplikację"
-2. **Użyj uruchamiania przez CLI** dla projektów wielodomenowych — nie próbuj robić wszystkiego w jednym czacie
-3. **Przeglądaj bazę wiedzy** — sprawdź `.agents/results/` pod kątem spójności API
-4. **Iteruj z ponownymi uruchomieniami** — udoskonalaj instrukcje, nie zaczynaj od nowa
-5. **Używaj dashboardów** — `bunx oh-my-agent dashboard` lub `bunx oh-my-agent dashboard:web` do monitorowania sesji orchestratora
-6. **Oddzielne przestrzenie robocze** — przypisz każdemu agentowi własny katalog
+1. **Bądź konkretny w promptach.** "Build a TODO app with JWT auth, React frontend, Express backend, PostgreSQL" daje lepsze wyniki niż "make an app."
+2. **Używaj przestrzeni roboczych dla równoległych agentów.** Zawsze przekazuj `-w ./ścieżka` aby zapobiec konfliktom plików.
+3. **Zablokuj kontrakty API przed uruchomieniem agentów implementacyjnych.** Uruchom `/plan` najpierw.
+4. **Aktywnie monitoruj.** Otwórz terminal z panelem aby wcześnie wychwycić nieudanych agentów.
+5. **Iteruj przez ponowne uruchomienia.** Nie zaczynaj od nowa — uruchom ponownie z kontekstem korekty.
+6. **Zacznij od `/coordinate` gdy nie masz pewności.** Prowadzi krok po kroku.
+7. **Używaj `/brainstorm` przed `/plan` dla niejasnych pomysłów.**
+8. **Uruchom `/deepinit` na nowych bazach kodu.** Tworzy AGENTS.md i ARCHITECTURE.md.
+9. **Skonfiguruj mapowanie agent-CLI.** Kieruj złożone rozumowanie do Claude, szybkie generowanie do Gemini.
+10. **Używaj `/ultrawork` dla kodu krytycznego dla produkcji.**
 
 ---
 
 ## Rozwiązywanie problemów
 
-| Problem | Rozwiązanie |
-|---------|----------|
-| Umiejętności nie ładują się | `antigravity open .`, sprawdź `.agents/skills/`, zrestartuj IDE |
-| CLI nie znalezione | Sprawdź `which gemini` / `which claude`, zainstaluj brakujące CLI |
-| Niekompatybilne wyniki agentów | Przejrzyj oba w bazie wiedzy, uruchom ponownie z poprawkami |
-| Dashboard: "No agents" | Pliki pamięci nie utworzone jeszcze, najpierw uruchom orchestrator |
-| Dashboard webowy nie uruchamia się | Uruchom `npm install` aby zainstalować chokidar i ws |
-| fswatch nie znaleziony | macOS: `brew install fswatch`, Linux: `apt install inotify-tools` |
-| Raport QA ma 50+ problemów | Skup się najpierw na CRITICAL/HIGH, udokumentuj resztę na później |
+| Problem | Przyczyna | Rozwiązanie |
+|---------|-------|-----|
+| Umiejętności nie wykryte w IDE | Brak `.agents/skills/` lub plików `SKILL.md` | Uruchom instalator (`bunx oh-my-agent`), zweryfikuj symlinki, uruchom ponownie IDE |
+| CLI nie znalezione przy uruchamianiu | AI CLI nie zainstalowane globalnie | `which gemini` / `which claude` — zainstaluj brakujące CLI |
+| Agenci produkują konfliktujący kod | Brak izolacji przestrzeni roboczej | Użyj oddzielnych przestrzeni roboczych: `-w ./apps/api`, `-w ./apps/web` |
+| Panel pokazuje "No agents detected" | Agenci jeszcze nie zapisali do pamięci | Poczekaj na start agentów lub zweryfikuj ID sesji |
+| Automatyczne wykrywanie wyzwala błędny workflow | Niejednoznaczność słów kluczowych | Użyj jawnej `/komendy` zamiast języka naturalnego |
+| Trwały workflow nie zatrzymuje się | Plik stanu nadal istnieje | Powiedz "workflow done" lub ręcznie usuń plik stanu z `.agents/state/` |
+| Agent zablokowany na HIGH clarification | Wymagania zbyt niejednoznaczne | Podaj konkretne odpowiedzi lub uruchom `/brainstorm` |
 
 ---
 
-## Polecenia CLI
-
-```bash
-bunx oh-my-agent                # Interaktywny instalator umiejętności
-bunx oh-my-agent doctor         # Sprawdź konfigurację i napraw brakujące umiejętności
-bunx oh-my-agent doctor --json  # Wyjście JSON dla CI/CD
-bunx oh-my-agent update         # Zaktualizuj umiejętności do najnowszej wersji
-bunx oh-my-agent stats          # Wyświetl metryki produktywności
-bunx oh-my-agent stats --reset  # Resetuj metryki
-bunx oh-my-agent retro          # Retrospektywa sesji (nauki i kolejne kroki)
-bunx oh-my-agent dashboard      # Dashboard terminalowy w czasie rzeczywistym
-bunx oh-my-agent dashboard:web  # Dashboard webowy (http://localhost:9847)
-bunx oh-my-agent help           # Pokaż pomoc
-```
-
----
-
-## Dla deweloperów (Przewodnik integracji)
-
-Jeśli chcesz zintegrować te umiejętności z istniejącym projektem Antigravity, zobacz [AGENT_GUIDE.md](../AGENT_GUIDE.md) dla:
-- Szybka 3-etapowa integracja
-- Pełna integracja dashboardu
-- Dostosowywanie umiejętności do Twojego stosu technologicznego
-- Rozwiązywanie problemów i najlepsze praktyki
-
----
-
-**Po prostu rozmawiaj w Antigravity IDE.** Do monitorowania użyj dashboardów. Do wykonywania przez CLI użyj skryptów orchestratora. Aby zintegrować z istniejącym projektem, zobacz [AGENT_GUIDE.md](../AGENT_GUIDE.md).
+Więcej wzorców zadań jednodomenowych w [Przewodniku pojedynczej umiejętności](./single-skill).
+Szczegóły integracji z projektem w [Przewodniku integracji](./integration).

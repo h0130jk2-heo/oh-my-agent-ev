@@ -1,129 +1,134 @@
 ---
 title: Integracja z istniejącym projektem
-description: Bezpieczny i niedestrukcyjny przepływ integracji dodający umiejętności oh-my-agent do istniejącego projektu Antigravity.
+description: Kompletny przewodnik dodawania oh-my-agent do istniejącego projektu — ścieżka CLI, ścieżka ręczna, weryfikacja, struktura dowiązań symbolicznych SSOT i co instalator robi pod spodem.
 ---
 
 # Integracja z istniejącym projektem
 
-Ten przewodnik zastępuje przestarzały przepływ pracy oparty na `AGENT_GUIDE.md` w katalogu głównym i odzwierciedla aktualną strukturę workspace (`cli` + `web`) oraz zachowanie CLI.
+## Dwie ścieżki integracji
 
-## Cel
+1. **Ścieżka CLI** — Uruchom `oma` (lub `npx oh-my-agent`) i podążaj za interaktywnymi podpowiedziami. Zalecana dla większości użytkowników.
+2. **Ścieżka ręczna** — Skopiuj pliki i skonfiguruj dowiązania symboliczne samodzielnie. Przydatna dla ograniczonych środowisk.
 
-Dodanie umiejętności `oh-my-agent` do istniejącego projektu bez nadpisywania bieżących zasobów.
+Obie ścieżki produkują ten sam wynik: katalog `.agents/` (SSOT) z dowiązaniami symbolicznymi wskazującymi katalogi specyficzne dla IDE na niego.
 
-## Zalecana ścieżka (CLI)
+---
 
-Uruchom to w katalogu głównym docelowego projektu:
+## Ścieżka CLI: krok po kroku
 
+### 1. Zainstaluj CLI
 ```bash
-bunx oh-my-agent
+bun install --global oh-my-agent
 ```
 
-Co robi:
+### 2. Przejdź do głównego katalogu projektu
+```bash
+cd /path/to/your/project
+```
 
-- Instaluje lub aktualizuje `.agents/skills/*`
-- Instaluje współdzielone zasoby w `.agents/skills/_shared`
-- Instaluje `.agents/workflows/*`
-- Instaluje `.agents/config/user-preferences.yaml`
-- Opcjonalnie instaluje globalne przepływy pracy w `~/.gemini/antigravity/global_workflows`
+### 3. Uruchom instalator
+```bash
+oma
+```
 
-## Bezpieczna ścieżka ręczna
+### 4. Wybierz typ projektu
+Presety: All, Fullstack, Frontend, Backend, Mobile, DevOps, Custom.
 
-Użyj tego, gdy potrzebujesz pełnej kontroli nad każdym kopiowanym katalogiem.
+### 5. Wybierz język backend (jeśli dotyczy)
+Python, Node.js, Rust lub Auto-detect.
+
+### 6. Skonfiguruj dowiązania symboliczne IDE
+Instalator zawsze tworzy dowiązania Claude Code (`.claude/skills/`). Opcjonalnie GitHub Copilot.
+
+### 7. Git rerere
+Zalecane dla wieloagentowych workflow z potencjalnymi konfliktami merge.
+
+### 8. Konfiguracja MCP
+Opcjonalna konfiguracja Serena MCP bridge dla Antigravity IDE i Gemini CLI.
+
+---
+
+## Ścieżka ręczna
+
+Dla środowisk bez interaktywnego CLI:
 
 ```bash
-cd /path/to/your-project
+# Pobierz i wyodrębnij
+VERSION=$(curl -s https://raw.githubusercontent.com/first-fluke/oh-my-agent/main/prompt-manifest.json | jq -r '.version')
+curl -L "https://github.com/first-fluke/oh-my-agent/releases/download/cli-v${VERSION}/agent-skills.tar.gz" -o agent-skills.tar.gz
+sha256sum -c agent-skills.tar.gz.sha256
+tar -xzf agent-skills.tar.gz
 
-mkdir -p .agents/skills .agents/workflows .agents/config
+# Skopiuj do projektu
+cp -r .agents/ /path/to/your/project/.agents/
 
-# Copy only missing skill directories (example)
-for skill in oma-coordination oma-pm oma-frontend oma-backend oma-mobile oma-qa oma-debug oma-orchestrator oma-commit; do
-  if [ ! -d ".agents/skills/$skill" ]; then
-    cp -r /path/to/oh-my-agent/.agents/skills/$skill .agents/skills/$skill
-  fi
-done
-
-# Copy shared resources if missing
-[ -d .agents/skills/_shared ] || cp -r /path/to/oh-my-agent/.agents/skills/_shared .agents/skills/_shared
-
-# Copy workflows if missing
-for wf in coordinate.md orchestrate.md plan.md review.md debug.md setup.md tools.md; do
-  [ -f ".agents/workflows/$wf" ] || cp /path/to/oh-my-agent/.agents/workflows/$wf .agents/workflows/$wf
-done
-
-# Copy default user preferences only if missing
-[ -f .agents/config/user-preferences.yaml ] || cp /path/to/oh-my-agent/.agents/config/user-preferences.yaml .agents/config/user-preferences.yaml
+# Utwórz dowiązania symboliczne
+mkdir -p /path/to/your/project/.claude/skills
+ln -sf ../../.agents/skills/oma-frontend /path/to/your/project/.claude/skills/oma-frontend
+# ... (powtórz dla każdego skill)
 ```
+
+---
 
 ## Lista kontrolna weryfikacji
 
 ```bash
-# 9 installable skills (excluding _shared)
-find .agents/skills -mindepth 1 -maxdepth 1 -type d ! -name '_shared' | wc -l
-
-# Shared resources
-[ -d .agents/skills/_shared ] && echo ok
-
-# 7 workflows
-find .agents/workflows -maxdepth 1 -name '*.md' | wc -l
-
-# Basic command health
-bunx oh-my-agent doctor
+oma doctor
+oma doctor --json  # Format wyjściowy dla CI
 ```
 
-## Opcjonalne panele
+Sprawdza: instalacje CLI, uwierzytelnianie, konfigurację MCP, stan umiejętności.
 
-Panele są opcjonalne i korzystają z zainstalowanego CLI:
+---
 
+## Struktura dowiązań symbolicznych wielu IDE (koncepcja SSOT)
+
+```
+your-project/
+  .agents/                    # SSOT — prawdziwe pliki są tutaj
+  .claude/                    # Claude Code — tylko dowiązania symboliczne
+    skills/                   # -> .agents/skills/* i .agents/workflows/*
+    agents/                   # -> .agents/agents/*
+  .github/                    # GitHub Copilot — tylko dowiązania symboliczne (opcjonalne)
+  .serena/                    # Przechowywanie pamięci MCP
+```
+
+### Dlaczego dowiązania symboliczne?
+- **Jedna aktualizacja, wszystkie IDE korzystają.** Odświeżenie `.agents/` automatycznie dociera do każdego IDE.
+- **Brak duplikacji.** Umiejętności przechowywane raz.
+- **Bezpieczne usuwanie.** Usunięcie `.claude/` nie niszczy umiejętności.
+- **Przyjazne dla git.** Dowiązania symboliczne są małe i czytelne w diffach.
+
+---
+
+## Wskazówki bezpieczeństwa i strategia wycofania
+
+### Przed instalacją
+1. **Commitnij bieżącą pracę.** Czysty stan git pozwala na `git checkout .` do cofnięcia.
+2. **Sprawdź istniejący `.agents/`.** Zrób backup jeśli istnieje.
+
+### Po instalacji
+Dodaj do `.gitignore`:
+```gitignore
+.serena/
+.agents/results/
+.agents/state/
+```
+
+### Wycofanie
 ```bash
-bunx oh-my-agent dashboard
-bunx oh-my-agent dashboard:web
+rm -rf .agents/ .claude/skills/ .claude/agents/ .serena/
 ```
 
-Domyślny URL panelu webowego: `http://localhost:9847`
+---
 
-## Strategia wycofywania
+## Co instalator robi pod spodem
 
-Przed integracją utwórz commit z punktem kontrolnym w swoim projekcie:
-
-```bash
-git add -A
-git commit -m "chore: checkpoint before oh-my-agent integration"
-```
-
-Jeśli musisz cofnąć zmiany, wycofaj ten commit zgodnie z normalnym procesem zespołu.
-
-## Obsługa dowiązań symbolicznych dla wielu CLI
-
-Po uruchomieniu `bunx oh-my-agent` zobaczysz ten komunikat po wybraniu umiejętności:
-
-```text
-Also develop with other CLI tools?
-  ○ Claude Code (.claude/skills/)
-  ○ OpenCode, Amp, Codex (.agents/skills/)
-  ○ GitHub Copilot (.github/skills/)
-```
-
-Wybierz dodatkowe narzędzia CLI, których używasz obok Antigravity. Instalator:
-
-1. Zainstaluje umiejętności do `.agents/skills/` (natywna lokalizacja Antigravity)
-2. Utworzy dowiązania symboliczne z katalogu umiejętności każdego wybranego CLI do `.agents/skills/`
-
-Zapewnia to jedno źródło prawdy, jednocześnie umożliwiając działanie umiejętności w wielu narzędziach CLI.
-
-### Struktura dowiązań symbolicznych
-
-```
-.agents/skills/oma-frontend/      ← Źródło (SSOT)
-.claude/skills/oma-frontend/     → ../../.agents/skills/oma-frontend/
-.agents/skills/oma-frontend/     → ../../.agents/skills/oma-frontend/ (OpenCode, Amp, Codex)
-.github/skills/oma-frontend/     → ../../.agents/skills/oma-frontend/ (GitHub Copilot)
-```
-
-Instalator pomija istniejące dowiązania symboliczne i ostrzega, jeśli w docelowej lokalizacji istnieje prawdziwy katalog.
-
-## Uwagi
-
-- Nie nadpisuj istniejących katalogów `.agents/skills/*`, chyba że zamierzasz zastąpić dostosowane umiejętności.
-- Zachowaj pliki polityk specyficzne dla projektu (`.agents/config/*`) pod własnością swojego repozytorium.
-- Aby poznać wzorce orkiestracji wieloagentowej, przejdź do [`Przewodnika użycia`](./usage.md).
+1. Migracja z legacy `.agent/` do `.agents/`
+2. Wykrywanie konkurencyjnych narzędzi
+3. Pobieranie tarballa z wydań GitHub
+4. Instalacja zasobów współdzielonych, workflow, konfiguracji
+5. Instalacja wybranych umiejętności
+6. Adaptacje dostawców (Claude, Codex, Gemini, Qwen)
+7. Tworzenie dowiązań symbolicznych CLI
+8. Konfiguracja git rerere + MCP

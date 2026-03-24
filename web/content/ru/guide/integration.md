@@ -1,129 +1,192 @@
 ---
-title: Интеграция в существующий проект
-description: Безопасный и неразрушающий процесс интеграции навыков oh-my-agent в существующий проект Antigravity.
+title: "Руководство: Интеграция в существующий проект"
+description: Полное руководство по добавлению oh-my-agent в существующий проект — CLI-путь, ручной путь, верификация, структура символических ссылок SSOT и что делает установщик.
 ---
 
-# Интеграция в существующий проект
+# Руководство: Интеграция в существующий проект
 
-Это руководство заменяет устаревший рабочий процесс с корневым `AGENT_GUIDE.md` и отражает текущую структуру проекта (`cli` + `web`) и поведение CLI.
+## Два пути интеграции
 
-## Цель
+1. **CLI-путь** — Запустите `oma` (или `npx oh-my-agent`) и следуйте интерактивным подсказкам. Рекомендуется для большинства.
+2. **Ручной путь** — Скопируйте файлы и настройте символические ссылки самостоятельно. Для ограниченных окружений.
 
-Добавить навыки `oh-my-agent` в существующий проект без перезаписи текущих ресурсов.
+Оба пути дают одинаковый результат: директория `.agents/` (SSOT) с символическими ссылками от IDE-специфичных директорий.
 
-## Рекомендуемый путь (CLI)
+---
 
-Выполните в корне целевого проекта:
+## CLI-путь
 
-```bash
-bunx oh-my-agent
-```
-
-Что происходит:
-
-- Устанавливает или обновляет `.agents/skills/*`
-- Устанавливает общие ресурсы в `.agents/skills/_shared`
-- Устанавливает `.agents/workflows/*`
-- Устанавливает `.agents/config/user-preferences.yaml`
-- Опционально устанавливает глобальные рабочие процессы в `~/.gemini/antigravity/global_workflows`
-
-## Безопасный ручной путь
-
-Используйте, когда нужен полный контроль над каждой копируемой директорией.
+### 1. Установка CLI
 
 ```bash
-cd /path/to/your-project
-
-mkdir -p .agents/skills .agents/workflows .agents/config
-
-# Копировать только отсутствующие директории навыков (пример)
-for skill in oma-coordination oma-pm oma-frontend oma-backend oma-mobile oma-qa oma-debug oma-orchestrator oma-commit; do
-  if [ ! -d ".agents/skills/$skill" ]; then
-    cp -r /path/to/oh-my-agent/.agents/skills/$skill .agents/skills/$skill
-  fi
-done
-
-# Копировать общие ресурсы, если отсутствуют
-[ -d .agents/skills/_shared ] || cp -r /path/to/oh-my-agent/.agents/skills/_shared .agents/skills/_shared
-
-# Копировать рабочие процессы, если отсутствуют
-for wf in coordinate.md orchestrate.md plan.md review.md debug.md setup.md tools.md; do
-  [ -f ".agents/workflows/$wf" ] || cp /path/to/oh-my-agent/.agents/workflows/$wf .agents/workflows/$wf
-done
-
-# Копировать пользовательские настройки по умолчанию, только если отсутствуют
-[ -f .agents/config/user-preferences.yaml ] || cp /path/to/oh-my-agent/.agents/config/user-preferences.yaml .agents/config/user-preferences.yaml
+bun install --global oh-my-agent
+# Или одноразовый запуск
+npx oh-my-agent
 ```
+
+После глобальной установки доступны алиасы: `oma` и `oh-my-ag`.
+
+### 2. Перейдите в корень проекта
+
+```bash
+cd /path/to/your/project
+```
+
+Установщик ожидает запуск из корня проекта (где находится `.git/`).
+
+### 3. Запуск установщика
+
+```bash
+oma
+```
+
+### 4. Выбор типа проекта
+
+| Пресет | Включённые навыки |
+|--------|-------------------|
+| **All** | Все доступные навыки |
+| **Fullstack** | Frontend + Backend + PM + QA |
+| **Frontend** | React/Next.js навыки |
+| **Backend** | Python/Node.js/Rust бэкенд навыки |
+| **Mobile** | Flutter/Dart мобильные навыки |
+| **DevOps** | Terraform + CI/CD + Workflow навыки |
+| **Custom** | Индивидуальный выбор навыков |
+
+### 5. Выбор языка бэкенда (если применимо)
+
+Python (FastAPI/SQLAlchemy), Node.js (NestJS/Hono + Prisma/Drizzle), Rust (Axum/Actix-web), или автоопределение (`/stack-set`).
+
+### 6. Настройка символических ссылок IDE
+
+Всегда создаются для Claude Code (`.claude/skills/`). Для GitHub Copilot — по запросу.
+
+### 7. Git rerere
+
+Рекомендуется для мультиагентных рабочих процессов — запоминает разрешения конфликтов слияния.
+
+### 8. Конфигурация MCP
+
+Настройка Serena MCP для Antigravity IDE и Gemini CLI при обнаружении.
+
+---
+
+## Ручной путь
+
+Для окружений без интерактивного CLI:
+
+### Шаг 1: Скачивание и распаковка
+
+```bash
+VERSION=$(curl -s https://raw.githubusercontent.com/first-fluke/oh-my-agent/main/prompt-manifest.json | jq -r '.version')
+curl -L "https://github.com/first-fluke/oh-my-agent/releases/download/cli-v${VERSION}/agent-skills.tar.gz" -o agent-skills.tar.gz
+sha256sum -c agent-skills.tar.gz.sha256
+tar -xzf agent-skills.tar.gz
+```
+
+### Шаг 2: Копирование файлов
+
+```bash
+cp -r .agents/ /path/to/your/project/.agents/
+mkdir -p /path/to/your/project/.claude/skills
+mkdir -p /path/to/your/project/.claude/agents
+
+# Символические ссылки навыков
+ln -sf ../../.agents/skills/oma-frontend /path/to/your/project/.claude/skills/oma-frontend
+ln -sf ../../.agents/skills/oma-backend /path/to/your/project/.claude/skills/oma-backend
+ln -sf ../../.agents/skills/_shared /path/to/your/project/.claude/skills/_shared
+```
+
+### Шаг 3: Настройка предпочтений
+
+```bash
+mkdir -p /path/to/your/project/.agents/config
+cat > /path/to/your/project/.agents/config/user-preferences.yaml << 'EOF'
+language: en
+date_format: ISO
+timezone: UTC
+default_cli: gemini
+agent_cli_mapping:
+  frontend: gemini
+  backend: gemini
+EOF
+```
+
+### Шаг 4: Инициализация памяти
+
+```bash
+oma memory:init
+# Или вручную: mkdir -p /path/to/your/project/.serena/memories
+```
+
+---
 
 ## Чек-лист верификации
 
 ```bash
-# 9 устанавливаемых навыков (исключая _shared)
-find .agents/skills -mindepth 1 -maxdepth 1 -type d ! -name '_shared' | wc -l
-
-# Общие ресурсы
-[ -d .agents/skills/_shared ] && echo ok
-
-# 7 рабочих процессов
-find .agents/workflows -maxdepth 1 -name '*.md' | wc -l
-
-# Базовая проверка работоспособности команд
-bunx oh-my-agent doctor
+oma doctor        # Полная проверка
+oma doctor --json # JSON для CI
 ```
 
-## Опциональные панели мониторинга
+Проверяет: установку CLI, аутентификацию, конфигурацию MCP, статус навыков.
 
-Панели мониторинга опциональны и используют установленный CLI:
+---
+
+## Архитектура SSOT и символические ссылки
+
+`.agents/` — единственное место хранения навыков, рабочих процессов, конфигов и определений агентов. IDE-директории содержат только символические ссылки.
+
+**Преимущества:**
+- **Одно обновление — все IDE** получают изменения автоматически
+- **Без дублирования** — навыки хранятся один раз
+- **Безопасное удаление** — удаление `.claude/` не уничтожает навыки
+- **Git-дружественность** — символические ссылки маленькие и чисто диффятся
+
+---
+
+## Безопасность и откат
+
+### Перед установкой
+
+1. **Закоммитьте текущую работу** — чистый git позволяет `git checkout .` для отмены
+2. **Проверьте существующую `.agents/`** — при наличии от другого инструмента — сделайте бэкап
+
+### После установки
+
+1. Проверьте `git status` — новые файлы только в `.agents/`, `.claude/` и `.github/`
+2. Добавьте в `.gitignore`:
+```gitignore
+.serena/
+.agents/results/
+.agents/state/
+```
+
+### Полный откат
 
 ```bash
-bunx oh-my-agent dashboard
-bunx oh-my-agent dashboard:web
+rm -rf .agents/ .claude/skills/ .claude/agents/ .serena/
+# Или через git: git checkout -- .agents/ .claude/ && git clean -fd .agents/ .claude/ .serena/
 ```
 
-URL веб-панели по умолчанию: `http://localhost:9847`
+---
 
-## Стратегия отката
-
-Перед интеграцией создайте контрольный коммит в вашем проекте:
+## Настройка дашборда
 
 ```bash
-git add -A
-git commit -m "chore: checkpoint before oh-my-agent integration"
+oma dashboard        # Терминальный
+oma dashboard:web    # Веб на http://localhost:9847
 ```
 
-Если нужно отменить изменения, откатите этот коммит стандартным процессом вашей команды.
+---
 
-## Поддержка мульти-CLI через символические ссылки
+## Что делает установщик
 
-При запуске `bunx oh-my-agent` после выбора навыков вы увидите такой запрос:
-
-```text
-Also develop with other CLI tools?
-  ○ Claude Code (.claude/skills/)
-  ○ OpenCode, Amp, Codex (.agents/skills/)
-  ○ GitHub Copilot (.github/skills/)
-```
-
-Выберите дополнительные CLI-инструменты, которые вы используете наряду с Antigravity. Установщик:
-
-1. Устанавливает навыки в `.agents/skills/` (нативное расположение Antigravity)
-2. Создаёт символические ссылки из директории навыков каждого выбранного CLI на `.agents/skills/`
-
-Это обеспечивает единый источник истины, позволяя навыкам работать в нескольких CLI-инструментах.
-
-### Структура символических ссылок
-
-```
-.agents/skills/oma-frontend/      <- Источник (SSOT)
-.claude/skills/oma-frontend/     -> ../../.agents/skills/oma-frontend/
-.agents/skills/oma-frontend/     -> ../../.agents/skills/oma-frontend/ (OpenCode, Amp, Codex)
-.github/skills/oma-frontend/     → ../../.agents/skills/oma-frontend/ (GitHub Copilot)
-```
-
-Установщик пропускает существующие символические ссылки и предупреждает, если в целевом расположении существует реальная директория.
-
-## Примечания
-
-- Не перезаписывайте существующие папки `.agents/skills/*`, если вы не намерены заменить кастомизированные навыки.
-- Храните файлы политик проекта (`.agents/config/*`) под управлением вашего репозитория.
-- Для паттернов мультиагентной оркестрации перейдите к [`Руководству по использованию`](./usage.md).
+1. **Миграция** — проверка устаревшей `.agent/` (ед. число) -> `.agents/` (мн. число)
+2. **Обнаружение конкурентов** — предложение удалить конфликтующие инструменты
+3. **Скачивание тарбола** — последний релиз с GitHub
+4. **Установка общих ресурсов** — `_shared/` с core/, runtime/, conditional/
+5. **Установка рабочих процессов** — все 14 определений
+6. **Установка конфигов** — `user-preferences.yaml`, `mcp.json` (без перезаписи существующих)
+7. **Установка навыков** — выбранные навыки + языковые варианты
+8. **Вендорные адаптации** — файлы для Claude, Codex, Gemini, Qwen
+9. **Символические ссылки CLI** — `.claude/skills/`, `.claude/agents/`
+10. **Git rerere + MCP** — опциональная настройка

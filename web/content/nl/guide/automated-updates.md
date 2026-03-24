@@ -1,23 +1,24 @@
 ---
-title: Automatische updates met GitHub Action
-description: Houd oh-my-agent-skills automatisch up-to-date met de officiële GitHub Action.
+title: "Gids: Automatische Updates"
+description: Volledige GitHub Action-documentatie voor oh-my-agent — setup, alle invoer en uitvoer, gedetailleerde voorbeelden, hoe het onder de motorkap werkt en vergelijking met het centraal register.
 ---
 
-# Automatische updates met GitHub Action
+# Gids: Automatische Updates
 
-De **oh-my-agent update action** voert `oma update` uit op een schema en maakt een PR aan (of commit rechtstreeks) wanneer er nieuwe skillversies beschikbaar zijn.
+## Overzicht
 
-## Snel starten
+De oh-my-agent GitHub Action (`first-fluke/oh-my-agent/action@v1`) werkt automatisch de agent-skills van je project bij door `oma update` in CI uit te voeren. Het ondersteunt twee modi: een pull request aanmaken voor review, of direct committen naar een branch.
 
-Voeg deze workflow toe aan elke repository die oh-my-agent gebruikt:
+---
+
+## Snelle Setup
 
 ```yaml
-# .github/workflows/update-oma.yml
 name: Update oh-my-agent
 
 on:
   schedule:
-    - cron: "0 9 * * 1" # Every Monday at 09:00 UTC
+    - cron: '0 9 * * 1'  # Elke maandag om 9:00 UTC
   workflow_dispatch:
 
 permissions:
@@ -28,100 +29,104 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       - uses: first-fluke/oh-my-agent/action@v1
 ```
 
-Dit controleert wekelijks op updates en opent een PR als er wijzigingen worden gevonden.
+---
 
-## Action-referentie
+## Alle Action Invoer
 
-De action is beschikbaar op:
+| Invoer | Type | Standaard | Beschrijving |
+|:------|:-----|:---------|:-----------|
+| `mode` | string | `"pr"` | `"pr"` maakt een pull request. `"commit"` pusht direct. |
+| `base-branch` | string | `"main"` | Basisbranch voor de PR of directe commits. |
+| `force` | string | `"false"` | Overschrijft gebruikersaanpassingen (user-preferences.yaml, mcp.json, stack/). |
+| `pr-title` | string | `"chore(deps): update oh-my-agent skills"` | Aangepaste PR-titel. |
+| `pr-labels` | string | `"dependencies,automated"` | Kommagescheiden labels voor de PR. |
+| `commit-message` | string | `"chore(deps): update oh-my-agent skills"` | Aangepast commitbericht. |
+| `token` | string | `${{ github.token }}` | GitHub-token. Gebruik een PAT als de PR andere workflows moet triggeren. |
 
-- **Monorepo-pad**: `first-fluke/oh-my-agent/action@v1`
-- **Marketplace**: [`first-fluke/oma-update-action@v1`](https://github.com/marketplace/actions/oh-my-agent-update)
+## Alle Action Uitvoer
 
-### Inputs
+| Uitvoer | Type | Beschrijving |
+|:-------|:-----|:-----------|
+| `updated` | string | `"true"` als er wijzigingen zijn na `oma update`. |
+| `version` | string | De oh-my-agent versie na de update. |
+| `pr-number` | string | Het pull request-nummer (alleen in `pr`-modus). |
+| `pr-url` | string | De volledige URL van de PR (alleen in `pr`-modus). |
 
-| Input | Beschrijving | Standaard |
-|:------|:------------|:---------|
-| `mode` | `pr` maakt een pull request aan, `commit` pusht rechtstreeks | `pr` |
-| `base-branch` | Basistak voor de PR of directe commitdoeltak | `main` |
-| `force` | Overschrijft gebruikersconfiguraties (`--force`) | `false` |
-| `pr-title` | Aangepaste PR-titel | `chore(deps): update oh-my-agent skills` |
-| `pr-labels` | Kommagescheiden labels voor de PR | `dependencies,automated` |
-| `commit-message` | Aangepast commit-bericht | `chore(deps): update oh-my-agent skills` |
-| `token` | GitHub-token voor het aanmaken van PR's | `${{ github.token }}` |
+---
 
-### Outputs
+## Gedetailleerde Voorbeelden
 
-| Output | Beschrijving |
-|:-------|:------------|
-| `updated` | `true` als er wijzigingen zijn gedetecteerd |
-| `version` | De oh-my-agent-versie na de update |
-| `pr-number` | PR-nummer (alleen in `pr`-modus) |
-| `pr-url` | PR-URL (alleen in `pr`-modus) |
+### Voorbeeld 1: Standaard PR-Modus
 
-## Voorbeelden
+```yaml
+- uses: first-fluke/oh-my-agent/action@v1
+  id: update
+- name: Samenvatting
+  if: steps.update.outputs.updated == 'true'
+  run: echo "Bijgewerkt naar versie ${{ steps.update.outputs.version }}"
+```
 
-### Directe commit-modus
-
-Sla de PR over en push wijzigingen rechtstreeks naar de basistak:
+### Voorbeeld 2: Directe Commit-Modus met PAT
 
 ```yaml
 - uses: first-fluke/oh-my-agent/action@v1
   with:
     mode: commit
-    commit-message: "chore: sync oh-my-agent skills"
+    token: ${{ secrets.OH_MY_AGENT_PAT }}
+    base-branch: develop
 ```
 
-### Met een Personal Access Token
+### Voorbeeld 3: Met Slack-Notificatie
 
-Vereist voor fork-repositories waarbij `GITHUB_TOKEN` geen schrijftoegang heeft:
+```yaml
+- uses: first-fluke/oh-my-agent/action@v1
+  id: update
+- name: Slack Notificatie
+  if: steps.update.outputs.updated == 'true'
+  uses: slackapi/slack-github-action@v2
+  with:
+    webhook: ${{ secrets.SLACK_WEBHOOK }}
+    webhook-type: incoming-webhook
+    payload: |
+      {"text": "oh-my-agent bijgewerkt naar v${{ steps.update.outputs.version }}"}
+```
+
+### Voorbeeld 4: Force-Modus
 
 ```yaml
 - uses: first-fluke/oh-my-agent/action@v1
   with:
-    token: ${{ secrets.PAT_TOKEN }}
+    force: 'true'
+    pr-title: "chore(deps): force-update oh-my-agent skills (reset configs)"
 ```
 
-### Voorwaardelijke notificatie
+**Waarschuwing:** Force-modus overschrijft `user-preferences.yaml`, `mcp.json` en `stack/`-directory's.
 
-Voer een vervolgstap alleen uit wanneer er een update is toegepast:
+---
 
-```yaml
-jobs:
-  update:
-    runs-on: ubuntu-latest
-    outputs:
-      updated: ${{ steps.oma.outputs.updated }}
-    steps:
-      - uses: actions/checkout@v6
-      - uses: first-fluke/oh-my-agent/action@v1
-        id: oma
+## Hoe Het Onder de Motorkap Werkt
 
-  notify:
-    needs: update
-    if: needs.update.outputs.updated == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "oh-my-agent was updated to ${{ needs.update.outputs.version }}"
-```
+1. **Setup Bun** — Installeert de Bun-runtime
+2. **Installeer oh-my-agent** — `bun install -g oh-my-agent`
+3. **Voer oma update uit** — `oma update --ci` (optioneel `--force`)
+4. **Controleer wijzigingen** — `git status --porcelain .agents/ .claude/`
+5. **PR- of commit-modus** — Afhankelijk van `mode`-invoer
 
-## Hoe het werkt
+Wat `oma update --ci` intern doet: versie controleren, tarball downloaden, gebruikersbestanden behouden (tenzij `--force`), bestanden kopieren, symlinks vernieuwen.
 
-1. Installeert de `oh-my-agent` CLI via Bun
-2. Voert `oma update --ci` uit (niet-interactieve modus, geen prompts)
-3. Detecteert wijzigingen in de mappen `.agents/` en `.claude/`
-4. Maakt een PR aan of commit rechtstreeks op basis van de `mode`-input
+---
 
-## Vergelijking met het Centraal register
+## Vergelijking met Centraal Register
 
-| | GitHub Action | Centraal register |
-|:--|:--:|:--:|
-| Opzet | 1 workflowbestand | 3 bestanden (config + 2 workflows) |
-| Updatemethode | `oma update` CLI | Tarball-download + handmatige sync |
-| Aanpassing | Action-inputs | `.agent-registry.yml` |
-| Versiepinning | Altijd de laatste versie | Expliciete versiepinning |
-
-Gebruik de **GitHub Action** voor de meeste projecten. Gebruik de **Centraal register**-aanpak als je strikte versiepinning nodig hebt of geen third-party actions kunt gebruiken.
+| Aspect | GitHub Action | Centraal Register |
+|:-------|:-------------|:----------------|
+| **Bestanden toevoegen** | 1 workflowbestand | 3 bestanden |
+| **Updatebron** | npm-register | GitHub Release-artefacten |
+| **Versiepinning** | Nee — altijd laatste | Ja — expliciet in .agent-registry.yml |
+| **Checksumverificatie** | Nee | Ja — SHA256 |
+| **Configbehoud** | Automatisch | Handmatig configureerbaar |
+| **Geschikt voor** | Eenvoudige projecten | Multi-projectorganisaties, compliance |

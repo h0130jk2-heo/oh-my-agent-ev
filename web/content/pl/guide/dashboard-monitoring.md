@@ -1,67 +1,94 @@
 ---
-title: "Przypadek użycia: Monitorowanie panelu"
-description: Obsługa sesji orkiestratora za pomocą paneli terminalowych/webowych i sygnałów runbooka do podjęcia działań.
+title: Monitorowanie panelem kontrolnym
+description: Kompleksowy przewodnik po panelu kontrolnym obejmujący panele terminala i webowe, źródła danych, układ 3-terminalowy, rozwiązywanie problemów i szczegóły techniczne implementacji.
 ---
 
-# Przypadek użycia: Monitorowanie panelu
+# Monitorowanie panelem kontrolnym
 
-## Komendy uruchomienia
+## Dwa polecenia panelu kontrolnego
 
+| Polecenie | Interfejs | URL | Technologia |
+|:--------|:---------|:----|:-----------|
+| `oma dashboard` | Terminal (TUI) | N/A — renderuje w terminalu | chokidar file watcher, picocolors |
+| `oma dashboard:web` | Przeglądarka | `http://localhost:9847` | Serwer HTTP, WebSocket, chokidar |
+
+Oba panele obserwują to samo źródło danych: katalog `.serena/memories/`.
+
+### Panel w terminalu
 ```bash
-bunx oh-my-agent dashboard
-bunx oh-my-agent dashboard:web
+oma dashboard
+```
+Renderuje UI z rysowaniem ramek bezpośrednio w terminalu. Aktualizuje się automatycznie przy zmianach plików pamięci. `Ctrl+C` aby wyjść.
+
+**Symbole statusu:** `●` (zielony) — running, `✓` (cyan) — completed, `✗` (czerwony) — failed, `○` (żółty) — blocked, `◌` (przyciemniony) — pending.
+
+### Panel webowy
+```bash
+oma dashboard:web
+# Lub z niestandardowym portem:
+DASHBOARD_PORT=8080 oma dashboard:web
 ```
 
-Domyślny URL panelu webowego: `http://localhost:9847`
+Ciemny motyw z: znacznikiem stanu połączenia, tabelą statusu agentów, kanałem aktywności i automatycznym odświeżaniem.
 
-## Zalecany układ terminala
+---
 
-Używaj co najmniej 3 terminali:
+## Zalecany układ 3-terminalowy
 
-1. Panel terminalowy (`oma dashboard`)
-2. Komendy uruchamiania agentów
-3. Logi testów/budowania
+```
+┌────────────────────────────────┬────────────────────────────────┐
+│   Terminal 1: Główny agent     │   Terminal 2: Panel kontrolny  │
+│   $ gemini                     │   $ oma dashboard              │
+│   > /orchestrate               │                                │
+├────────────────────────────────┴────────────────────────────────┤
+│   Terminal 3: Polecenia ad-hoc                                  │
+│   $ oma agent:status session-id backend frontend                │
+└─────────────────────────────────────────────────────────────────┘
+```
 
-Trzymaj panel webowy otwarty dla wspólnej widoczności podczas sesji zespołowych.
+---
 
-## Co monitorują panele
+## Źródła danych w .serena/memories/
 
-Źródło danych: `.serena/memories/`
+| Wzorzec pliku | Tworzony przez | Zawartość |
+|:-------------|:----------|:---------|
+| `orchestrator-session.md` | `/orchestrate` Krok 2 | ID sesji, czas startu, status, wersja workflow |
+| `task-board.md` | Workflow orkiestracji | Tabela Markdown z przypisaniami agentów, statusami, zadaniami |
+| `progress-{agent}.md` | Każdy uruchomiony agent | Bieżący numer tury, nad czym agent pracuje |
+| `result-{agent}.md` | Każdy zakończony agent | Końcowy status, zmienione pliki, znalezione problemy |
+| `experiment-ledger.md` | System Quality Score | Śledzenie eksperymentów: bazowe wyniki, delty, decyzje keep/discard |
 
-Główne sygnały:
+---
 
-- status sesji (`running`, `completed`, `failed`)
-- przypisania tablicy zadań i zmiany stanów
-- tury postępu poszczególnych agentów
-- zdarzenia publikacji wyników
+## Rozwiązywanie problemów
 
-Aktualizacje są sterowane zdarzeniami ze zmienionych plików; pełna pętla odpytywania katalogu nie jest wymagana.
+### Sygnał 1: Agent "running" ale brak postępu tur
+Sprawdź log: `cat /tmp/subagent-{session-id}-{agent-id}.log`. Sprawdź czy proces żyje: `oma agent:status`.
 
-## Runbook: sygnał → działanie
+### Sygnał 2: Agent "crashed"
+Sprawdź log po szczegóły, zweryfikuj CLI: `oma doctor`, sprawdź auth: `oma auth:status`. Uruchom ponownie.
 
-- `No agents detected`
-  - zweryfikuj, czy agenci zostali uruchomieni z tym samym `session-id`
-  - potwierdź, że `.serena/memories/` jest zapisywany
-- `Session stuck in running`
-  - sprawdź znaczniki czasu najnowszych plików `progress-*`
-  - uruchom ponownie zablokowanego agenta z jaśniejszym promptem
-- `Frequent reconnects (web)`
-  - sprawdź lokalny firewall/proxy
-  - uruchom ponownie `dashboard:web` i odśwież stronę
-- `Missing activity while agents are active`
-  - zweryfikuj, czy zapisy orkiestratora nie są przekierowane do innej przestrzeni roboczej
+### Sygnał 3: "No agents detected yet"
+Workflow może być jeszcze w fazie planowania. Zweryfikuj katalog pamięci: `ls -la .serena/memories/`.
 
-## Lista kontrolna monitorowania przed scaleniem
+### Sygnał 4: Panel webowy "Disconnected"
+Sprawdź czy proces panelu działa. Spróbuj innego portu. Panel automatycznie łączy się ponownie z wykładniczym backoffem (1s start, maks. 10s).
 
-- wszyscy wymagani agenci osiągnęli stan completed
-- brak nierozwiązanych ustaleń QA o wysokim priorytecie
-- najnowsze pliki wyników są obecne dla każdego agenta
-- testy integracyjne wykonane po końcowych wynikach agentów
+---
 
-## Kryteria zakończenia
+## Lista kontrolna monitoringu przed merge
 
-Faza monitorowania jest zakończona, gdy:
+- [ ] Wszystkie agenci pokazują "completed"
+- [ ] Żaden agent nie pokazuje "failed"
+- [ ] Agent QA zakończył przegląd
+- [ ] Zero znalezisk CRITICAL/HIGH
+- [ ] Status sesji to COMPLETED
+- [ ] Kanał aktywności pokazuje raport końcowy
 
-- sesja osiągnęła stan końcowy (`completed` lub celowo zatrzymana)
-- historia aktywności wyjaśnia pochodzenie końcowego wyniku
-- decyzja o wydaniu/scaleniu została podjęta z pełną widocznością statusu
+---
+
+## Szczegóły techniczne
+
+**Panel terminala:** chokidar z `awaitWriteFinish` (200ms), pełne przerysowanie na każdą zmianę pliku, `picocolors` dla kolorów ANSI.
+
+**Panel webowy:** Serwer Node.js HTTP + biblioteka `ws` WebSocket. Debouncing 100ms. Automatyczne ponowne połączenie w przeglądarce z wykładniczym backoffem. Port domyślny 9847, konfigurowlny przez `DASHBOARD_PORT`.

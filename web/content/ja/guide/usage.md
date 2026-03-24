@@ -1,333 +1,207 @@
 ---
-title: 使用ガイド
-description: 使用例、ワークフロー、ダッシュボード操作、トラブルシューティングを含む完全な使用ガイド。
+title: 使い方ガイド
+description: oh-my-agentの包括的な使い方ガイド — クイックスタート、単一タスクからマルチドメインプロジェクト、バグ修正、デザインシステム、CLI並列実行、ultraworkまでの実践例。全ワークフローコマンド、複数言語での自動検出例、全14スキルのユースケース、ダッシュボードセットアップ、主要概念、ヒント、トラブルシューティング。
 ---
 
-# Antigravityマルチエージェントスキルの使用方法
+# oh-my-agentの使い方
 
 ## クイックスタート
 
-1. **Antigravity IDEで開く**
-   ```bash
-   antigravity open /path/to/oh-my-agent
-   ```
+1. AI搭載IDE（Claude Code、Gemini CLI、Cursor、Antigravityなど）でプロジェクトを開く
+2. スキルは`.agents/skills/`から自動検出される
+3. 自然言語でやりたいことを記述 — oh-my-agentが適切なエージェントにルーティング
+4. マルチエージェント作業には`/coordinate`または`/orchestrate`を使用
 
-2. **スキルは自動的に検出されます。** Antigravityが`.agents/skills/`をスキャンし、利用可能なすべてのスキルをインデックス化します。
-
-3. **IDEでチャット。** 構築したいものを説明してください。
+これがワークフロー全体です。単一ドメインのタスクには特別な構文は不要です。
 
 ---
 
-## 使用例
+## 例1：シンプルな単一タスク
 
-### 例1: シンプルな単一ドメインタスク
-
-**あなたが入力:**
+**入力：**
 ```
-"Tailwind CSSを使用してメールとパスワードフィールドを持つログインフォームコンポーネントを作成"
+メール・パスワードフィールド、クライアントサイドバリデーション、アクセシブルなラベル付きのログインフォームコンポーネントをTailwind CSSで作成して
 ```
 
-**何が起こるか:**
-- /commandまたはエージェントskillsフィールドで`oma-frontend`を呼び出し
-- オンデマンドでスキルをロード（Progressive Disclosure）
-- TypeScript、Tailwind、フォームバリデーション付きのReactコンポーネントを取得
+**何が起こるか：**
 
-### 例2: 複雑なマルチドメインプロジェクト
+1. `oma-frontend`スキルが自動アクティベート（キーワード：「form」「component」「Tailwind CSS」）
+2. レイヤー1（SKILL.md）がロード済み
+3. レイヤー2リソースがオンデマンドロード：`execution-protocol.md`、`snippets.md`、`component-template.tsx`
+4. エージェントが**CHARTER_CHECK**を出力
+5. エージェントが実装：Reactコンポーネント、Zodバリデーションスキーマ、Vitestテスト、Loading Skeleton
+6. チェックリスト実行：アクセシビリティ、モバイルビューポート、パフォーマンス、Error Boundaries
 
-**あなたが入力:**
+**出力：** TypeScript、バリデーション、テスト、アクセシビリティ対応のプロダクション対応Reactコンポーネント。
+
+---
+
+## 例2：マルチドメインプロジェクト
+
+**入力：**
 ```
-"ユーザー認証付きのTODOアプリを構築"
-```
-
-**何が起こるか:**
-
-1. **Workflow Guideが起動** — マルチドメインの複雑さを検出
-2. **PM Agentが計画** — 優先順位付きのタスク分解を作成
-3. **CLIでエージェントを起動**:
-   ```bash
-   oma agent:spawn backend "JWT認証API" session-01 &
-   oma agent:spawn frontend "ログインとTODO UI" session-01 &
-   wait
-   ```
-4. **エージェントが並列作業** — Knowledge Baseに出力を保存
-5. **調整** — 一貫性のために`.agents/results/`をレビュー
-6. **QA Agentがレビュー** — セキュリティ/パフォーマンス監査
-7. **修正と反復** — 修正を含めてエージェントを再起動
-
-### 例3: バグ修正
-
-**あなたが入力:**
-```
-"バグがあります — ログインをクリックすると'Cannot read property map of undefined'と表示されます"
+ユーザー認証、タスクCRUD、モバイルコンパニオンアプリ付きのTODOアプリを作成
 ```
 
-**何が起こるか:**
+**`/coordinate`を使用（ステップバイステップ）：**
 
-1. **oma-debugが起動** — エラーを分析
-2. **根本原因を発見** — データロード前にコンポーネントが`todos`をマップしている
-3. **修正を提供** — ローディング状態とnullチェックを追加
-4. **リグレッションテストを作成** — バグが再発しないことを保証
-5. **類似パターンを発見** — 他の3つのコンポーネントを予防的に修正
+1. **PMエージェントが計画：** ドメイン特定、APIコントラクト定義、優先タスク分解
+2. **プランを確認**
+3. **エージェントが優先度順にスポーン：** P0（バックエンド並列）→ P1（フロントエンド + モバイル並列）
+4. **QAエージェントがレビュー：** OWASP Top 10、パフォーマンス、アクセシビリティ、クロスドメイン整合性
+5. **CRITICAL課題があれば反復**
 
-### 例：デザインシステム作成
+---
 
-**入力:**
+## 例3：バグ修正
+
+**入力：**
 ```
-"SaaS製品用のダークプレミアムランディングページをデザインして"
+バグがある — 保存ボタンをクリックするとタスクリストで"Cannot read property 'map' of undefined"が表示される
 ```
 
-**実行プロセス:**
+1. `oma-debug`が自動アクティベート
+2. MCP `search_for_pattern`で`.map()`呼び出しを特定
+3. `find_referencing_symbols`でデータフローをトレース → ローディング状態の欠如が根本原因
+4. 最小修正を提案（ユーザー確認待ち）
+5. 修正適用 + 回帰テスト作成
+6. 類似パターンスキャン → 3つの同様パターンを発見し修正
 
-1. **oma-designが起動** — `.design-context.md`を確認
-2. **コンテキスト収集** — ターゲット、ブランド、美的方向性を質問
-3. **プロンプト強化** — 曖昧な要求をセクション別詳細仕様に変換
-4. **2-3方向を提案** — カラー、タイポグラフィ、レイアウト、モーションオプション
-5. **DESIGN.md生成** — 6セクションデザインシステム + トークン
-6. **監査実行** — レスポンシブ、WCAG、Nielsenヒューリスティクス、AIスロップチェック
-7. **引き渡し** — oma-frontendの実装準備完了
+---
 
-### 例4: CLIベースの並列実行
+## 例4：デザインシステム
+
+**入力：**
+```
+B2B SaaS分析製品のダークプレミアムランディングページをデザインして
+```
+
+1. `oma-design`がアクティベート
+2. コンテキスト収集 → プロンプト補強 → 3つのデザイン方向性を提案
+3. 選択された方向性でDESIGN.md + CSSトークン + Tailwind設定を生成
+4. レスポンシブ、WCAG 2.2、Nielsen、AIスロップチェックで監査
+
+---
+
+## 例5：CLI並列実行
 
 ```bash
-# 単一エージェント (ワークスペース自動検出)
-oma agent:spawn backend "JWT認証APIを実装" session-01
+# 単一エージェント
+oma agent:spawn frontend "Add dark mode toggle to the header" session-ui-01
 
-# 並列エージェント
-oma agent:spawn backend "認証APIを実装" session-01 &
-oma agent:spawn frontend "ログインフォームを作成" session-01 &
-oma agent:spawn mobile "認証画面を構築" session-01 &
+# 3エージェント並列
+oma agent:spawn backend "Implement notification API with WebSocket" session-notif-01 -w ./apps/api &
+oma agent:spawn frontend "Build notification center with real-time updates" session-notif-01 -w ./apps/web &
+oma agent:spawn mobile "Add push notification screens" session-notif-01 -w ./apps/mobile &
 wait
-```
 
-**リアルタイムで監視:**
-```bash
-# ターミナル (別のターミナルウィンドウで)
-bunx oh-my-agent dashboard
+# モニタリング（別ターミナル）
+oma dashboard
 
-# またはブラウザで
-bunx oh-my-agent dashboard:web
-# → http://localhost:9847
+# QA
+oma agent:spawn qa "Review notification feature across all platforms" session-notif-01
 ```
 
 ---
 
-## リアルタイムダッシュボード
+## 例6：Ultrawork — 最高品質
 
-### ターミナルダッシュボード
-
-```bash
-bunx oh-my-agent dashboard
+```
+/ultrawork Stripe統合の決済処理モジュールを構築
 ```
 
-`fswatch` (macOS) または `inotifywait` (Linux) を使用して`.serena/memories/`を監視します。セッションステータス、エージェント状態、ターン数、最新アクティビティを含むライブテーブルを表示します。メモリファイルが変更されると自動的に更新されます。
-
-**要件:**
-- macOS: `brew install fswatch`
-- Linux: `apt install inotify-tools`
-
-### Webダッシュボード
-
-```bash
-npm install          # 初回のみ
-bunx oh-my-agent dashboard:web
-```
-
-ブラウザで`http://localhost:9847`を開きます。機能:
-
-- **リアルタイム更新** WebSocket経由（ポーリングではなくイベント駆動）
-- **自動再接続** 接続が切れた場合
-- **SerenaテーマのUI** 紫のアクセントカラー
-- **セッションステータス** — IDと実行中/完了/失敗状態
-- **エージェントテーブル** — 名前、ステータス（カラードット付き）、ターン数、タスク説明
-- **アクティビティログ** — 進捗と結果ファイルからの最新変更
-
-サーバーはchokidarを使用して`.serena/memories/`を監視し、デバウンス（100ms）を適用します。変更されたファイルのみが読み取りをトリガーし、完全な再スキャンは行いません。
+5フェーズ、17ステップ、11レビューステップで実行：PLAN（4レビュー）→ IMPL → VERIFY（3レビュー）→ REFINE（5レビュー）→ SHIP（4レビュー）
 
 ---
 
-## 主要な概念
+## 全ワークフローコマンド
 
-### Progressive Disclosure（段階的開示）
-スキルは/commandまたはエージェントのskillsフィールドを通じて明示的に呼び出されます。必要なスキルのみがコンテキストにロードされます。
-
-### トークン最適化されたスキル設計
-各スキルは最大限のトークン効率のために2層アーキテクチャを使用:
-- **SKILL.md** (~40行): アイデンティティ、ルーティング、コアルール — 即座にロード
-- **resources/**: 実行プロトコル、例、チェックリスト、エラープレイブック — オンデマンドでロード
-
-共有リソースは`_shared/`（スキルではない）にあり、すべてのエージェントから参照されます:
-- 4ステップワークフローを含むchain-of-thought実行プロトコル
-- 中位モデルガイダンスのためのfew-shot入出力例
-- "3 strikes"エスカレーションを含むエラー復旧プレイブック
-- 構造化された多段階分析のための推論テンプレート
-- Flash/Proモデルティアのコンテキスト予算管理
-- `verify.sh`による自動検証
-- セッション横断の教訓蓄積
-
-### CLIエージェント起動
-`oma agent:spawn`を使用してCLI経由でエージェントを実行します。`user-preferences.yaml`の`agent_cli_mapping`を尊重して、エージェントタイプごとに適切なCLI（gemini、claude、codex、qwen）を選択します。ワークスペースは一般的なモノレポ規約から自動検出されるか、`-w`で明示的に設定できます。
-
-### Knowledge Base
-`.agents/results/`に保存されたエージェント出力。計画、コード、レポート、調整メモを含みます。
-
-### Serena Memory
-`.serena/memories/`の構造化されたランタイム状態。orchestratorはセッション情報、タスクボード、エージェントごとの進捗、結果を書き込みます。ダッシュボードはこれらのファイルを監視して監視を提供します。
-
-### ワークスペース
-エージェントは競合を避けるために別々のディレクトリで作業できます。ワークスペースは一般的なモノレポ規約から自動検出されます:
-```
-./apps/api   または ./backend   → Backend Agentワークスペース
-./apps/web   または ./frontend  → Frontend Agentワークスペース
-./apps/mobile または ./mobile   → Mobile Agentワークスペース
-```
+| コマンド | 種別 | 内容 | 使用場面 |
+|---------|------|-------------|-------------|
+| `/orchestrate` | 永続 | 自動並列エージェント実行 | 最大並列処理の大規模プロジェクト |
+| `/coordinate` | 永続 | ステップバイステップ協調 | ユーザー制御が必要なマルチエージェント機能 |
+| `/ultrawork` | 永続 | 5フェーズ・17ステップ品質ワークフロー | 最高品質デリバリー |
+| `/plan` | 非永続 | PMタスク分解 | 複雑なマルチエージェント作業の前 |
+| `/exec-plan` | 非永続 | 実行プランの作成・追跡 | 追跡が必要な複雑機能 |
+| `/brainstorm` | 非永続 | デザインファーストアイデア出し | 実装アプローチ決定前 |
+| `/deepinit` | 非永続 | プロジェクト初期化 | 既存コードベースでのoh-my-agentセットアップ |
+| `/review` | 非永続 | QAパイプライン | マージ前、デプロイ前レビュー |
+| `/debug` | 非永続 | 構造化デバッグ | バグやエラーの調査 |
+| `/design` | 非永続 | 7フェーズデザインワークフロー | デザインシステム構築 |
+| `/commit` | 非永続 | Conventional Commit | コード変更完了後 |
+| `/setup` | 非永続 | プロジェクト設定 | 初回セットアップまたは再設定 |
+| `/tools` | 非永続 | MCPツール管理 | ツール可視性制御 |
+| `/stack-set` | 非永続 | 技術スタック検出 | 言語固有コーディング規約のセットアップ |
 
 ---
 
-## 利用可能なスキル
+## 自動検出の例
 
-| スキル | ユースケース | 出力 |
-|-------|-------------------|--------|
-| oma-coordination | 複雑なマルチドメインプロジェクト | ステップバイステップのエージェント調整 |
-| oma-pm | "plan this"、"break down" | `.agents/plan.json` |
-| oma-frontend | UI、コンポーネント、スタイリング | Reactコンポーネント、テスト |
-| oma-backend | API、データベース、認証 | APIエンドポイント、モデル、テスト |
-| oma-mobile | モバイルアプリ、iOS/Android | Flutter画面、状態管理 |
-| oma-brainstorm | アイデア創出、コンセプト探索 | 設計ドキュメント |
-| oma-db | データベース、スキーマ、ERD、マイグレーション | スキーマ設計、クエリチューニング |
-| oma-dev-workflow | CI/CD、git hooks、モノレポ設定 | ワークフロー設定、自動化 |
-| oma-tf-infra | Terraform、クラウドインフラ | IaC モジュール、ステート管理 |
-| oma-translator | 翻訳、多言語コンテンツ | トーンを維持した翻訳文 |
-| oma-qa | "review security"、"audit" | 優先順位付きの修正を含むQAレポート |
-| oma-debug | バグレポート、エラーメッセージ | 修正されたコード、リグレッションテスト |
-| oma-orchestrator | CLIサブエージェント実行 | `.agents/results/`の結果 |
-| oma-commit | "commit"、"커밋해줘" | Gitコミット（機能ごとに自動分割） |
+| 入力 | 検出ワークフロー | 言語 |
+|----------|------------------|----------|
+| "plan the authentication feature" | `/plan` | 英語 |
+| "do everything in parallel" | `/orchestrate` | 英語 |
+| "計画を立てて" | `/plan` | 日本語 |
+| "コードレビューして" | `/review` | 日本語 |
+| "デバッグして" | `/debug` | 日本語 |
+| "デザインシステムを作って" | `/design` | 日本語 |
+
+**情報的クエリはフィルタリング：** 「orchestrateとは？」→ ワークフロー非トリガー。
 
 ---
 
-## ワークフローコマンド
+## 全14スキル — クイックリファレンス
 
-Antigravity IDEチャットでこれらを入力してステップバイステップのワークフローをトリガー:
-
-| コマンド | 説明 |
-|---------|-------------|
-| `/brainstorm` | 設計優先アイデア創出 — 意図、制約、アプローチの探索 |
-| `/coordinate` | ステップバイステップガイダンス付きCLI経由のマルチエージェントオーケストレーション |
-| `/deepinit` | AGENTS.md と ARCHITECTURE.md でプロジェクトハーネスを初期化 |
-| `/exec-plan` | 実行計画をリポジトリアーティファクトとして作成・追跡 |
-| `/orchestrate` | 自動化されたCLIベースの並列エージェント実行 |
-| `/plan` | APIコントラクト付きPMタスク分解 |
-| `/review` | 完全なQAパイプライン（セキュリティ、パフォーマンス、アクセシビリティ、コード品質） |
-| `/debug` | 構造化されたバグ修正（再現 → 診断 → 修正 → リグレッションテスト） |
-| `/setup` | プロジェクトの設定と構成 |
-| `/tools` | MCP ツール管理 |
-| `/ultrawork` | 11 のレビューゲートを持つ高品質 5 フェーズ開発 |
-| `/stack-set` | oma-backendのバックエンド言語スタック設定 (Python, Node.js, Rust) |
-
-これらは**スキル**（/commandまたはエージェントskillsフィールドで呼び出し）とは別のものです。ワークフローは多段階プロセスに対する明示的な制御を提供します。
-
----
-
-## 典型的なワークフロー
-
-### ワークフローA: 単一スキル
-
-```
-あなた: "ボタンコンポーネントを作成"
-  → Antigravityがoma-frontendをロード
-  → すぐにコンポーネントを取得
-```
-
-### ワークフローB: マルチエージェントプロジェクト（自動）
-
-```
-あなた: "認証付きTODOアプリを構築"
-  → /coordinateでoma-coordinationを開始
-  → PM Agentが計画を作成
-  → CLI経由でエージェントを起動 (oma agent:spawn)
-  → エージェントが並列作業
-  → QA Agentがレビュー
-  → 問題を修正し、反復
-```
-
-### ワークフローB-2: マルチエージェントプロジェクト（明示的）
-
-```
-あなた: /coordinate
-  → ステップバイステップのガイド付きワークフロー
-  → PM計画 → 計画レビュー → エージェント起動 → 監視 → QAレビュー
-```
-
-### ワークフローC: バグ修正
-
-```
-あなた: "ログインボタンがTypeErrorをスロー"
-  → oma-debugが起動
-  → 根本原因分析
-  → 修正 + リグレッションテスト
-  → 類似パターンをチェック
-```
-
-### ワークフローD: ダッシュボード付きCLIオーケストレーション
-
-```
-ターミナル1: bunx oh-my-agent dashboard:web
-ターミナル2: oma agent:spawn backend "task" session-01 &
-            oma agent:spawn frontend "task" session-01 &
-ブラウザ:    http://localhost:9847 → リアルタイムステータス
-```
+| スキル | 最適な用途 | 主な出力 |
+|-------|---------|---------------|
+| **oma-brainstorm** | アイデア探索 | `docs/plans/`の設計ドキュメント |
+| **oma-pm** | タスク分解 | `.agents/plan.json` |
+| **oma-frontend** | UIコンポーネント | React/TypeScriptコンポーネント、テスト |
+| **oma-backend** | API、サーバーロジック | エンドポイント、モデル、サービス、テスト |
+| **oma-db** | スキーマ設計 | スキーマドキュメント、マイグレーション |
+| **oma-mobile** | モバイルアプリ | Flutterスクリーン、状態管理 |
+| **oma-design** | デザインシステム | DESIGN.md、CSS/Tailwindトークン |
+| **oma-qa** | セキュリティ・品質監査 | CRITICAL/HIGH/MEDIUM/LOW指摘のQAレポート |
+| **oma-debug** | バグ調査 | 修正コード + 回帰テスト + 類似パターン修正 |
+| **oma-tf-infra** | クラウドインフラ | Terraformモジュール、IAMポリシー |
+| **oma-dev-workflow** | CI/CD、モノレポタスク | mise.toml設定、パイプライン定義 |
+| **oma-translator** | 多言語コンテンツ | トーン・レジスター保持の翻訳テキスト |
+| **oma-orchestrator** | 自動並列エージェント実行 | 複数エージェントのオーケストレーション結果 |
+| **oma-commit** | Gitコミット | 適切なtype/scopeのConventional Commits |
 
 ---
 
 ## ヒント
 
-1. **具体的に** — "JWT認証、Reactフロントエンド、Expressバックエンドでtodoアプリを構築"は"アプリを作る"よりも良い
-2. **CLI起動を使用** マルチドメインプロジェクトには — 1つのチャットですべてをやろうとしない
-3. **Knowledge Baseをレビュー** — API一貫性のために`.agents/results/`をチェック
-4. **再起動で反復** — 指示を洗練させ、最初からやり直さない
-5. **ダッシュボードを使用** — orchestratorセッションを監視するために`bunx oh-my-agent dashboard`または`bunx oh-my-agent dashboard:web`
-6. **ワークスペースを分離** — 各エージェントに独自のディレクトリを割り当てる
+1. **プロンプトは具体的に。** 「JWTとReactフロントエンドのTODOアプリ」は「アプリを作って」より良い結果。
+2. **並列エージェントにはワークスペースを使用。** 常に`-w`を渡してファイル競合を防止。
+3. **実装前にAPIコントラクトを確定。** `/plan`を先に実行。
+4. **積極的にモニタリング。** ダッシュボードで失敗を早期発見。
+5. **再スポーンで反復。** 最初からやり直さず、修正コンテキストを追加して再スポーン。
+6. **不安な場合は`/coordinate`から。**
+7. **曖昧なアイデアには`/brainstorm`を`/plan`の前に。**
+8. **新コードベースには`/deepinit`を実行。**
+9. **エージェント-CLIマッピングを設定。** 複雑な推論をClaudeに、高速生成をGeminiに。
+10. **本番クリティカルなコードには`/ultrawork`。**
 
 ---
 
 ## トラブルシューティング
 
-| 問題 | 解決策 |
-|---------|----------|
-| スキルがロードされない | `antigravity open .`、`.agents/skills/`をチェック、IDEを再起動 |
-| CLIが見つからない | `which gemini` / `which claude`をチェック、欠落しているCLIをインストール |
-| エージェント出力が互換性がない | Knowledge Baseで両方をレビュー、修正を含めて再起動 |
-| ダッシュボード: "No agents" | メモリファイルがまだ作成されていない、最初にorchestratorを実行 |
-| Webダッシュボードが起動しない | `npm install`を実行してchokidarとwsをインストール |
-| fswatchが見つからない | macOS: `brew install fswatch`、Linux: `apt install inotify-tools` |
-| QAレポートに50以上の問題 | まずCRITICAL/HIGHに焦点を当て、残りは後で文書化 |
+| 問題 | 原因 | 修正 |
+|---------|-------|-----|
+| IDEでスキルが検出されない | `.agents/skills/`の欠如 | インストーラーを実行、シンボリックリンクを確認、IDEを再起動 |
+| スポーン時にCLIが見つからない | AI CLIが未インストール | `which gemini` / `which claude`で確認、インストールガイドに従う |
+| エージェントのコードが競合 | ワークスペース分離なし | 個別ワークスペースを使用：`-w ./apps/api`、`-w ./apps/web` |
+| ダッシュボードに「エージェント未検出」 | エージェントがまだメモリに書き込んでいない | エージェント開始を待つ、セッションIDを確認 |
+| QAレポートが50+件の指摘 | 大規模コードベースの初回レビュー | CRITICALとHIGHに集中、MEDIUM/LOWは次スプリント |
+| 自動検出が誤ったワークフローをトリガー | キーワードの曖昧さ | 明示的`/command`を使用 |
+| 永続ワークフローが停止しない | 状態ファイルが残存 | 「workflow done」と発言、または`.agents/state/`から状態ファイルを手動削除 |
+| エージェントがHIGH明確化でブロック | 要件が曖昧すぎる | エージェントが要求した回答を提供して再実行 |
+| MCPツールが動作しない | Serena未設定 | `/setup`のStep 3を実行、`oma doctor`で確認 |
+| エージェントがターン制限を超過 | タスクが複雑すぎる | `-t 30`フラグで増やすか、小さいタスクに分解 |
 
 ---
 
-## CLIコマンド
-
-```bash
-bunx oh-my-agent                # 対話型スキルインストーラー
-bunx oh-my-agent doctor         # セットアップチェックと欠落スキルの修復
-bunx oh-my-agent doctor --json  # CI/CD用JSON出力
-bunx oh-my-agent update         # スキルを最新バージョンに更新
-bunx oh-my-agent stats          # 生産性メトリクスを表示
-bunx oh-my-agent stats --reset  # メトリクスをリセット
-bunx oh-my-agent retro          # セッション振り返り（学びと次のステップ）
-bunx oh-my-agent dashboard      # ターミナルリアルタイムダッシュボード
-bunx oh-my-agent dashboard:web  # Webダッシュボード (http://localhost:9847)
-bunx oh-my-agent help           # ヘルプを表示
-```
-
----
-
-## 開発者向け（統合ガイド）
-
-これらのスキルを既存のAntigravityプロジェクトに統合したい場合は、[AGENT_GUIDE.md](../AGENT_GUIDE.md)を参照してください:
-- クイック3ステップ統合
-- 完全なダッシュボード統合
-- 技術スタック用のスキルカスタマイズ
-- トラブルシューティングとベストプラクティス
-
----
-
-**Antigravity IDEでチャットするだけです。** 監視にはダッシュボードを使用してください。CLI実行にはorchestratorスクリプトを使用してください。既存プロジェクトに統合するには、[AGENT_GUIDE.md](../AGENT_GUIDE.md)を参照してください。
+単一ドメインタスクパターンは[単一スキルガイド](./single-skill)を参照。
+プロジェクト統合の詳細は[統合ガイド](./integration)を参照。
