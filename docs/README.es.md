@@ -190,6 +190,11 @@ Consulta [SPONSORS.md](../SPONSORS.md) para la lista completa de supporters.
 
 
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=first-fluke/oh-my-agent&type=date&legend=bottom-right)](https://www.star-history.com/#first-fluke/oh-my-agent&type=date&legend=bottom-right)
+
+
 ## Licencia
 
 MIT
