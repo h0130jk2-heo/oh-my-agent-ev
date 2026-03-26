@@ -1,5 +1,5 @@
 import * as fs from "node:fs";
-import { join, resolve, relative, dirname } from "node:path";
+import { join, relative, resolve } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createCliSymlinks,
@@ -200,9 +200,11 @@ describe("createCliSymlinks", () => {
       true,
     );
 
-    const result = createCliSymlinks(mockTargetDir, ["claude"], [
-      "oma-frontend",
-    ]);
+    const result = createCliSymlinks(
+      mockTargetDir,
+      ["claude"],
+      ["oma-frontend"],
+    );
 
     expect(fs.symlinkSync).toHaveBeenCalledWith(
       relative(
@@ -224,9 +226,11 @@ describe("createCliSymlinks", () => {
       },
     );
 
-    const result = createCliSymlinks(mockTargetDir, ["claude"], [
-      "oma-missing",
-    ]);
+    const result = createCliSymlinks(
+      mockTargetDir,
+      ["claude"],
+      ["oma-missing"],
+    );
 
     expect(fs.symlinkSync).not.toHaveBeenCalled();
     expect(result.skipped).toContain(
@@ -235,7 +239,7 @@ describe("createCliSymlinks", () => {
   });
 
   it("should skip when symlink already points to same target", () => {
-    const linkPath = join(mockTargetDir, ".claude/skills/oma-frontend");
+    const _linkPath = join(mockTargetDir, ".claude/skills/oma-frontend");
     const sourcePath = join(ssotSkillsDir, "oma-frontend");
     const relTarget = relative(
       join(mockTargetDir, ".claude/skills"),
@@ -252,9 +256,11 @@ describe("createCliSymlinks", () => {
       relTarget,
     );
 
-    const result = createCliSymlinks(mockTargetDir, ["claude"], [
-      "oma-frontend",
-    ]);
+    const result = createCliSymlinks(
+      mockTargetDir,
+      ["claude"],
+      ["oma-frontend"],
+    );
 
     expect(fs.symlinkSync).not.toHaveBeenCalled();
     expect(fs.unlinkSync).not.toHaveBeenCalled();
@@ -276,9 +282,11 @@ describe("createCliSymlinks", () => {
       "/some/old/path",
     );
 
-    const result = createCliSymlinks(mockTargetDir, ["claude"], [
-      "oma-frontend",
-    ]);
+    const result = createCliSymlinks(
+      mockTargetDir,
+      ["claude"],
+      ["oma-frontend"],
+    );
 
     expect(fs.unlinkSync).toHaveBeenCalledWith(linkPath);
     expect(fs.symlinkSync).toHaveBeenCalled();
@@ -293,9 +301,11 @@ describe("createCliSymlinks", () => {
       isSymbolicLink: () => false,
     });
 
-    const result = createCliSymlinks(mockTargetDir, ["claude"], [
-      "oma-frontend",
-    ]);
+    const result = createCliSymlinks(
+      mockTargetDir,
+      ["claude"],
+      ["oma-frontend"],
+    );
 
     expect(fs.symlinkSync).not.toHaveBeenCalled();
     expect(fs.unlinkSync).not.toHaveBeenCalled();

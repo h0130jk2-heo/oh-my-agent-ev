@@ -179,12 +179,6 @@ function activateMode(
   );
 }
 
-const PERSISTENT_WORKFLOWS = new Set([
-  "ultrawork",
-  "orchestrate",
-  "coordinate",
-]);
-
 // ── Main ──────────────────────────────────────────────────────
 
 async function main() {

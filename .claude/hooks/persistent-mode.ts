@@ -14,12 +14,29 @@
  */
 
 import { readFileSync, writeFileSync, unlinkSync, existsSync } from "node:fs";
-import { join } from "node:path";
+import { join, dirname } from "node:path";
 import { type Vendor, type ModeState, makeBlockOutput } from "./types.ts";
 
-const PERSISTENT_WORKFLOWS = ["ultrawork", "orchestrate", "coordinate"];
 const MAX_REINFORCEMENTS = 20;
 const STALE_HOURS = 2;
+
+// ── Config Loading ────────────────────────────────────────────
+
+interface TriggerConfig {
+  workflows: Record<string, { persistent: boolean }>;
+}
+
+function loadPersistentWorkflows(): string[] {
+  const configPath = join(dirname(import.meta.path), "triggers.json");
+  try {
+    const config: TriggerConfig = JSON.parse(readFileSync(configPath, "utf-8"));
+    return Object.entries(config.workflows)
+      .filter(([, def]) => def.persistent)
+      .map(([name]) => name);
+  } catch {
+    return ["ultrawork", "orchestrate", "coordinate"];
+  }
+}
 
 // ── Vendor Detection ──────────────────────────────────────────
 
@@ -113,7 +130,9 @@ async function main() {
   const projectDir = getProjectDir(vendor, input);
   const sessionId = getSessionId(input);
 
-  for (const workflow of PERSISTENT_WORKFLOWS) {
+  const persistentWorkflows = loadPersistentWorkflows();
+
+  for (const workflow of persistentWorkflows) {
     const state = readModeState(projectDir, workflow);
     if (!state) continue;
 

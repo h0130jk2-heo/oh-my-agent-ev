@@ -123,6 +123,62 @@
         "pl": ["inicjalizacja projektu"]
       }
     },
+    "ralph": {
+      "persistent": true,
+      "keywords": {
+        "*": ["ralph"],
+        "en": [
+          "don't stop", "do not stop", "must complete",
+          "until done", "keep going", "finish everything",
+          "complete everything", "run to completion",
+          "no stopping", "see it through"
+        ],
+        "ko": [
+          "랄프", "멈추지마", "멈추지 말고", "끝까지",
+          "완료될때까지", "될때까지 해", "끝날때까지",
+          "다 끝내", "다 해", "전부 완료", "끝까지 해",
+          "중단하지마", "끝장내"
+        ],
+        "ja": [
+          "止まるな", "完了まで", "最後まで",
+          "全部終わらせて", "止めないで", "完了するまで",
+          "最後までやって"
+        ],
+        "zh": [
+          "不要停", "直到完成", "做到完成",
+          "全部完成", "别停", "做完为止",
+          "一直做到完"
+        ],
+        "es": [
+          "no pares", "hasta completar", "hasta terminar",
+          "termina todo", "no te detengas", "completa todo"
+        ],
+        "fr": [
+          "n'arrête pas", "jusqu'à complétion", "jusqu'au bout",
+          "termine tout", "ne t'arrête pas", "complète tout"
+        ],
+        "de": [
+          "hör nicht auf", "bis zur fertigstellung", "bis es fertig ist",
+          "alles fertigstellen", "nicht aufhören", "mach alles fertig"
+        ],
+        "pt": [
+          "não pare", "até completar", "até terminar",
+          "termine tudo", "complete tudo", "não pare até terminar"
+        ],
+        "ru": [
+          "не останавливайся", "до завершения", "пока не закончишь",
+          "заверши всё", "не прекращай", "доделай всё"
+        ],
+        "nl": [
+          "stop niet", "tot voltooiing", "tot het klaar is",
+          "maak alles af", "niet stoppen", "alles afronden"
+        ],
+        "pl": [
+          "nie zatrzymuj się", "do ukończenia", "aż skończysz",
+          "dokończ wszystko", "nie przerywaj", "skończ wszystko"
+        ]
+      }
+    },
     "design": {
       "persistent": false,
       "keywords": {

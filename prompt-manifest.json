@@ -1,7 +1,7 @@
 {
   "name": "oh-my-agent",
-  "version": "4.10.3",
-  "releaseDate": "2026-03-26T06:50:52.088Z",
+  "version": "4.10.2",
+  "releaseDate": "2026-03-26T09:37:44.004Z",
   "repository": "https://github.com/first-fluke/oh-my-agent",
   "files": [
     {
@@ -825,6 +825,16 @@
       "size": 2701
     },
     {
+      "path": ".agents/workflows/ralph/resources/judge-protocol.md",
+      "sha256": "f3eef51e1aaa7b392c0e07651088a957f44fe1a1ca8b4bd2e1eb202fe444c4cd",
+      "size": 3597
+    },
+    {
+      "path": ".agents/workflows/ralph.md",
+      "sha256": "228913341253c3944dc29041f8937d5a6862bf62d6bf6b5549a996f22cfe2a9d",
+      "size": 7836
+    },
+    {
       "path": ".agents/workflows/review.md",
       "sha256": "cee1616e9380eabe8d175aa9a2d556b9c1c3f0fae3658546422ba53c6004fb07",
       "size": 4827
@@ -905,6 +915,11 @@
       "size": 207
     },
     {
+      "path": ".claude/skills/ralph/SKILL.md",
+      "sha256": "1efd64b0de802317af18dad9b4a2ff5ddc93504352c64a4fd5ad566729164db3",
+      "size": 216
+    },
+    {
       "path": ".claude/skills/review/SKILL.md",
       "sha256": "b6019ea6fb17efc24afb51fc58ae966c36e427e842bf77d18c2864d09d422fb0",
       "size": 228
@@ -974,8 +989,8 @@
     "algorithm": "sha256"
   },
   "metadata": {
-    "skillCount": 29,
-    "workflowCount": 16,
-    "totalFiles": 193
+    "skillCount": 30,
+    "workflowCount": 18,
+    "totalFiles": 196
   }
 }
