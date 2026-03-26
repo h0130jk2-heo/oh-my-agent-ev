@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.10.1](https://github.com/first-fluke/oh-my-agent/compare/cli-v4.10.0...cli-v4.10.1) (2026-03-26)
+
+
+### Bug Fixes
+
+* **hooks:** remove yaml dependency from keyword-detector hook ([a6a7a7b](https://github.com/first-fluke/oh-my-agent/commit/a6a7a7b0503121f411d8ee2ef05cf684d732ab08))
+
 ## [4.10.0](https://github.com/first-fluke/oh-my-agent/compare/cli-v4.9.0...cli-v4.10.0) (2026-03-26)
 
 
