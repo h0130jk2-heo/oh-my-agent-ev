@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.8](https://github.com/first-fluke/oh-my-agent/compare/web-v0.3.7...web-v0.3.8) (2026-03-26)
+
+
+### Bug Fixes
+
+* **hooks:** remove yaml dependency from keyword-detector hook ([a6a7a7b](https://github.com/first-fluke/oh-my-agent/commit/a6a7a7b0503121f411d8ee2ef05cf684d732ab08))
+
 ## [0.3.7](https://github.com/first-fluke/oh-my-agent/compare/web-v0.3.6...web-v0.3.7) (2026-03-25)
 
 
