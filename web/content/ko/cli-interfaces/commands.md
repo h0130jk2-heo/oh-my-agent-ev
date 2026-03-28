@@ -61,6 +61,18 @@ oma doctor [--json] [--output <format>]
 - 각 CLI의 인증 상태.
 - MCP 설정: `~/.gemini/settings.json`, `~/.claude.json`, `~/.codex/config.toml`.
 - 설치된 스킬: 어떤 스킬이 존재하고 그 상태.
+- Serena 메모리 디렉토리: `.serena/memories/` 존재 여부 및 파일 수.
+- 글로벌 워크플로우: `~/.gemini/antigravity/global_workflows/` 설치 상태.
+- Git rerere: `rerere.enabled` 글로벌 설정 여부.
+- Claude Code 권장 설정: `~/.claude/settings.json`의 최적 설정 확인:
+  - `cleanupPeriodDays >= 180` (대화 히스토리 보존)
+  - `CLAUDE_CODE_FILE_READ_MAX_OUTPUT_TOKENS >= 100000`
+  - `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE >= 80`
+  - 텔레메트리/에러 리포팅/피드백 서베이 비활성화
+  - 커밋·PR 어트리뷰션 문자열
+- 사용자 레벨 CLAUDE.md: `~/.claude/CLAUDE.md`에 OMA 통합 블록(`<!-- OMA:START`) 존재 여부.
+
+**자동 복구:** 누락된 스킬이나 설정이 감지되면 대화형으로 설치를 제안합니다. Claude Code 설정은 권장값을 자동 적용할 수 있습니다.
 
 **예시:**
 ```bash
@@ -578,6 +590,26 @@ oma verify <agent-type> [-w <workspace>] [--json] [--output <format>]
 | `--output <format>` | 출력 형식 (`text` 또는 `json`) | |
 
 **수행 내용:** 지정된 에이전트 타입에 대한 검증 스크립트를 실행하여 빌드 성공, 테스트 결과, 범위 준수를 확인합니다.
+
+**공통 검사 (모든 에이전트 타입):**
+- **범위 검사**: `.agents/plan.json`의 태스크 범위를 읽고, `git diff`로 변경된 파일을 정의된 범위 패턴과 비교합니다. 에이전트에 할당된 범위 외의 파일이 수정되면 실패합니다.
+- **Charter Preflight**: `result-{agent}.md`에 올바르게 채워진 `CHARTER_CHECK:` 블록이 있는지, 미입력 플레이스홀더가 없는지 확인합니다.
+- **하드코딩된 시크릿**: `.py`, `.ts`, `.tsx`, `.js`, `.dart` 파일에서 `password = "..."`, `api_key = "..."` 같은 패턴을 스캔합니다 (테스트/예제 파일은 제외).
+- **TODO/FIXME 주석**: `TODO`, `FIXME`, `HACK`, `XXX` 주석 수를 집계합니다 (발견 시 경고).
+
+**에이전트별 검사:**
+
+| 에이전트 타입 | 추가 검사 |
+|:------------|:---------|
+| `backend` | Python 구문 검증 (`py_compile`), SQL 인젝션 감지 (f-string + SQL 키워드), Python 테스트 실행 (`pytest`) |
+| `frontend` | TypeScript 컴파일 (`tsc --noEmit`), 인라인 스타일 감지 (`style={{`), `any` 타입 사용 (3개 초과 시 실패), 프론트엔드 테스트 (`vitest`) |
+| `mobile` | Flutter/Dart 분석 (`flutter analyze` 또는 `dart analyze`), Flutter 테스트 (`flutter test`) |
+| `qa` | 자체 검사 검증 |
+| `debug` | 감지된 프로젝트 타입에 따라 Python 테스트 또는 프론트엔드 테스트 실행 |
+| `pm` | `.agents/plan.json`이 존재하고 유효한 JSON인지 검증 |
+
+**출력 형식:**
+각 검사는 `PASS`, `FAIL`, `WARN`, `SKIP` 중 하나를 상세 메시지와 함께 보고합니다. 전체 결과는 실패한 검사가 0건일 때만 `ok: true`입니다.
 
 **예시:**
 ```bash

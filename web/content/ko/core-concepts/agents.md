@@ -64,7 +64,7 @@ oh-my-agent의 에이전트는 전문화된 엔지니어링 역할입니다. 각
 - 태스크는 단일 에이전트가 완료 가능해야 함
 - 오케스트레이터 호환성을 위한 JSON 계획 + task-board.md 출력
 
-**출력:** `.agents/plan.json`, `.agents/brain/current-plan.md`, 오케스트레이터용 메모리 기록.
+**출력:** `.agents/plan.json`, `.agents/results/current-plan.md`, 오케스트레이터용 메모리 기록.
 
 **리소스:** `execution-protocol.md`, `examples.md`, `iso-planning.md`, `task-template.json`, `../_shared/core/api-contracts/`.
 
@@ -295,7 +295,7 @@ oh-my-agent의 에이전트는 전문화된 엔지니어링 역할입니다. 각
 - 최소 수정: 필요한 것만 변경
 - 모든 수정에 회귀 테스트
 - 다른 곳에서 유사한 패턴 검색
-- `.agents/brain/bugs/`에 문서화
+- `.agents/results/bugs/`에 문서화
 
 **사용하는 Serena MCP 도구:**
 - `find_symbol("functionName")` — 함수 위치 찾기
@@ -377,6 +377,27 @@ oh-my-agent의 에이전트는 전문화된 엔지니어링 역할입니다. 각
 - 스테이징 시 항상 파일 지정
 - 멀티라인 커밋 메시지에 HEREDOC 사용
 - Co-Author: `First Fluke <our.first.fluke@gmail.com>`
+
+---
+
+### oma-coordination
+
+**도메인:** 수동 단계별 멀티 에이전트 조율 가이드.
+
+**사용 시기:** 모든 게이트에서 사람의 확인이 필요한 복잡한 프로젝트, 수동 에이전트 스폰 가이드, 단계별 조율 레시피.
+
+**사용하지 말 것:** 완전 자동 병렬 실행(oma-orchestrator 사용), 단일 도메인 작업(해당 도메인 에이전트 직접 사용).
+
+**핵심 규칙:**
+- 에이전트 스폰 전 반드시 계획을 사용자에게 확인
+- 한 번에 하나의 우선순위 티어만 — 완료 후 다음 티어 진행
+- 사용자가 각 게이트 전환을 승인
+- 머지 전 QA 리뷰 필수
+- CRITICAL/HIGH 이슈에 대한 수정 반복 루프
+
+**워크플로우:** PM 계획 → 사용자 확인 → 우선순위별 스폰 → 모니터링 → QA 리뷰 → 이슈 수정 → 배포.
+
+**oma-orchestrator와 차이:** coordination은 수동 가이드(사용자가 속도 제어), orchestrator는 자동(최소 사용자 개입으로 에이전트가 스폰·실행).
 
 ---
 

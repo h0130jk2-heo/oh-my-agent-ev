@@ -29,10 +29,12 @@ oma
 5. Asks about GitHub Copilot symlinks.
 6. Downloads the latest tarball from the registry.
 7. Installs shared resources, workflows, configs, and selected skills.
-8. Installs vendor adaptations for all vendors (Claude, Codex, Gemini, Qwen).
-9. Creates CLI symlinks.
-10. Offers to enable `git rerere`.
-11. Offers to configure MCP for Antigravity IDE and Gemini CLI.
+8. Installs vendor adaptations for all 4 vendors (Claude, Codex, Gemini, Qwen).
+9. Applies recommended Claude Code settings (`~/.claude/settings.json`) when Claude Code is detected.
+10. Creates CLI symlinks.
+11. Offers to enable `git rerere`.
+12. Offers to configure MCP for Antigravity IDE and Gemini CLI.
+13. Prompts for GitHub star if `gh` is authenticated.
 
 **Example:**
 ```bash
@@ -61,6 +63,18 @@ oma doctor [--json] [--output <format>]
 - Authentication status for each CLI.
 - MCP configuration: `~/.gemini/settings.json`, `~/.claude.json`, `~/.codex/config.toml`.
 - Installed skills: which skills are present and their status.
+- Serena memory directory: `.serena/memories/` existence and file count.
+- Global workflows: checks `~/.gemini/antigravity/global_workflows/` installation status.
+- Git rerere: whether `rerere.enabled` is configured globally.
+- Claude Code recommended settings: checks `~/.claude/settings.json` for optimal configuration:
+  - `cleanupPeriodDays >= 180` (preserve conversation history)
+  - `CLAUDE_CODE_FILE_READ_MAX_OUTPUT_TOKENS >= 100000`
+  - `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE >= 80`
+  - `DISABLE_TELEMETRY`, `DISABLE_ERROR_REPORTING`, `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY` set to `"1"`
+  - Attribution strings for commits and PRs
+- User-level CLAUDE.md: checks `~/.claude/CLAUDE.md` contains the OMA integration block (`<!-- OMA:START`).
+
+**Auto-repair:** If missing skills or settings are detected, `doctor` offers to install them interactively. For Claude Code settings, it can apply recommended values automatically.
 
 **Examples:**
 ```bash
@@ -578,6 +592,26 @@ oma verify <agent-type> [-w <workspace>] [--json] [--output <format>]
 | `--output <format>` | Output format (`text` or `json`) | |
 
 **What it does:** Runs the verification script for the specified agent type, checking build success, test results, and scope compliance.
+
+**Common checks (all agent types):**
+- **Scope Check**: Reads `.agents/plan.json` task scopes. Compares `git diff` changed files against defined scope patterns. Fails if files are modified outside the agent's assigned scope.
+- **Charter Preflight**: Verifies `result-{agent}.md` contains a properly filled `CHARTER_CHECK:` block with no unfilled placeholders.
+- **Hardcoded Secrets**: Scans `.py`, `.ts`, `.tsx`, `.js`, `.dart` files for patterns like `password = "..."`, `api_key = "..."` (excludes test/example files).
+- **TODO/FIXME Comments**: Counts `TODO`, `FIXME`, `HACK`, `XXX` comments (warns if any found).
+
+**Agent-specific checks:**
+
+| Agent Type | Additional Checks |
+|:-----------|:-----------------|
+| `backend` | Python syntax validation (`py_compile`), SQL injection detection (f-string + SQL keywords), Python test execution (`pytest`) |
+| `frontend` | TypeScript compilation (`tsc --noEmit`), inline style detection (`style={{`), `any` type usage (fails if > 3), frontend tests (`vitest`) |
+| `mobile` | Flutter/Dart analysis (`flutter analyze` or `dart analyze`), Flutter tests (`flutter test`) |
+| `qa` | Self-check verification |
+| `debug` | Runs Python tests or frontend tests based on detected project type |
+| `pm` | Validates `.agents/plan.json` exists and is valid JSON |
+
+**Output format:**
+Each check reports `PASS`, `FAIL`, `WARN`, or `SKIP` with a detail message. Overall result is `ok: true` only if zero checks fail.
 
 **Examples:**
 ```bash

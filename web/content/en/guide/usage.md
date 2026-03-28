@@ -234,7 +234,7 @@ oma stats
 
 ---
 
-## All Workflow Commands
+## All 15 Workflow Commands
 
 | Command | Type | What It Does | When to Use |
 |---------|------|-------------|-------------|
@@ -252,6 +252,7 @@ oma stats
 | `/setup` | Non-persistent | Interactive project configuration (language, CLI, MCP) | First-time setup or reconfiguration |
 | `/tools` | Non-persistent | MCP tool visibility management (enable/disable groups) | Controlling which MCP tools agents can use |
 | `/stack-set` | Non-persistent | Auto-detect project tech stack and generate backend references | Setting up language-specific coding conventions |
+| `/ralph` | Persistent | Self-referential completion loop wrapping ultrawork with independent judge | When agents must keep working until verifiable criteria pass |
 
 ---
 
@@ -279,6 +280,9 @@ oh-my-agent detects workflow keywords in 11 languages. Here are examples showing
 | "diseña la página" | `/design` | Spanish |
 | "debuggen" | `/debug` | German |
 | "coordonner étape par étape" | `/coordinate` | French |
+| "don't stop until it's done" | `/ralph` | English |
+| "끝까지 해" | `/ralph` | Korean |
+| "最後までやって" | `/ralph` | Japanese |
 
 **Informational queries are filtered out:**
 

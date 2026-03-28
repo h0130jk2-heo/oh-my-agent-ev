@@ -157,6 +157,43 @@ For complex requests that span multiple domains, routing follows established exe
 
 ---
 
+## HUD Statusline
+
+When running in Claude Code, oh-my-agent displays a persistent status indicator `[OMA]` in the status bar showing:
+- Model name (e.g., Opus, Sonnet)
+- Context usage with color coding (green < 70%, yellow 70-85%, red > 85%)
+- Active workflow state (if a persistent workflow is running)
+
+The HUD is powered by `.claude/hooks/hud.ts` using Claude Code's `statusLine` hook feature.
+
+---
+
+## Automatic Workflow Detection
+
+You do not need to type `/command` to trigger workflows. oh-my-agent's `UserPromptSubmit` hook scans your natural language input against keyword triggers defined in `.claude/hooks/triggers.json` — supporting 11 languages (English, Korean, Japanese, Chinese, Spanish, French, German, Portuguese, Russian, Dutch, Polish).
+
+- **Actionable input** (e.g., "plan the auth feature") → automatically loads the workflow
+- **Informational input** (e.g., "what is orchestrate?") → filtered out, no workflow triggered
+- **Explicit `/command`** → hook skips detection to avoid duplication
+- **Persistent workflows** reinject context on every message until you say "workflow done"
+
+---
+
+## Cross-Vendor Support
+
+oh-my-agent is not limited to Claude Code. The hook system supports:
+
+| Vendor | Integration |
+|--------|------------|
+| **Claude Code** | Native hooks (`UserPromptSubmit`, `Notification`, statusLine) |
+| **Gemini CLI** | Skills auto-loaded from `.agents/skills/`, agent spawning via `oh-my-ag agent:spawn` |
+| **Codex CLI** | Skills auto-loaded, model-mediated parallel requests |
+| **Qwen Code** | Hook support for workflow detection |
+
+Vendor detection happens automatically — agents adapt their spawning method based on the detected runtime environment.
+
+---
+
 ## What is Next
 
 - **[Installation](./installation)** — Three install methods, presets, CLI setup, and verification

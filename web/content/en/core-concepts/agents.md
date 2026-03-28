@@ -64,7 +64,7 @@ Agents in oh-my-agent are specialized engineering roles. Each agent has a define
 - Tasks must be completable by a single agent
 - Output JSON plan + task-board.md for orchestrator compatibility
 
-**Output:** `.agents/plan.json`, `.agents/brain/current-plan.md`, memory write for orchestrator.
+**Output:** `.agents/plan.json`, `.agents/results/result-pm.md`, memory write for orchestrator.
 
 **Resources:** `execution-protocol.md`, `examples.md`, `iso-planning.md`, `task-template.json`, `../_shared/core/api-contracts/`.
 
@@ -295,7 +295,7 @@ Agents in oh-my-agent are specialized engineering roles. Each agent has a define
 - Minimal fix: change only what is necessary
 - Every fix gets a regression test
 - Search for similar patterns elsewhere
-- Document in `.agents/brain/bugs/`
+- Document in `.agents/results/`
 
 **Serena MCP tools used:**
 - `find_symbol("functionName")` — locate the function
@@ -377,6 +377,27 @@ Agents in oh-my-agent are specialized engineering roles. Each agent has a define
 - Always specify files when staging
 - Use HEREDOC for multi-line commit messages
 - Co-Author: `First Fluke <our.first.fluke@gmail.com>`
+
+---
+
+### oma-coordination
+
+**Domain:** Manual step-by-step multi-agent coordination guide.
+
+**When to use:** Complex projects where you want human-in-the-loop control at every gate, manual agent spawning guidance, step-by-step coordination recipes.
+
+**When NOT to use:** Fully automated parallel execution (use oma-orchestrator), single-domain tasks (use the domain agent directly).
+
+**Core rules:**
+- Always present the plan for user confirmation before spawning agents
+- One priority tier at a time — wait for completion before next tier
+- User approves each gate transition
+- QA review is mandatory before merging
+- Issue remediation loop for CRITICAL/HIGH findings
+
+**Workflow:** PM plans → User confirms → Spawn by priority tier → Monitor → QA review → Fix issues → Ship.
+
+**Difference from oma-orchestrator:** Coordination is manual and guided (user controls pace), orchestrator is automated (agents spawn and run with minimal user intervention).
 
 ---
 

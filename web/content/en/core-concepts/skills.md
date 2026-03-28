@@ -135,7 +135,8 @@ All agents share common foundations from `.agents/skills/_shared/`. These are or
 | **`vendor-detection.md`** | Protocol for detecting the current runtime environment (Claude Code, Codex CLI, Gemini CLI, Antigravity, CLI Fallback). Uses marker checks: Agent tool = Claude Code, apply_patch = Codex, @-syntax = Gemini. | At workflow start |
 | **`session-metrics.md`** | Clarification Debt (CD) scoring and session metrics tracking. Defines event types (clarify +10, correct +25, redo +40), thresholds (CD >= 50 = RCA, CD >= 80 = pause), and integration points. | During orchestration sessions |
 | **`common-checklist.md`** | Universal quality checklist applied at final verification of Complex tasks (in addition to agent-specific checklists). | Verify step of Complex tasks |
-| **`lessons-learned.md`** | Repository of past session learnings, auto-generated from Clarification Debt breaches and discarded experiments. Organized by domain section. | Referenced after errors and at session end |
+| **`lessons-learned.md`** | Repository of past session learnings, auto-generated from Clarification Debt breaches and discarded experiments. Organized by domain section. Includes QA Evaluation Lessons for tracking evaluator blind spots. | Referenced after errors and at session end |
+| **`evaluator-tuning.md`** | Semi-automated QA prompt tuning protocol. Tracks Evaluation Accuracy (EA) events, triggers tuning when EA >= 30, generates patch suggestions for QA checklists and execution protocols. Includes tuning log and positive reinforcement from `good_catch` events. | When `oh-my-ag retro` detects EA threshold breach |
 | **`api-contracts/`** | Directory containing API contract template and generated contracts. `template.md` defines the per-endpoint format (method, path, request/response schemas, auth, errors). | When cross-boundary work is planned |
 
 ### Runtime Resources (`.agents/skills/_shared/runtime/`)
@@ -303,3 +304,93 @@ When the orchestrator composes prompts for subagents, it includes only task-rele
 5. Serena Memory Protocol (CLI mode)
 
 This targeted composition avoids loading unnecessary resources, maximizing the subagent's available context for actual work.
+
+---
+
+## Clarification Debt & Session Metrics (Deep Dive)
+
+Clarification Debt (CD) measures the cost of unclear requirements during a session. The orchestrator tracks every user correction and scores it:
+
+| Event Type | Points | Description |
+|------------|--------|-------------|
+| `clarify` | +10 | Simple clarification question (expected for MEDIUM uncertainty) |
+| `correct` | +25 | Intent misunderstanding requiring direction change |
+| `redo` | +40 | Scope/charter violation requiring rollback and restart |
+| `blocked` | +0 | Agent correctly stopped and asked (good behavior — not penalized) |
+
+**Modifiers:** Charter not read (+15), allowlist violation (+20), same error repeated (x1.5).
+
+**Thresholds and enforcement:**
+- **CD >= 50** → Mandatory RCA entry added to `lessons-learned.md`
+- **CD >= 80** → Session halted, user must re-specify requirements
+- **`redo` >= 2** → Orchestrator pauses and requests explicit scope confirmation
+- **CD >= 30 across 3 consecutive sessions for the same agent** → Agent prompt template review
+
+The session log is maintained in `.serena/memories/session-metrics.md` with per-event rows (turn, agent, event type, points, detail) and a summary section.
+
+---
+
+## Evaluator Accuracy & QA Tuning
+
+QA agents improve through tracked judgment errors. Unlike CD (real-time), Evaluator Accuracy (EA) is retrospective — most errors are discovered after the session ends.
+
+**EA event types:**
+
+| Event | Points | When Discovered |
+|-------|--------|-----------------|
+| `false_negative` | +30 | Next session or production — bug that QA missed |
+| `false_positive` | +15 | During session — impl agent successfully disputes QA finding |
+| `severity_mismatch` | +10 | During session or retro — wrong severity assigned |
+| `missed_stub` | +20 | Runtime verification catches display-only feature |
+| `good_catch` | -10 | QA caught a non-obvious bug (positive reward signal) |
+
+**EA is calculated on a rolling 3-session window.** Thresholds:
+- **EA >= 30** → `oh-my-ag retro` flags QA patterns for review (tuning suggested)
+- **EA >= 50** → Tuning required: update QA execution-protocol.md
+- **`false_negative` >= 3** across window → Add detection pattern to QA checklist.md
+- **`good_catch` >= 5** across window → Document and propagate successful pattern
+
+The full tuning loop is defined in `evaluator-tuning.md`: sessions accumulate EA events → threshold triggers `oh-my-ag retro` → report categorizes errors and suggests patches → user reviews and approves → patches applied to QA checklist/protocol → validation over next 3 sessions.
+
+---
+
+## Sprint Decomposition for Complex Tasks
+
+Complex tasks (4+ files, architecture decisions) use sprint-based execution rather than a single long run:
+
+1. **Decompose** into 2-4 feature-focused sprints, each independently testable
+2. **Target** 5-8 turns per sprint
+3. **Sprint Gate** after each sprint:
+   - Sprint deliverable complete?
+   - Lint/test pass?
+   - If sprint took 2x expected turns → write checkpoint, inform user
+4. **Continue** to next sprint on gate pass
+
+**Example:** Task "JWT auth + CRUD API + tests" decomposes into:
+- Sprint 1: User model + auth endpoints (register/login)
+- Sprint 2: CRUD endpoints + validation
+- Sprint 3: Tests + error handling
+
+**Difficulty misjudgment recovery:** If a task started as Simple but proves more complex, the agent upgrades to Medium or Complex protocol mid-execution and records the change in progress.
+
+---
+
+## Context Reset Protocol
+
+Long-running agents degrade in quality as context fills up. The Orchestrator (not the agent itself) monitors for this and triggers resets.
+
+**Trigger conditions (Orchestrator checks during monitoring):**
+
+| Condition | Detection | Action |
+|-----------|-----------|--------|
+| Turn budget exhaustion | Agent consumed >= 80% of expected turns AND acceptance criteria < 50% complete | Context Reset |
+| Progress stall | No progress file update for 3+ consecutive monitoring cycles | Context Reset |
+| Shallow output | Result file contains stub markers or TODO placeholders | Re-spawn with explicit instruction |
+
+**Reset procedure:**
+1. **Checkpoint** — Save agent's current state (completed items, remaining items, key decisions)
+2. **Terminate** — Stop the current agent run
+3. **Re-spawn** — Start a fresh agent with the checkpoint as context
+4. **Resume** — New agent reads checkpoint, continues from remaining items only
+
+For standalone agents (no Orchestrator), the Sprint Gate in `difficulty-guide.md` serves as the safety net — if a sprint takes 2x expected turns, the agent writes a checkpoint and informs the user.

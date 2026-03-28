@@ -1,13 +1,13 @@
 ---
 title: Workflows
-description: Complete reference for all 14 oh-my-agent workflows — slash commands, persistent vs non-persistent modes, trigger keywords in 11 languages, phases and steps, files read and written, auto-detection mechanics via triggers.json and keyword-detector.ts, informational pattern filtering, and persistent mode state management.
+description: Complete reference for all 15 oh-my-agent workflows — slash commands, persistent vs non-persistent modes, trigger keywords in 11 languages, phases and steps, files read and written, auto-detection mechanics via triggers.json and keyword-detector.ts, informational pattern filtering, and persistent mode state management.
 ---
 
 # Workflows
 
 Workflows are structured multi-step processes triggered by slash commands or natural language keywords. They define how agents collaborate on tasks — from single-phase utilities to complex 5-phase quality gates.
 
-There are 14 workflows, 3 of which are persistent (they maintain state and cannot be accidentally interrupted).
+There are 15 workflows, 4 of which are persistent (they maintain state and cannot be accidentally interrupted).
 
 ---
 
@@ -123,6 +123,40 @@ Persistent workflows keep running until all tasks are done. They maintain state 
 **REFINE skip condition:** Simple tasks under 50 lines.
 
 **When to use:** Maximum quality delivery. When code must be production-ready with comprehensive review.
+
+---
+
+### /ralph
+
+**Description:** Persistent self-referential execution loop. Wraps ultrawork with an independent verifier that checks completion criteria after each iteration. Keeps looping until all criteria pass or safeguards trigger.
+
+**Persistent:** Yes. State file: `.agents/state/ralph-state.json`.
+
+**Trigger keywords:**
+| Language | Keywords |
+|----------|----------|
+| Universal | "ralph" |
+| English | "don't stop", "until done", "keep going", "finish everything", "run to completion" |
+| Korean | "랄프", "멈추지마", "끝까지", "완료될때까지", "끝장내" |
+| Japanese | "止まるな", "完了まで", "最後まで", "全部終わらせて" |
+| Chinese | "不要停", "直到完成", "全部完成", "做完为止" |
+| Spanish | "no pares", "hasta completar", "termina todo" |
+| French | "n'arrête pas", "jusqu'à complétion", "termine tout" |
+| German | "hör nicht auf", "bis zur fertigstellung", "alles fertigstellen" |
+
+**Phases:**
+1. **Phase 0 — INIT:** Load prerequisites (context-loading, memory protocol, judge protocol). Define verifiable completion criteria (each must be mechanically verifiable — test pass, build success, file exists). Present criteria for user confirmation. Initialize session with `max_iterations: 5`.
+2. **Phase 1 — WORK:** Execute ultrawork (PLAN → IMPL → VERIFY → REFINE → SHIP) as a single iteration.
+3. **Phase 2 — JUDGE:** Independent verifier checks each completion criterion against actual project state (run tests, check builds, verify file existence). Score each criterion as PASS/FAIL with evidence.
+4. **Phase 3 — DECIDE:** If all criteria PASS → end loop, generate final report. If any FAIL → increment iteration counter, feed failure context back, return to Phase 1.
+5. **Safeguards:** Loop stops if `current_iteration >= max_iterations` (default 5), or if the same criterion fails 3 consecutive times with the same root cause (stuck detection).
+
+**Key difference from /ultrawork:** Ultrawork is a single-pass 5-phase workflow. Ralph wraps ultrawork in a retry loop with an independent judge that objectively verifies completion — it keeps going until the work is actually done, not just "reviewed."
+
+**Files read:** `.agents/workflows/ralph/resources/judge-protocol.md`, all ultrawork files.
+**Files written:** `session-ralph.md` (memory), iteration logs, final report.
+
+**When to use:** When you need guaranteed completion — the agent must keep working until verifiable criteria pass, not just do one pass and report.
 
 ---
 
@@ -373,13 +407,14 @@ The following workflows are excluded from auto-detection and must be invoked wit
 
 ### State Files
 
-Persistent workflows (orchestrate, ultrawork, coordinate) create state files in `.agents/state/`:
+Persistent workflows (orchestrate, ultrawork, coordinate, ralph) create state files in `.agents/state/`:
 
 ```
 .agents/state/
 ├── orchestrate-state.json
 ├── ultrawork-state.json
-└── coordinate-state.json
+├── coordinate-state.json
+└── ralph-state.json
 ```
 
 These files contain: workflow name, current phase/step, session ID, timestamp, and any pending state.
@@ -429,4 +464,9 @@ The workflow can also end naturally when all steps are completed and the final g
 ### New Codebase Setup
 ```
 /deepinit → AGENTS.md + ARCHITECTURE.md + docs/ → /setup → CLI and MCP configuration
+```
+
+### Guaranteed Completion
+```
+/ralph → define criteria → ultrawork loop → judge verifies → re-iterate if needed → all criteria pass → done
 ```

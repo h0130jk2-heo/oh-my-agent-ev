@@ -1,13 +1,13 @@
 ---
 title: 워크플로우
-description: oh-my-agent 14개 워크플로우 완전 레퍼런스 — 슬래시 명령, 영구 vs 비영구 모드, 11개 언어의 트리거 키워드, 단계 및 스텝, 읽기/쓰기 파일, triggers.json과 keyword-detector.ts를 통한 자동 감지 메커니즘, 정보성 패턴 필터링, 영구 모드 상태 관리.
+description: oh-my-agent 15개 워크플로우 완전 레퍼런스 — 슬래시 명령, 영구 vs 비영구 모드, 11개 언어의 트리거 키워드, 단계 및 스텝, 읽기/쓰기 파일, triggers.json과 keyword-detector.ts를 통한 자동 감지 메커니즘, 정보성 패턴 필터링, 영구 모드 상태 관리.
 ---
 
 # 워크플로우
 
 워크플로우는 슬래시 명령이나 자연어 키워드로 트리거되는 구조화된 다단계 프로세스입니다. 단일 단계 유틸리티부터 복잡한 5단계 품질 게이트까지 에이전트가 태스크에서 어떻게 협업하는지 정의합니다.
 
-14개의 워크플로우가 있으며, 그 중 3개는 영구 워크플로우입니다(상태를 유지하며 실수로 중단할 수 없습니다).
+15개의 워크플로우가 있으며, 그 중 4개는 영구 워크플로우입니다(상태를 유지하며 실수로 중단할 수 없습니다).
 
 ---
 
@@ -123,6 +123,34 @@ description: oh-my-agent 14개 워크플로우 완전 레퍼런스 — 슬래시
 **REFINE 건너뛰기 조건:** 50줄 미만의 Simple 태스크.
 
 **사용 시기:** 최대 품질 제공. 포괄적인 리뷰를 거쳐 프로덕션 준비 상태가 필요할 때.
+
+---
+
+### /ralph
+
+**설명:** 지속적 자기 참조 실행 루프. ultrawork를 독립적 검증자로 감싸서 매 반복마다 완료 기준을 확인합니다. 모든 기준이 통과하거나 안전장치가 작동할 때까지 계속 반복합니다.
+
+**Persistent:** 예. 상태 파일: `.agents/state/ralph-state.json`.
+
+**트리거 키워드:**
+| 언어 | 키워드 |
+|------|--------|
+| 공통 | "ralph" |
+| 영어 | "don't stop", "until done", "keep going", "finish everything", "run to completion" |
+| 한국어 | "랄프", "멈추지마", "끝까지", "완료될때까지", "끝장내" |
+| 일본어 | "止まるな", "完了まで", "最後まで", "全部終わらせて" |
+| 중국어 | "不要停", "直到完成", "全部完成", "做完为止" |
+
+**단계:**
+1. **Phase 0 — INIT:** 사전 조건 로드(context-loading, 메모리 프로토콜, judge 프로토콜). 검증 가능한 완료 기준 정의(테스트 통과, 빌드 성공, 파일 존재 등 기계적으로 확인 가능해야 함). 사용자 확인. `max_iterations: 5` 초기화.
+2. **Phase 1 — WORK:** ultrawork(PLAN → IMPL → VERIFY → REFINE → SHIP) 1회 실행.
+3. **Phase 2 — JUDGE:** 독립적 검증자가 각 완료 기준을 실제 프로젝트 상태와 대조 확인(테스트 실행, 빌드 확인, 파일 존재 검증). PASS/FAIL 점수 부여.
+4. **Phase 3 — DECIDE:** 모든 기준 PASS → 루프 종료, 최종 보고서 생성. FAIL 존재 → 반복 카운터 증가, 실패 컨텍스트 피드백, Phase 1로 복귀.
+5. **안전장치:** `current_iteration >= max_iterations`(기본 5) 도달 시, 또는 같은 기준이 같은 원인으로 3회 연속 실패 시(멈춤 감지) 루프 중단.
+
+**/ultrawork와의 차이:** ultrawork는 단일 패스 5단계 워크플로우. ralph는 ultrawork를 독립적 judge가 객관적으로 완료를 검증하는 재시도 루프로 감쌈 — "검토 완료"가 아닌 실제로 완료될 때까지 계속 작업합니다.
+
+**사용 시기:** 보장된 완료가 필요할 때 — 에이전트가 한 번 패스하고 보고하는 것이 아니라, 검증 가능한 기준이 통과할 때까지 계속 작업해야 할 때.
 
 ---
 
@@ -364,13 +392,14 @@ oh-my-agent는 각 사용자 메시지가 처리되기 전에 실행되는 `User
 
 ### 상태 파일
 
-영구 워크플로우(orchestrate, ultrawork, coordinate)는 `.agents/state/`에 상태 파일을 생성합니다:
+영구 워크플로우(orchestrate, ultrawork, coordinate, ralph)는 `.agents/state/`에 상태 파일을 생성합니다:
 
 ```
 .agents/state/
 ├── orchestrate-state.json
 ├── ultrawork-state.json
-└── coordinate-state.json
+├── coordinate-state.json
+└── ralph-state.json
 ```
 
 이 파일에는 워크플로우 이름, 현재 단계/스텝, 세션 ID, 타임스탬프, 대기 중인 상태가 포함됩니다.
@@ -415,6 +444,11 @@ oh-my-agent는 각 사용자 메시지가 처리되기 전에 실행되는 `User
 ### 디자인에서 구현까지
 ```
 /brainstorm → 설계 문서 → /plan → 태스크 분해 → /orchestrate → 병렬 구현 → /review → /commit
+```
+
+### 보장된 완료
+```
+/ralph → 기준 정의 → ultrawork 루프 → judge 검증 → 필요시 재반복 → 모든 기준 통과 → 완료
 ```
 
 ### 새 코드베이스 설정
