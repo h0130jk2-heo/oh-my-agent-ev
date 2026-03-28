@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.11](https://github.com/first-fluke/oh-my-agent/compare/web-v0.3.10...web-v0.3.11) (2026-03-28)
+
+
+### Documentation
+
+* fill undocumented codebase features in EN/KO web content ([49b5f7e](https://github.com/first-fluke/oh-my-agent/commit/49b5f7e03c3e9fe0ab771a396a0b008522baeb0e))
+
 ## [0.3.10](https://github.com/first-fluke/oh-my-agent/compare/web-v0.3.9...web-v0.3.10) (2026-03-28)
 
 
