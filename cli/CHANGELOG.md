@@ -1,5 +1,23 @@
 # Changelog
 
+## [4.15.1](https://github.com/first-fluke/oh-my-agent/compare/cli-v4.15.0...cli-v4.15.1) (2026-03-29)
+
+
+### Bug Fixes
+
+* **skills:** update outdated stack versions in oma-pm ([08d56b1](https://github.com/first-fluke/oh-my-agent/commit/08d56b1a8c6290bc1896091b7358f56475048d42))
+
+
+### Documentation
+
+* fill undocumented codebase features in EN/KO web content ([49b5f7e](https://github.com/first-fluke/oh-my-agent/commit/49b5f7e03c3e9fe0ab771a396a0b008522baeb0e))
+
+
+### Miscellaneous
+
+* **main:** release web 0.3.11 ([07a1a7a](https://github.com/first-fluke/oh-my-agent/commit/07a1a7a97b9af302137451acb9e80d442ac63e50))
+* **main:** release web 0.3.11 ([d923737](https://github.com/first-fluke/oh-my-agent/commit/d92373763e1fd8fe489039753e1a4efc6950c028))
+
 ## [4.15.0](https://github.com/first-fluke/oh-my-agent/compare/cli-v4.14.0...cli-v4.15.0) (2026-03-28)
 
 
