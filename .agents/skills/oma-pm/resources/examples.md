@@ -9,7 +9,7 @@
 {
   "project_name": "TODO App with JWT Auth",
   "tech_stack": {
-    "frontend": "Next.js 14 + TypeScript + Tailwind",
+    "frontend": "Next.js 16+ + TypeScript + TailwindCSS v4",
     "backend": "FastAPI + PostgreSQL + Redis",
     "testing": "pytest + Vitest + Playwright"
   },
