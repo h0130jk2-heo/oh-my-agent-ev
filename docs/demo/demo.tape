@@ -2,8 +2,8 @@
 # Usage: vhs docs/demo/demo.tape (from project root)
 # Requires: brew install vhs (installs ttyd + ffmpeg automatically)
 
-Output web/public/oh-my-ag.mp4
-Output docs/demo/oh-my-ag.gif
+Output web/public/oh-my-agent.mp4
+Output docs/demo/oh-my-agent.gif
 
 Set Shell "bash"
 Set FontFamily "Hack Nerd Font"

@@ -848,7 +848,7 @@ export async function parallelRun(
       if (tasksOrFile.length === 0) {
         console.error(color.red("Error: No tasks specified"));
         console.log(
-          'Usage: oh-my-ag agent:parallel --inline "agent:task" "agent:task" ...',
+          'Usage: oh-my-agent agent:parallel --inline "agent:task" "agent:task" ...',
         );
         process.exit(1);
       }
@@ -856,7 +856,7 @@ export async function parallelRun(
     } else {
       if (tasksOrFile.length === 0) {
         console.error(color.red("Error: No tasks file specified"));
-        console.log("Usage: oh-my-ag agent:parallel <tasks-file.yaml>");
+        console.log("Usage: oh-my-agent agent:parallel <tasks-file.yaml>");
         process.exit(1);
       }
       const tasksFile = tasksOrFile[0];

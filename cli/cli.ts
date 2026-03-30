@@ -383,14 +383,14 @@ function runAction<T extends unknown[]>(
 const program = new Command();
 
 program
-  .name("oh-my-ag")
+  .name("oh-my-agent")
   .description("Multi-Agent Orchestrator for AI IDEs")
   .version(VERSION)
   .showSuggestionAfterError()
   .showHelpAfterError()
   .addHelpText(
     "after",
-    "\nAliases:\n  oma  Alias for oh-my-ag after global installation.\n",
+    "\nAliases:\n  oma  Alias for oh-my-agent after global installation.\n",
   )
   .action(
     runAction(async () => {
