@@ -660,6 +660,8 @@ function mergeClaudeMd(sourceDir: string): void {
   const omaBlock = readFileSync(templatePath, "utf-8").trim();
   const claudeMdPath = join(homeDir, ".claude", "CLAUDE.md");
 
+  mkdirSync(dirname(claudeMdPath), { recursive: true });
+
   if (existsSync(claudeMdPath)) {
     const existing = readFileSync(claudeMdPath, "utf-8");
     const startIdx = existing.indexOf(OMA_START);
