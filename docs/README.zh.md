@@ -95,6 +95,8 @@ oma agent:parallel -i backend:"Auth API" frontend:"Login form"
 
 ## 为什么选 oh-my-agent？
 
+> [深入了解 →](https://github.com/first-fluke/oh-my-agent/issues/155#issuecomment-4142133589)
+
 - **可移植** — `.agents/` 跟着项目走，不被任何 IDE 绑定
 - **角色化** — 像真正的工程团队一样建模，而不是一堆 prompt 的堆砌
 - **省 token** — 双层 skill 设计节省约 75% 的 token
