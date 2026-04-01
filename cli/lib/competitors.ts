@@ -31,10 +31,132 @@ function detectCompetitors(cwd: string): Competitor[] {
       name: "omc",
       displayName: "oh-my-claudecode",
       uninstall: () => {
-        execSync(
-          "curl -fsSL https://raw.githubusercontent.com/Yeachan-Heo/oh-my-claudecode/main/scripts/uninstall.sh | bash",
-          { stdio: "pipe", timeout: 60_000 },
-        );
+        const claudeDir = join(homeDir, ".claude");
+
+        // Remove agents
+        for (const agent of [
+          "architect",
+          "document-specialist",
+          "explore",
+          "designer",
+          "writer",
+          "vision",
+          "critic",
+          "analyst",
+          "executor",
+          "planner",
+        ]) {
+          const agentPath = join(claudeDir, "agents", `${agent}.md`);
+          if (existsSync(agentPath)) rmSync(agentPath, { force: true });
+        }
+
+        // Remove commands
+        for (const cmd of [
+          "coordinator",
+          "omc",
+          "ultrawork",
+          "deepsearch",
+          "analyze",
+          "plan",
+          "review",
+          "planner",
+          "orchestrator",
+          "update",
+        ]) {
+          const cmdPath = join(claudeDir, "commands", `${cmd}.md`);
+          if (existsSync(cmdPath)) rmSync(cmdPath, { force: true });
+        }
+
+        // Remove skills
+        for (const skill of ["ultrawork", "git-master", "frontend-ui-ux"]) {
+          const skillPath = join(claudeDir, "skills", skill);
+          if (existsSync(skillPath))
+            rmSync(skillPath, { recursive: true, force: true });
+        }
+
+        // Remove hooks
+        for (const hook of [
+          "keyword-detector.sh",
+          "silent-auto-update.sh",
+          "stop-continuation.sh",
+        ]) {
+          const hookPath = join(claudeDir, "hooks", hook);
+          if (existsSync(hookPath)) rmSync(hookPath, { force: true });
+        }
+
+        // Remove state/version files
+        for (const file of [
+          ".omc-version.json",
+          ".omc-silent-update.json",
+          ".omc-update.log",
+          ".omc-config.json",
+        ]) {
+          const filePath = join(claudeDir, file);
+          if (existsSync(filePath)) rmSync(filePath, { force: true });
+        }
+
+        // Remove project-level .omc directory
+        if (existsSync(omcProjectDir))
+          rmSync(omcProjectDir, { recursive: true, force: true });
+
+        // Clean OMC hooks from settings.json
+        const settingsPath = join(claudeDir, "settings.json");
+        if (existsSync(settingsPath)) {
+          try {
+            const settings = JSON.parse(readFileSync(settingsPath, "utf-8"));
+            if (settings.hooks) {
+              for (const event of Object.keys(settings.hooks)) {
+                if (!Array.isArray(settings.hooks[event])) continue;
+                settings.hooks[event] = settings.hooks[event]
+                  .map((entry: { hooks?: { command?: string }[] }) => {
+                    if (Array.isArray(entry.hooks)) {
+                      entry.hooks = entry.hooks.filter(
+                        (h: { command?: string }) =>
+                          !h.command ||
+                          !(
+                            h.command.includes("keyword-detector.sh") ||
+                            h.command.includes("silent-auto-update.sh") ||
+                            h.command.includes("stop-continuation.sh")
+                          ),
+                      );
+                    }
+                    return entry;
+                  })
+                  .filter(
+                    (entry: { hooks?: unknown[] }) =>
+                      !entry.hooks || entry.hooks.length > 0,
+                  );
+                if (settings.hooks[event].length === 0)
+                  delete settings.hooks[event];
+              }
+              if (Object.keys(settings.hooks).length === 0)
+                delete settings.hooks;
+              writeFileSync(
+                settingsPath,
+                `${JSON.stringify(settings, null, 2)}\n`,
+              );
+            }
+          } catch {
+            // settings.json parse failed, skip hook cleanup
+          }
+        }
+
+        // Clean OMC block from CLAUDE.md
+        const globalClaudeMd = join(claudeDir, "CLAUDE.md");
+        if (existsSync(globalClaudeMd)) {
+          try {
+            const content = readFileSync(globalClaudeMd, "utf-8");
+            if (content.includes("OMC:START")) {
+              const cleaned = content.replace(
+                /<!-- OMC:START[\s\S]*?OMC:END -->\n?/g,
+                "",
+              );
+              writeFileSync(globalClaudeMd, cleaned);
+            }
+          } catch {
+            // ignore
+          }
+        }
       },
     });
   }
