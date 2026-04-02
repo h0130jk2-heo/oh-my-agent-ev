@@ -23,6 +23,7 @@ import {
   saveLocalVersion,
 } from "../lib/manifest.js";
 import { migrateSharedLayout, migrateToAgents } from "../lib/migrate.js";
+import { ensureSerenaProject, inferSerenaLanguages } from "../lib/serena.js";
 import {
   createCliSymlinks,
   detectExistingCliSymlinkDirs,
@@ -254,6 +255,12 @@ export async function update(force = false, ci = false): Promise<void> {
         "gemini",
         "qwen",
       ]);
+
+      // --- Serena Project Setup ---
+      {
+        const serenaLangs = inferSerenaLanguages(cwd);
+        ensureSerenaProject(cwd, serenaLangs);
+      }
 
       // --- Claude Code recommended settings (user-level) ---
       const homeDir = process.env.HOME || process.env.USERPROFILE || "";

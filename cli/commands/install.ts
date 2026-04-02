@@ -1,10 +1,5 @@
 import { execSync } from "node:child_process";
-import {
-  existsSync,
-  readdirSync,
-  readFileSync,
-  writeFileSync,
-} from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
@@ -15,6 +10,7 @@ import {
   isGhInstalled,
 } from "../lib/github.js";
 import { migrateSharedLayout, migrateToAgents } from "../lib/migrate.js";
+import { ensureSerenaProject, resolveSerenaLanguages } from "../lib/serena.js";
 import {
   type CliTool,
   createCliSymlinks,
@@ -220,7 +216,6 @@ export async function install(): Promise<void> {
 
   try {
     try {
-
       installShared(repoDir, cwd);
       installWorkflows(repoDir, cwd);
       installRules(repoDir, cwd);
@@ -245,7 +240,12 @@ export async function install(): Promise<void> {
       spinner.stop("Vendor adaptations installed!");
 
       // Patch user-preferences.yaml with selected language
-      const userPrefsPath = join(cwd, ".agents", "config", "user-preferences.yaml");
+      const userPrefsPath = join(
+        cwd,
+        ".agents",
+        "config",
+        "user-preferences.yaml",
+      );
       if (existsSync(userPrefsPath)) {
         const prefs = readFileSync(userPrefsPath, "utf-8");
         writeFileSync(
@@ -289,6 +289,23 @@ export async function install(): Promise<void> {
       ].join("\n"),
       "Installed",
     );
+
+    // --- Serena Project Setup ---
+    {
+      const serenaLangs = resolveSerenaLanguages(
+        selectedSkills,
+        variantSelections["oma-backend"],
+      );
+      const { configured, registered } = ensureSerenaProject(cwd, serenaLangs);
+      if (configured) {
+        p.log.success(
+          pc.green(`Serena project configured (${serenaLangs.join(", ")})`),
+        );
+      }
+      if (registered) {
+        p.log.success(pc.green("Project registered in Serena"));
+      }
+    }
 
     // --- Git rerere Setup ---
     try {
