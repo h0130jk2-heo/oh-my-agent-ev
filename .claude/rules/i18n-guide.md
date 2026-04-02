@@ -13,5 +13,4 @@
 - Technical terms stay in English — don't force-translate (JWT, API, middleware, scaffold)
 - Inline code in backticks is never translated
 - Code block comments stay in English
-- Korean default register: 해요체 (conversational), 합쇼체 (formal docs)
-- Unfamiliar terms: `번역어(원어)` format, first occurrence only
+- Unfamiliar terms: `translated(original)` format, first occurrence only
