@@ -107,7 +107,7 @@ main() {
   # ── Run oh-my-agent interactive installer ──
   info "Launching ${BOLD}oh-my-agent${RESET} setup..."
   echo ""
-  exec bunx oh-my-agent@latest
+  exec bunx oh-my-agent@latest < /dev/tty
 }
 
 main "$@"
