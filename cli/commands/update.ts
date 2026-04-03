@@ -20,6 +20,7 @@ import {
 import {
   fetchRemoteManifest,
   getLocalVersion,
+  hasInstalledProject,
   saveLocalVersion,
 } from "../lib/manifest.js";
 import { migrateSharedLayout, migrateToAgents } from "../lib/migrate.js";
@@ -69,6 +70,14 @@ function createUI(ci: boolean) {
   };
 }
 
+export function classifyUpdateTarget(
+  localVersion: string | null,
+  hasExistingInstall: boolean,
+): "ready" | "legacy" | "missing" {
+  if (localVersion !== null) return "ready";
+  return hasExistingInstall ? "legacy" : "missing";
+}
+
 export async function update(force = false, ci = false): Promise<void> {
   if (!ci && process.stdout.isTTY) console.clear();
 
@@ -91,16 +100,25 @@ export async function update(force = false, ci = false): Promise<void> {
     await promptUninstallCompetitors(cwd);
   }
 
-  // If not initialized, redirect to install
   const localVersion = await getLocalVersion(cwd);
-  if (localVersion === null) {
+  const hasExistingInstall = hasInstalledProject(cwd);
+  const targetState = classifyUpdateTarget(localVersion, hasExistingInstall);
+
+  if (targetState === "missing") {
+    const message =
+      "oh-my-agent is not installed in this project. Run `oma install` first.";
+    ui.logError(message);
+    if (ci) {
+      throw new Error(message);
+    }
+    process.exit(1);
+  }
+
+  if (targetState === "legacy") {
     ui.note(
-      "oh-my-agent is not installed in this project. Running install...",
-      "Not initialized",
+      "Existing .agents installation detected without _version.json. Updating in place and restoring version metadata.",
+      "Legacy install",
     );
-    const { install } = await import("./install.js");
-    await install();
-    return;
   }
 
   let spinner: ReturnType<typeof ui.spinnerStart> | undefined;

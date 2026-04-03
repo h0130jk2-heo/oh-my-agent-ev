@@ -1,15 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { classifyUpdateTarget } from "../commands/update.js";
 import * as skills from "../lib/skills.js";
-
-vi.mock("../lib/manifest.js", () => ({
-  fetchRemoteManifest: vi.fn(),
-  getLocalVersion: vi.fn(),
-  saveLocalVersion: vi.fn(),
-}));
-
-vi.mock("../lib/tarball.js", () => ({
-  downloadAndExtract: vi.fn(),
-}));
+import { hasInstalledProject } from "../lib/manifest.js";
 
 describe("whitelist-based skill filtering", () => {
   it("getAllSkills should return only registered skills", () => {
@@ -108,5 +103,56 @@ describe("update stack/ preservation logic", () => {
     expect(expectedStackYaml).toContain("framework: fastapi");
     expect(expectedStackYaml).toContain("orm: sqlalchemy");
     expect(expectedStackYaml).toContain("source: migrated");
+  });
+});
+
+describe("hasInstalledProject", () => {
+  const tempRoots: string[] = [];
+
+  afterEach(() => {
+    for (const root of tempRoots) {
+      rmSync(root, { recursive: true, force: true });
+    }
+    tempRoots.length = 0;
+  });
+
+  it("treats an existing .agents tree without _version.json as installed", () => {
+    const root = mkdtempSync(join(tmpdir(), "oma-update-"));
+    tempRoots.push(root);
+
+    mkdirSync(join(root, ".agents", "skills", "oma-backend"), {
+      recursive: true,
+    });
+    mkdirSync(join(root, ".agents", "config"), { recursive: true });
+    mkdirSync(join(root, ".agents", "workflows"), { recursive: true });
+    writeFileSync(
+      join(root, ".agents", "config", "user-preferences.yaml"),
+      "language: ko\n",
+      { encoding: "utf-8", flag: "w" },
+    );
+
+    expect(hasInstalledProject(root)).toBe(true);
+  });
+
+  it("does not treat a random directory as installed", () => {
+    const root = mkdtempSync(join(tmpdir(), "oma-update-"));
+    tempRoots.push(root);
+
+    expect(hasInstalledProject(root)).toBe(false);
+  });
+});
+
+describe("classifyUpdateTarget", () => {
+  it("treats versioned installs as ready", () => {
+    expect(classifyUpdateTarget("4.22.1", true)).toBe("ready");
+    expect(classifyUpdateTarget("4.22.1", false)).toBe("ready");
+  });
+
+  it("treats .agents installs without version metadata as legacy", () => {
+    expect(classifyUpdateTarget(null, true)).toBe("legacy");
+  });
+
+  it("treats directories without an install as missing", () => {
+    expect(classifyUpdateTarget(null, false)).toBe("missing");
   });
 });

@@ -32,6 +32,19 @@ export async function getLocalVersion(
   }
 }
 
+export function hasInstalledProject(targetDir: string): boolean {
+  const skillsDir = join(targetDir, INSTALLED_SKILLS_DIR);
+  if (!existsSync(skillsDir)) return false;
+
+  const installationMarkers = [
+    join(targetDir, ".agents", "config", "user-preferences.yaml"),
+    join(targetDir, ".agents", "mcp.json"),
+    join(targetDir, ".agents", "workflows"),
+  ];
+
+  return installationMarkers.some((path) => existsSync(path));
+}
+
 export async function saveLocalVersion(
   targetDir: string,
   version: string,

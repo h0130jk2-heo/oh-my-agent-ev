@@ -4,6 +4,7 @@ import { join } from "node:path";
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { promptUninstallCompetitors } from "../lib/competitors.js";
+import { getLocalVersion, saveLocalVersion } from "../lib/manifest.js";
 import {
   isAlreadyStarred,
   isGhAuthenticated,
@@ -52,7 +53,7 @@ export function scanLanguages(
   if (existsSync(docsDir)) {
     for (const file of readdirSync(docsDir)) {
       const match = file.match(/^README\.(.+)\.md$/);
-      if (match) codes.push(match[1]);
+      if (match?.[1]) codes.push(match[1]);
     }
   }
 
@@ -60,6 +61,24 @@ export function scanLanguages(
     value: code,
     label: LANGUAGE_NAMES[code] ?? code,
   }));
+}
+
+export function getExistingLanguage(targetDir: string): string | null {
+  const prefsPath = join(
+    targetDir,
+    ".agents",
+    "config",
+    "user-preferences.yaml",
+  );
+  if (!existsSync(prefsPath)) return null;
+
+  try {
+    const prefs = readFileSync(prefsPath, "utf-8");
+    const match = prefs.match(/^language:\s*([A-Za-z-]+)/m);
+    return match?.[1] ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export async function install(): Promise<void> {
@@ -96,10 +115,16 @@ export async function install(): Promise<void> {
   spinner.stop("Downloaded!");
 
   const languages = scanLanguages(repoDir);
+  const existingLanguage = getExistingLanguage(process.cwd());
+  const initialLanguage = languages.some(
+    (option) => option.value === existingLanguage,
+  )
+    ? (existingLanguage as string)
+    : "en";
   const language = await p.select({
     message: "Response language?",
     options: languages,
-    initialValue: "en",
+    initialValue: initialLanguage,
   });
 
   if (p.isCancel(language)) {
@@ -252,6 +277,11 @@ export async function install(): Promise<void> {
           userPrefsPath,
           prefs.replace(/^language:\s*.+$/m, `language: ${language as string}`),
         );
+      }
+
+      const bundledVersion = await getLocalVersion(repoDir);
+      if (bundledVersion) {
+        await saveLocalVersion(cwd, bundledVersion);
       }
 
       const sharedLayoutMigrations = migrateSharedLayout(cwd);

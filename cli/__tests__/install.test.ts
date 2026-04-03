@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { scanLanguages } from "../commands/install.js";
+import { getExistingLanguage, scanLanguages } from "../commands/install.js";
 
 describe("scanLanguages", () => {
   const tempRoots: string[] = [];
@@ -97,5 +97,38 @@ describe("scanLanguages", () => {
     const result = scanLanguages(root);
 
     expect(result[0]).toEqual({ value: "en", label: "English" });
+  });
+});
+
+describe("getExistingLanguage", () => {
+  const tempRoots: string[] = [];
+
+  afterEach(() => {
+    for (const root of tempRoots) {
+      rmSync(root, { recursive: true, force: true });
+    }
+    tempRoots.length = 0;
+  });
+
+  it("reads the current language from user-preferences.yaml", () => {
+    const root = mkdtempSync(join(tmpdir(), "oma-language-"));
+    tempRoots.push(root);
+
+    const configDir = join(root, ".agents", "config");
+    mkdirSync(configDir, { recursive: true });
+    writeFileSync(
+      join(configDir, "user-preferences.yaml"),
+      "language: ko\ntimezone: Asia/Seoul\n",
+      "utf-8",
+    );
+
+    expect(getExistingLanguage(root)).toBe("ko");
+  });
+
+  it("returns null when the preferences file is missing", () => {
+    const root = mkdtempSync(join(tmpdir(), "oma-language-"));
+    tempRoots.push(root);
+
+    expect(getExistingLanguage(root)).toBeNull();
   });
 });
