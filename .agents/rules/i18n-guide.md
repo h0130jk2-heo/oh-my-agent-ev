@@ -51,6 +51,7 @@ language: ko  # ko, en, ja, zh, ...
 3. **Inline code (`backtick`) is never translated**
 4. **Parenthetical supplement allowed** — for unfamiliar terms, use `translated(original)` format once
 5. **Register consistency** — match the target language's appropriate register for the context
+6. **Translation tasks** — for translating UI strings, docs, or marketing copy, use the `/oma-translator` skill
 
 ## Workflow Integration
 

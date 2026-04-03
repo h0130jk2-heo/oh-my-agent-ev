@@ -14,3 +14,4 @@
 - Inline code in backticks is never translated
 - Code block comments stay in English
 - Unfamiliar terms: `translated(original)` format, first occurrence only
+- Translation tasks (UI strings, docs, marketing copy) → use the `/oma-translator` skill
