@@ -1,7 +1,7 @@
 {
   "name": "oh-my-agent",
   "version": "4.22.4",
-  "releaseDate": "2026-04-05T01:46:58.753Z",
+  "releaseDate": "2026-04-05T07:00:13.915Z",
   "repository": "https://github.com/first-fluke/oh-my-agent",
   "files": [
     {
@@ -41,7 +41,7 @@
     },
     {
       "path": ".agents/config/user-preferences.yaml",
-      "sha256": "65659e9ed1c114aec5e60f8fd4e35d21127d8b33a7cb02a8bcdf3a7d0d3fbb7b",
+      "sha256": "d0c4e6a49f9452c1bdddb0e4352e143b53b784364123c1573b7e903d7a490a90",
       "size": 570
     },
     {
@@ -141,8 +141,8 @@
     },
     {
       "path": ".agents/skills/_shared/core/skill-routing.md",
-      "sha256": "f2980da1246f26d3c38d3f359a12a6678f9f42b2a8b90c06ac91be59e2f163ce",
-      "size": 4291
+      "sha256": "f4533cbc019c8c201e9d747446a3fcec607b9054884e3d70fc30a8287c1acc0c",
+      "size": 5018
     },
     {
       "path": ".agents/skills/_shared/core/vendor-detection.md",
@@ -500,6 +500,26 @@
       "size": 7761
     },
     {
+      "path": ".agents/skills/oma-evaluator/SKILL.md",
+      "sha256": "315b156384f7d21606ecd8fa8787891cbe98c8d4a0dcbfdf394d774675489da5",
+      "size": 9564
+    },
+    {
+      "path": ".agents/skills/oma-evaluator/resources/calibration-examples.md",
+      "sha256": "a1fd9bac30d07b4020d2e3d6d1cbe78691862f1b714d16934afff2d9b2785b15",
+      "size": 5804
+    },
+    {
+      "path": ".agents/skills/oma-evaluator/resources/scoring-rubric.md",
+      "sha256": "aada1db49be6acd351ec871e0239c6a2d3c17bce8a1e9230d2ad3a45ac7338d9",
+      "size": 4111
+    },
+    {
+      "path": ".agents/skills/oma-evaluator/resources/sprint-contract-template.md",
+      "sha256": "7a3835a26bb45f304785e2b2165ba4cfeb754f5b25f3334f3c15c3318d7dfeb3",
+      "size": 3276
+    },
+    {
       "path": ".agents/skills/oma-frontend/SKILL.md",
       "sha256": "7e73feb4dc7e3bc4c2cb0d35b58a3497e12f05e081085124eb5b776f2b987d29",
       "size": 6955
@@ -815,6 +835,11 @@
       "size": 4410
     },
     {
+      "path": ".agents/workflows/evaluate.md",
+      "sha256": "cb65ebbf18525c4ceeba8f373949c4881baa50d67de77505d3ef7d81ed5fc04e",
+      "size": 7647
+    },
+    {
       "path": ".agents/workflows/exec-plan.md",
       "sha256": "bc6ecc92709ebbd7ea56223d5f2773a581a016d4a10ef61424ee327d272f98a5",
       "size": 4823
@@ -843,6 +868,11 @@
       "path": ".agents/workflows/review.md",
       "sha256": "cee1616e9380eabe8d175aa9a2d556b9c1c3f0fae3658546422ba53c6004fb07",
       "size": 4827
+    },
+    {
+      "path": ".agents/workflows/setup.md",
+      "sha256": "9e14cc44ac8760cbc3b87cf53d0bb70683d06d8b1f434ca004580fc8bb89c9be",
+      "size": 8028
     },
     {
       "path": ".agents/workflows/stack-set.md",
@@ -900,6 +930,11 @@
       "size": 211
     },
     {
+      "path": ".claude/skills/evaluate/SKILL.md",
+      "sha256": "18fb7c6f602ef2f53008972ff97ca48bf983b145909fcd2d6f8a4ad19bb085c2",
+      "size": 1230
+    },
+    {
       "path": ".claude/skills/exec-plan/SKILL.md",
       "sha256": "384c02a1029858226c54c2ba78d3672479ecefbd276d3a3ebc02a9d8d6435dfd",
       "size": 229
@@ -923,6 +958,11 @@
       "path": ".claude/skills/review/SKILL.md",
       "sha256": "b6019ea6fb17efc24afb51fc58ae966c36e427e842bf77d18c2864d09d422fb0",
       "size": 228
+    },
+    {
+      "path": ".claude/skills/setup/SKILL.md",
+      "sha256": "68a7140b9a95a65cd5276b53a51b27d402d9705dad8a06113d4b93f15d0b2097",
+      "size": 252
     },
     {
       "path": ".claude/skills/stack-set/SKILL.md",
@@ -960,6 +1000,11 @@
       "size": 1996
     },
     {
+      "path": ".claude/agents/evaluator.md",
+      "sha256": "0b241e07cb6d7b12c7022558b337ea20fdf5aeb45389a81a2813b2154b3be98c",
+      "size": 3733
+    },
+    {
       "path": ".claude/agents/frontend-engineer.md",
       "sha256": "a082f64872eee6d68a7d7c7ab09d1cde2497cb53f29d5c9f900152d4bf4fca2b",
       "size": 1649
@@ -984,8 +1029,8 @@
     "algorithm": "sha256"
   },
   "metadata": {
-    "skillCount": 29,
-    "workflowCount": 17,
-    "totalFiles": 195
+    "skillCount": 32,
+    "workflowCount": 19,
+    "totalFiles": 204
   }
 }
