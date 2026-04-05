@@ -52,7 +52,8 @@ Design API contracts between frontend/mobile and backend. Per endpoint:
 
 // turbo
 Break down the project into actionable tasks. Each task must have:
-- Assigned agent (frontend/backend/mobile/qa/debug)
+- Assigned agent (frontend/backend/mobile/qa/debug/evaluator)
+  - `evaluator`: assign when frontend UI/design tasks require iterative design scoring (Generator-Evaluator loop)
 - Title, acceptance criteria
 - Priority (P0-P3), dependencies
 
