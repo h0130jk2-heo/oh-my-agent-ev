@@ -1,7 +1,7 @@
 {
   "name": "oh-my-agent",
   "version": "4.22.4",
-  "releaseDate": "2026-04-05T07:11:59.129Z",
+  "releaseDate": "2026-04-05T07:20:12.007Z",
   "repository": "https://github.com/first-fluke/oh-my-agent",
   "files": [
     {
@@ -816,8 +816,8 @@
     },
     {
       "path": ".agents/workflows/coordinate.md",
-      "sha256": "33be4f572b81edd47d336066058d7b525fcf3e59eca5f891cc75f98a60bc093d",
-      "size": 5541
+      "sha256": "e482250df31145e5b7ec57cebe0bf55238d51e7802e12447e83663076eb7eb63",
+      "size": 6483
     },
     {
       "path": ".agents/workflows/debug.md",
@@ -846,13 +846,13 @@
     },
     {
       "path": ".agents/workflows/orchestrate.md",
-      "sha256": "c4bb40e26438d55125efc7ece9b1ce61fe80e2477ea0973ddf79e1add7bc3435",
-      "size": 6926
+      "sha256": "ebb0c65cb7976581fd4f332a2d8911000d9b6a4e34b5d790b1cd2957288f7492",
+      "size": 7748
     },
     {
       "path": ".agents/workflows/plan.md",
-      "sha256": "586335ca594ffcc09ac3b3c493ebbf4f939b6fa5af482621fe6b368d562c0021",
-      "size": 2701
+      "sha256": "dafe68cee76217838d9b6a96f4dfbf78812f9e2e9bbe3429211f6e60589f86f0",
+      "size": 2825
     },
     {
       "path": ".agents/workflows/ralph/resources/judge-protocol.md",
@@ -896,8 +896,8 @@
     },
     {
       "path": ".agents/workflows/ultrawork.md",
-      "sha256": "add1f726e35660cef4bfe5b4c68def8679ba6fab6ffa01acfbacd1e00434fdb7",
-      "size": 15793
+      "sha256": "c33753e085a90e0886e562b5865ff35aabb6203ccaed0f23fb1a3b34a88ea7be",
+      "size": 16598
     },
     {
       "path": ".claude/skills/brainstorm/SKILL.md",
