@@ -91,7 +91,6 @@ Spawn agents via **Agent tool** using `.claude/agents/{agent}.md` definitions.
 | qa | `.claude/agents/qa-reviewer.md` |
 | debug | `.claude/agents/debug-investigator.md` |
 | pm | `.claude/agents/pm-planner.md` |
-| evaluator | `.claude/agents/evaluator.md` *(conditional — spawn after frontend, see Step 5.1)* |
 
 - Include API contracts from `.agents/skills/_shared/api-contracts/` if they exist
 - Load only task-relevant context (check codebase structure around affected domains)
@@ -141,21 +140,6 @@ Record reset events in `task-board.md`:
 ```
 
 > **Claude Code note**: Agent tool returns results synchronously — no polling needed. Check status, files changed, and issues directly in each agent's return value.
-
----
-
-## Step 4.5: Design Evaluation Loop (Conditional — Frontend Tasks Only)
-
-If the plan included frontend UI/design tasks and the frontend agent has completed:
-
-1. Spawn evaluator agent:
-   - `Agent(subagent_type="evaluator", prompt="Evaluate the frontend implementation. Load sprint contract from .agents/plan.json. Navigate the live page and score across 4 dimensions. Write result to .agents/results/result-evaluator.md.")`
-2. Read `result-evaluator.md`:
-   - **PASS** → proceed to Step 5.
-   - **NEEDS_WORK** → re-spawn frontend agent with evaluator feedback, then re-run Step 4.5 (max 3 iterations).
-3. Record iteration count in `task-board.md`.
-
-> Skip this step if no frontend/UI tasks exist in the plan.
 
 ---
 
