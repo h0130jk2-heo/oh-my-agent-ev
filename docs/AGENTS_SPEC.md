@@ -18,6 +18,7 @@ It is not a formal external standard. It is the interoperability contract used b
 ├── agents/                 (abstract agent definitions — vendor-neutral SSOT)
 │   ├── backend-engineer.yaml
 │   ├── frontend-engineer.yaml
+│   ├── evaluator.yaml
 │   └── ...
 ├── skills/
 │   ├── _shared/
@@ -152,7 +153,8 @@ Claude Code uses a hybrid model beyond simple symlinks:
 │   └── ...
 ├── agents/
 │   ├── backend-engineer.md         (generated from .agents/agents/backend-engineer.yaml)
-│   ├── qa-reviewer.md          (generated from .agents/agents/qa-reviewer.yaml)
+│   ├── qa-reviewer.md              (generated from .agents/agents/qa-reviewer.yaml)
+│   ├── evaluator.md                (generated from .agents/agents/evaluator.yaml)
 │   └── ...
 └── settings.local.json         (hooks for SSOT protection)
 ```

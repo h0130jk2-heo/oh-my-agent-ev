@@ -108,6 +108,15 @@ This saves context window and prevents confusion from irrelevant information.
 | Feature addition planning | examples.md + Serena MCP (understand existing structure)     |
 | Refactoring planning      | Serena MCP only                                              |
 
+### Evaluator Agent
+
+| Task Type | Required Resources |
+| --------- | ------------------ |
+| Full Generator-Evaluator loop | SKILL.md + scoring-rubric.md + calibration-examples.md + sprint-contract-template.md |
+| Standalone design evaluation (no loop) | scoring-rubric.md + calibration-examples.md |
+| Score trend analysis (iteration N≥2) | scoring-rubric.md + previous result-evaluator.md |
+| Evaluator tuning / prompt adjustment | evaluator-tuning.md |
+
 ### Design Agent
 
 | Task Type                   | Required Resources                                                       |

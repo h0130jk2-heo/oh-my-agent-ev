@@ -49,6 +49,7 @@ Pick a preset and you're ready:
 | **oma-tf-infra** | Multi-cloud Terraform IaC |
 | **oma-dev-workflow** | CI/CD, releases, monorepo automation |
 | **oma-translator** | Natural multilingual translation |
+| **oma-evaluator** | Generator-Evaluator loop — iterative frontend design scoring via live browser |
 | **oma-orchestrator** | Parallel agent execution via CLI |
 | **oma-commit** | Clean conventional commits |
 
@@ -77,6 +78,7 @@ Or use slash commands for structured workflows:
 | `/review` | Security + performance + accessibility audit |
 | `/debug` | Structured root-cause debugging |
 | `/design` | 7-phase design system workflow |
+| `/evaluate` | Generator-Evaluator loop — iterative frontend design scoring |
 | `/brainstorm` | Free-form ideation |
 | `/commit` | Conventional commit with type/scope analysis |
 
@@ -121,6 +123,7 @@ flowchart TD
         W5["/debug"]
         W6["/deepinit"]
         W7["/design"]
+        W8["/evaluate"]
     end
 
     subgraph Orchestration["Orchestration"]
@@ -143,6 +146,7 @@ flowchart TD
         direction TB
         QA[oma-qa]
         DBG[oma-debug]
+        EV[oma-evaluator]
     end
 
     Workflows --> Orchestration

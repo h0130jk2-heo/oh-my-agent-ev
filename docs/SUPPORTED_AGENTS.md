@@ -41,7 +41,7 @@ Claude Code extends beyond symlinks with a full native adapter layer:
 
 - **`CLAUDE.md`** at project root (auto-loaded by Claude Code)
 - **`.claude/skills/`** — 12 thin router SKILL.md files that delegate to `.agents/workflows/` (they contain routing logic only, not workflow content). Skills are explicitly invoked via slash commands, not keyword-auto-activated.
-- **`.claude/agents/`** — 7 subagent definitions generated from `.agents/agents/*.yaml` (backend-engineer, frontend-engineer, mobile-engineer, db-engineer, qa-reviewer, debug-investigator, pm-planner)
+- **`.claude/agents/`** — 8 subagent definitions generated from `.agents/agents/*.yaml` (backend-engineer, frontend-engineer, mobile-engineer, db-engineer, qa-reviewer, debug-investigator, pm-planner, evaluator)
 - **`stack/`** — generated backend stack artifacts (SSOT exception, created by `/stack-set` or `oma install` variant)
 - **Native loop patterns** — Review Loop, Issue Remediation Loop, Phase Gate Loop via Task tool
 - Domain skills remain as symlinks from `.agents/skills/` (coexist with thin router workflow skills)

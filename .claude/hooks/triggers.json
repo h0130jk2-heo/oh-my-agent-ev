@@ -194,6 +194,23 @@
         ]
       }
     },
+    "evaluate": {
+      "persistent": true,
+      "keywords": {
+        "*": ["evaluate", "/evaluate"],
+        "en": ["evaluate design", "score design", "rate the ui", "improve design", "iterate on design", "generator evaluator", "design loop", "refine ui", "critique the design"],
+        "ko": ["평가", "디자인 평가", "UI 평가", "점수 매겨", "개선해", "반복 개선", "디자인 루프", "평가해줘", "디자인 점수", "UI 점수", "개선 루프"],
+        "ja": ["評価", "デザイン評価", "スコア", "改善して", "反復改善", "デザインループ", "評価して", "UIスコア"],
+        "zh": ["评估", "设计评估", "评分", "改善", "迭代改进", "设计循环", "评价", "UI评分"],
+        "es": ["evaluar", "evaluar diseño", "puntuar diseño", "mejorar diseño", "iterar diseño", "bucle de diseño", "critica el diseño"],
+        "fr": ["évaluer", "évaluer le design", "noter le design", "améliorer le design", "itérer le design", "boucle de design", "critique le design"],
+        "de": ["bewerten", "Design bewerten", "Design verbessern", "Design iterieren", "Design-Schleife", "UI verbessern"],
+        "pt": ["avaliar", "avaliar design", "pontuar design", "melhorar design", "iterar design", "loop de design", "critique o design"],
+        "ru": ["оценить", "оценить дизайн", "улучшить дизайн", "итерировать дизайн", "петля дизайна", "оценка UI"],
+        "nl": ["evalueren", "design evalueren", "design verbeteren", "design itereren", "design-loop", "UI verbeteren"],
+        "pl": ["oceniać", "ocenić design", "poprawić design", "iterować design", "pętla designu", "oceń UI"]
+      }
+    },
     "design": {
       "persistent": false,
       "keywords": {
