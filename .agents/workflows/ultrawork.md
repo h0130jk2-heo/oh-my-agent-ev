@@ -136,13 +136,14 @@ If no measurement tools: skip — gates fall back to binary checklist.
 
 ## Phase 3: VERIFY (Steps 6-8)
 
-### Step 6-8: QA Verification
+### Step 6-8: QA Verification + Design Evaluation
 // turbo
-Spawn QA Agent to execute Steps 6-8.
+Spawn QA Agent and (if frontend tasks exist) Evaluator Agent in parallel.
 
 #### If Claude Code
-Use the Agent tool to spawn subagent:
+Use the Agent tool to spawn subagents (QA always; Evaluator only if frontend tasks exist):
 - `Agent(subagent_type="qa-reviewer", prompt="Execute Phase 3 Verification. Step 6: Alignment Review. Step 7: Security/Bug Review (npm audit, OWASP). Step 8: Improvement/Regression Review. IMPORTANT: Follow .agents/skills/_shared/core/context-loading.md rules.", run_in_background=true)`
+- *(if frontend tasks)* `Agent(subagent_type="evaluator", prompt="Evaluate the frontend implementation per sprint contract in .agents/plan.json. Score across 4 dimensions via live browser. Write result to .agents/results/result-evaluator.md.", run_in_background=true)`
 
 #### If Codex CLI
 Request parallel subagent execution with the QA verification tasks.
@@ -186,6 +187,7 @@ If baseline was measured at Step 5.2:
 - [ ] HIGH count: 0
 - [ ] No regressions
 - [ ] (If measured) Quality Score >= 75 (Grade B)
+- [ ] (If frontend tasks) Evaluator: PASS (`weighted_score >= 8.0`, `Originality >= 7.0`) — or NEEDS_WORK with iteration plan recorded
 
 **On gate pass**: Use memory edit tool to record phase completion in `session-ultrawork.md`
 
@@ -305,6 +307,7 @@ oh-my-ag agent:spawn qa-agent "Execute Phase 5 Ship. Step 14: Quality Review (li
 
 ### Step 15: UX Flow Verification
 - **Executed by QA Agent**: User journey check.
+- *(If frontend tasks and Evaluator not yet PASS)* Re-run Evaluator → frontend iteration loop until PASS or max 3 iterations.
 
 ### Step 16: Related Issues Review (Cascade Impact 2nd)
 - **Executed by QA Agent**: Final impact check.
@@ -346,15 +349,15 @@ If Quality Score was measured during this session:
 
 ## Review Steps Summary
 
-| Phase  | Steps | Agent       | Execution | Perspective                       |
-| ------ | ----- | ----------- | --------- | --------------------------------- |
-| PLAN   | 1-4   | PM Agent    | Inline    | Completeness, Meta, Simplicity    |
-| IMPL   | 5     | Dev Agents  | Spawn     | Implementation                    |
-| VERIFY | 6-8   | QA Agent    | Spawn     | Alignment, Safety, Regression     |
-| REFINE | 9-13  | Debug Agent | Spawn     | Reusability, Cascade, Consistency |
-| SHIP   | 14-17 | QA Agent    | Spawn     | Quality, UX, Cascade 2nd, Deploy  |
+| Phase  | Steps | Agent                        | Execution | Perspective                       |
+| ------ | ----- | ---------------------------- | --------- | --------------------------------- |
+| PLAN   | 1-4   | PM Agent                     | Inline    | Completeness, Meta, Simplicity    |
+| IMPL   | 5     | Dev Agents                   | Spawn     | Implementation                    |
+| VERIFY | 6-8   | QA Agent + Evaluator (if FE) | Spawn     | Alignment, Safety, Regression + Design Quality |
+| REFINE | 9-13  | Debug Agent                  | Spawn     | Reusability, Cascade, Consistency |
+| SHIP   | 14-17 | QA Agent                     | Spawn     | Quality, UX, Cascade 2nd, Deploy  |
 
-**Total 11 review steps + conditional Quality Score checkpoints → High quality guaranteed**
+**Total 11 review steps + conditional Quality Score checkpoints + conditional Evaluator loop → High quality guaranteed**
 
 ---
 

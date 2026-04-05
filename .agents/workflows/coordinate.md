@@ -115,6 +115,23 @@ After all implementation agents complete, spawn QA Agent to review all deliverab
 
 ---
 
+## Step 6.5: Design Evaluation Loop (Conditional — Frontend Tasks Only)
+
+If the plan included frontend UI/design tasks:
+
+### If Claude Code
+1. Spawn evaluator agent:
+   - `Agent(subagent_type="evaluator", prompt="Evaluate the frontend implementation. Load sprint contract from .agents/plan.json. Navigate the live page and score across 4 dimensions (Design Quality, Originality, Craft, Functionality). Write result to .agents/results/result-evaluator.md.")`
+2. Read `result-evaluator.md`:
+   - **PASS** (`weighted_score >= 8.0` and `Originality >= 7.0`) → proceed to Step 7.
+   - **NEEDS_WORK** → re-spawn frontend agent with evaluator critique, then re-run Step 6.5 (max 3 iterations).
+3. Use memory edit tool to record evaluation results.
+
+> **Note**: Evaluator = design/UX quality. QA = security/performance/accessibility. They are parallel concerns, not duplicates.
+> Skip this step if no frontend/UI tasks exist in the plan.
+
+---
+
 ## Step 6.1: Measure Quality Score (Conditional)
 
 If automated measurement is available:
