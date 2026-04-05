@@ -1,8 +1,23 @@
-# oh-my-agent: Portable Multi-Agent Harness
+> **This is a personal fork of [oh-my-agent](https://github.com/first-fluke/oh-my-agent) by [first-fluke](https://github.com/first-fluke), extended with an Evaluator agent for frontend design scoring.**
+> Original authors: Eunkwang Shin & Gahyun Kim — all credits to them. Licensed under MIT.
 
-[![npm version](https://img.shields.io/npm/v/oh-my-agent?color=cb3837&logo=npm)](https://www.npmjs.com/package/oh-my-agent) [![npm downloads](https://img.shields.io/npm/dm/oh-my-agent?color=cb3837&logo=npm)](https://www.npmjs.com/package/oh-my-agent) [![GitHub stars](https://img.shields.io/github/stars/first-fluke/oh-my-agent?style=flat&logo=github)](https://github.com/first-fluke/oh-my-agent) [![License](https://img.shields.io/github/license/first-fluke/oh-my-agent)](https://github.com/first-fluke/oh-my-agent/blob/main/LICENSE) [![Last Updated](https://img.shields.io/github/last-commit/first-fluke/oh-my-agent?label=updated&logo=git)](https://github.com/first-fluke/oh-my-agent/commits/main)
+---
 
-[한국어](./docs/README.ko.md) | [中文](./docs/README.zh.md) | [Português](./docs/README.pt.md) | [日本語](./docs/README.ja.md) | [Français](./docs/README.fr.md) | [Español](./docs/README.es.md) | [Nederlands](./docs/README.nl.md) | [Polski](./docs/README.pl.md) | [Русский](./docs/README.ru.md) | [Deutsch](./docs/README.de.md) | [Tiếng Việt](./docs/README.vi.md)
+# oh-my-agent + Evaluator Extension
+
+[![GitHub stars](https://img.shields.io/github/stars/first-fluke/oh-my-agent?style=flat&logo=github&label=original%20stars)](https://github.com/first-fluke/oh-my-agent) [![License](https://img.shields.io/github/license/h0130jk2-heo/oh-my-agent-ev)](https://github.com/h0130jk2-heo/oh-my-agent-ev/blob/main/LICENSE)
+
+## What's Added in This Fork
+
+| Feature | Description |
+|---------|-------------|
+| **`oma-evaluator` skill** | Frontend design scoring agent (Design Quality, Originality, Craft, Functionality) |
+| **`/evaluate` command** | Generator-Evaluator loop — iterate until design PASS (`weighted_score >= 8.0`) |
+| **`.claude/agents/evaluator.md`** | Subagent definition using live browser automation |
+
+Evaluator is **not auto-spawned** — call `/evaluate` explicitly when you need design scoring.
+
+---
 
 Ever wished your AI assistant had coworkers? That's what oh-my-agent does.
 
@@ -14,13 +29,13 @@ Works with all major AI IDEs: Antigravity, Claude Code, Cursor, Gemini CLI, Code
 
 ```bash
 # One-liner (auto-installs bun & uv if missing)
-curl -fsSL https://raw.githubusercontent.com/first-fluke/oh-my-agent/main/cli/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/h0130jk2-heo/oh-my-agent-ev/main/cli/install.sh | bash
 
 # Or manual
-bunx oh-my-agent@latest
+git clone https://github.com/h0130jk2-heo/oh-my-agent-ev && cd oh-my-agent-ev/cli && bun install && bun run build
 ```
 
-`install.sh` supports macOS/Linux only. On Windows, install `bun` and `uv` manually, then run `bunx oh-my-agent@latest`.
+`install.sh` supports macOS/Linux only. On Windows, install `bun` and `uv` manually, then clone and build.
 
 Pick a preset and you're ready:
 

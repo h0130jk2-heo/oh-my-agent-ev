@@ -174,7 +174,7 @@ describe("installClaudeSkills", () => {
 
 describe("skills.ts - repository metadata", () => {
   it("should use the correct GitHub repository", () => {
-    expect(REPO).toBe("first-fluke/oh-my-agent");
+    expect(REPO).toBe("h0130jk2-heo/oh-my-agent-ev");
   });
 });
 

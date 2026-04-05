@@ -15,7 +15,7 @@ import { dirname, join, relative, resolve } from "node:path";
 import type { SkillInfo, SkillsRegistry, VendorType } from "../types/index.js";
 import { parseFrontmatter, serializeFrontmatter } from "./frontmatter.js";
 
-export const REPO = "first-fluke/oh-my-agent";
+export const REPO = "h0130jk2-heo/oh-my-agent-ev";
 export const INSTALLED_SKILLS_DIR = ".agents/skills";
 
 export const SKILLS: SkillsRegistry = {

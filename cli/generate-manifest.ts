@@ -15,7 +15,7 @@ import { fileURLToPath } from "node:url";
 const AGENT_DIR = ".agents";
 const CLAUDE_DIR = ".claude";
 const MANIFEST_FILE = "prompt-manifest.json";
-export const REPOSITORY_URL = "https://github.com/first-fluke/oh-my-agent";
+export const REPOSITORY_URL = "https://github.com/h0130jk2-heo/oh-my-agent-ev";
 const EXCLUDED_PATTERNS = [
   "__pycache__/",
   ".pyc",

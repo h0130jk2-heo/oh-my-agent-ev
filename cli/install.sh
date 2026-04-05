@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# oh-my-agent installer (macOS/Linux only)
-# Usage: curl -fsSL https://raw.githubusercontent.com/first-fluke/oh-my-agent/main/cli/install.sh | bash
+# heo-agent installer (macOS/Linux only)
+# Usage: curl -fsSL https://raw.githubusercontent.com/h0130jk2-heo/oh-my-agent-ev/main/cli/install.sh | bash
 set -euo pipefail
 
 # ── Colors ──────────────────────────────────────────────────────────
@@ -59,7 +59,7 @@ detect_platform() {
     Darwin) PLATFORM="macOS" ;;
     Linux)  PLATFORM="Linux" ;;
     MINGW*|MSYS*|CYGWIN*)
-      fail "Windows is not supported by this script. Install bun and uv manually, then run: bunx oh-my-agent@latest"
+      fail "Windows is not supported by this script. Install bun and uv manually, then run: bunx heo-agent@latest"
       ;;
     *)      fail "Unsupported OS: $OS" ;;
   esac
@@ -115,7 +115,7 @@ install_uv() {
 
 # ── Main ────────────────────────────────────────────────────────────
 main() {
-  printf "\n${BOLD}${MAGENTA} 🛸 oh-my-agent installer ${RESET}\n\n"
+  printf "\n${BOLD}${MAGENTA} 🛸 heo-agent installer ${RESET}\n\n"
 
   pick_downloader
   detect_platform
@@ -139,7 +139,7 @@ main() {
   # ── Run oh-my-agent interactive installer ──
   info "Launching ${BOLD}oh-my-agent${RESET} setup..."
   echo ""
-  exec bunx oh-my-agent@latest < /dev/tty
+  exec bunx heo-agent@latest < /dev/tty
 }
 
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then

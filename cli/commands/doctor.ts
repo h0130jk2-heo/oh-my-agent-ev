@@ -489,7 +489,7 @@ export async function doctor(jsonMode = false): Promise<void> {
             claudeSettings.attribution = {
               commit:
                 "Generated with oh-my-agent\n\nCo-Authored-By: First Fluke <our.first.fluke@gmail.com>",
-              pr: "Generated with [oh-my-agent](https://github.com/first-fluke/oh-my-agent)",
+              pr: "Generated with [oh-my-agent](https://github.com/h0130jk2-heo/oh-my-agent-ev)",
             };
             writeFileSync(
               claudeSettingsPath,
@@ -532,12 +532,12 @@ export async function doctor(jsonMode = false): Promise<void> {
 
     if (checkStarred()) {
       p.note(
-        `${pc.green("⭐")} Thank you for starring oh-my-agent!\n${pc.dim("https://github.com/sponsors/first-fluke")}`,
+        `${pc.green("⭐")} Thank you for starring oh-my-agent!\n${pc.dim("")}`,
         "Support",
       );
     } else {
       p.note(
-        `${pc.yellow("❤️")} Enjoying oh-my-agent? Give it a star or sponsor!\n${pc.dim("gh api --method PUT /user/starred/first-fluke/oh-my-agent")}\n${pc.dim("https://github.com/sponsors/first-fluke")}`,
+        `${pc.yellow("❤️")} Enjoying oh-my-agent? Give it a star or sponsor!\n${pc.dim("gh api --method PUT /user/starred/h0130jk2-heo/oh-my-agent-ev")}\n${pc.dim("")}`,
         "Support",
       );
     }
