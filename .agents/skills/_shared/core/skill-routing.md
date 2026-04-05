@@ -27,6 +27,8 @@ Skills are explicitly loaded via /command invocation or agent skills field. Load
 | review, security, performance | **oma-qa** | |
 | accessibility, WCAG, a11y | **oma-qa** | |
 | UI design, design system, landing page, DESIGN.md, color palette, typography, glassmorphism, responsive design | **oma-design** | |
+| evaluate, design quality, originality, AI slop, museum grade | **oma-evaluator** | Frontend design evaluation. Generator-Evaluator loop |
+| visual review, UI critique, aesthetic, craft | **oma-evaluator** | Parallel with oma-qa — QA=security/perf, Evaluator=design/UX |
 | brainstorm, ideate, design, explore, idea, concept | **oma-brainstorm** | Run before oma-pm |
 | plan, breakdown, task, sprint | **oma-pm** | |
 | automatic, parallel, orchestrate | **oma-orchestrator** | |
@@ -50,6 +52,8 @@ Skills are explicitly loaded via /command invocation or agent skills field. Load
 | "Design and build a landing page" | oma-design → oma-frontend |
 | "Design, build, and review" | oma-design → oma-frontend → oma-qa |
 | "Redesign based on this URL" | oma-design (Phase 2 EXTRACT) → oma-frontend |
+| "Evaluate the UI" | oma-evaluator (standalone, no generator loop) |
+| "Improve the design" | oma-evaluator (with generator loop) |
 
 ---
 
@@ -67,8 +71,13 @@ Skills are explicitly loaded via /command invocation or agent skills field. Load
 - implementation agent → oma-debug (debugging after implementation complete)
 - oma-backend → oma-frontend/oma-mobile (when executing parallel without API contract)
 
+### Evaluator Before QA (Frontend Tasks)
+- oma-evaluator runs after frontend implementation, before oma-qa
+- Evaluator = design/UX quality, QA = security/performance/accessibility
+- Exception: Can run standalone via `/evaluate` without QA
+
 ### QA Is Always Last
-- oma-qa runs after all implementation tasks are complete
+- oma-qa runs after all implementation tasks (and evaluation) are complete
 - Exception: Can run immediately if user requests review of specific files only
 
 ---
@@ -95,3 +104,4 @@ Skills are explicitly loaded via /command invocation or agent skills field. Load
 | oma-mobile | 20 | 30 |
 | oma-debug | 15 | 25 |
 | oma-qa | 15 | 20 |
+| oma-evaluator | 30 | 30 (per iteration, max 15 iterations) |

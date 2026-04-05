@@ -25,6 +25,13 @@ docs/plans/
 # CLI-generated symlinks (created by createCliSymlinks per project)
 .claude/skills/oma-*
 
+# Local Claude Code settings
+.claude/settings.local.json
+
+# Serena local overrides and cache
+.serena/cache/
+.serena/project.local.yml
+
 # Serena Memory (runtime state)
 .serena/memories/*
 !.serena/memories/.gitkeep

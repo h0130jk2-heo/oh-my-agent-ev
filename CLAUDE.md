@@ -24,6 +24,8 @@
 | `/tools` | `tools.md` | Inline MCP management |
 | `/stack-set` | `stack-set.md` | Inline stack configuration |
 | `/design` | `design.md` | Inline 7-phase design workflow |
+| `/evaluate` | `evaluate.md` | Generator-Evaluator loop (frontend design scoring) |
+| `/setup` | `setup.md` | Inline setup |
 | `/deepinit` | `deepinit.md` | Inline project initialization |
 
 ## Automatic Workflow Detection
