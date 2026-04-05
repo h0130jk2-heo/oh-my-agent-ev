@@ -88,6 +88,6 @@ describe("install.sh", () => {
 
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("Windows is not supported by this script");
-    expect(result.stderr).toContain("bunx oh-my-agent@latest");
+    expect(result.stderr).toContain("bunx heo-agent@latest");
   });
 });

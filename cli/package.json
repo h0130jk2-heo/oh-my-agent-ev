@@ -1,7 +1,7 @@
 {
-  "name": "oh-my-agent",
+  "name": "heo-agent",
   "version": "4.22.4",
-  "description": "Portable multi-agent harness for .agents-based skills and workflows across Antigravity, Claude Code, Codex, OpenCode, and more",
+  "description": "Personal multi-agent workflow harness with evaluator extension",
   "type": "module",
   "bin": {
     "oh-my-ag": "./bin/cli.js",
@@ -11,49 +11,18 @@
     "bin"
   ],
   "keywords": [
-    "oh-my-agent",
-    "antigravity",
-    ".agents",
     "agent",
-    "skills",
-    "agent-skills",
-    "multi-agent",
-    "orchestrator",
-    "claude",
-    "claude-code",
-    "codex",
-    "opencode",
-    "copilot",
-    "cursor",
-    "chatgpt",
-    "pm",
-    "frontend",
-    "backend",
-    "mobile",
-    "qa",
-    "debug",
-    "terraform",
-    "database",
     "workflow",
-    "bug-fixing",
-    "gemini"
+    "claude-code",
+    "multi-agent"
   ],
-  "author": "our.first.fluke <our.first.fluke@gmail.com>",
+  "author": "h0130jk2-heo",
   "contributors": [
+    "our.first.fluke <our.first.fluke@gmail.com>",
     "gracefullight <gracefullight.dev@gmail.com>",
     "gahyun-git <go4it.gh@gmail.com>"
   ],
   "license": "MIT",
-  "funding": [
-    {
-      "type": "github",
-      "url": "https://github.com/sponsors/first-fluke"
-    },
-    {
-      "type": "buymeacoffee",
-      "url": "https://buymeacoffee.com/firstfluke"
-    }
-  ],
   "scripts": {
     "sync:readme": "node ./scripts/sync-readme.mjs",
     "build": "bun run sync:readme && bun build cli.ts --outfile bin/cli.js --target node --minify",
@@ -83,7 +52,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/first-fluke/oh-my-agent"
+    "url": "https://github.com/h0130jk2-heo/oh-my-agent-ev"
   },
   "antigravity": {
     "skillsPath": ".agents/skills",

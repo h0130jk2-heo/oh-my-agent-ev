@@ -415,7 +415,7 @@ export async function install(): Promise<void> {
             claudeSettings.attribution = {
               commit:
                 "Generated with oh-my-agent\n\nCo-Authored-By: First Fluke <our.first.fluke@gmail.com>",
-              pr: "Generated with [oh-my-agent](https://github.com/first-fluke/oh-my-agent)",
+              pr: "Generated with [oh-my-agent](https://github.com/h0130jk2-heo/oh-my-agent-ev)",
             };
             writeFileSync(
               claudeSettingsPath,
@@ -487,7 +487,7 @@ export async function install(): Promise<void> {
 
     if (configExists && mcpConfig && mcpConfig.mcpServers) {
       const serenaConfig = mcpConfig.mcpServers.serena;
-      const bridgeCommand = "oh-my-agent@latest";
+      const bridgeCommand = "heo-agent@latest";
 
       const isBridgeConfigured =
         serenaConfig &&
@@ -510,7 +510,7 @@ export async function install(): Promise<void> {
             command: "npx",
             args: [
               "-y",
-              "oh-my-agent@latest",
+              "heo-agent@latest",
               "bridge",
               "http://localhost:12341/mcp",
             ],

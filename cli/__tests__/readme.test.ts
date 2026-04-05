@@ -11,7 +11,7 @@ describe("npm package readme", () => {
     expect(readme).toContain("# oh-my-agent: Portable Multi-Agent Harness");
     expect(readme).not.toMatch(/\]\(\.\//);
     expect(readme).toContain(
-      "https://github.com/first-fluke/oh-my-agent/blob/main/docs/README.ko.md",
+      "https://github.com/h0130jk2-heo/oh-my-agent-ev/blob/main/docs/README.ko.md",
     );
   });
 });
