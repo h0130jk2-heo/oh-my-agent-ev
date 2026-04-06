@@ -9,7 +9,7 @@ dist/
 build/
 *.js.map
 bin/*.js
-/cli/bin/
+# cli/bin/ intentionally included for Node.js users without bun
 !scripts/dashboard-web/**/*.js
 !scripts/generate-manifest.js
 
