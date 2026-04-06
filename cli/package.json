@@ -1,6 +1,6 @@
 {
   "name": "heo-agent",
-  "version": "4.22.4",
+  "version": "5.0.0",
   "description": "Personal multi-agent workflow harness with evaluator extension",
   "type": "module",
   "bin": {
